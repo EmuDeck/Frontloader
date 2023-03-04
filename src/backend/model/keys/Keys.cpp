@@ -51,6 +51,8 @@ Keys::Keys(QObject* parent)
         { KeyEvent::PAGE_UP, {} },
         { KeyEvent::PAGE_DOWN, {} },
         { KeyEvent::MAIN_MENU, {} },
+        { KeyEvent::VOL_UP, {} },
+        { KeyEvent::VOL_DOWN, {} },
     }
 {
     refresh_keys();

@@ -36,12 +36,15 @@
 #include "SortFilterProxyModel/filters/filtersqmltypes.h"
 #include "SortFilterProxyModel/proxyroles/proxyrolesqmltypes.h"
 #include "SortFilterProxyModel/sorters/sortersqmltypes.h"
+#include "Paths.h"
 
 #include <QGuiApplication>
 #include <QQmlEngine>
 
 #if defined(WITH_SDL_GAMEPAD) || defined(WITH_SDL_POWER)
 #include <SDL.h>
+#include <QDirIterator>
+
 #endif
 
 namespace model { class Key; }
@@ -52,7 +55,7 @@ class FolderListModel;
 namespace {
 void print_metainfo()
 {
-    Log::info(LOGMSG("Pegasus " GIT_REVISION " (" GIT_DATE ")"));
+    Log::info(LOGMSG("frontloader " GIT_REVISION " (" GIT_DATE ")"));
     Log::info(LOGMSG("Running on %1 (%2, %3)").arg(
         QSysInfo::prettyProductName(),
         QSysInfo::currentCpuArchitecture(),
@@ -90,6 +93,45 @@ void register_api_classes()
     qqsfpm::registerQQmlSortFilterProxyModelTypes();
 }
 
+int get_default_sink_volume()
+{
+	QProcess process;
+	process.start("/bin/bash", QStringList() << "-c" << "pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\\d+(?=%)' | head -n 1");
+	process.waitForFinished();
+
+	return process.readAllStandardOutput().toInt();
+}
+
+void increase_volume()
+{
+	if (get_default_sink_volume() >= 100)
+	{
+		QProcess::execute("/usr/bin/pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << "100%");
+	}
+	else
+	{
+		QProcess::execute("/usr/bin/pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << "+10%");
+	}
+}
+
+void decrease_volume()
+{
+	QProcess::execute("/usr/bin/pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << "-10%");
+}
+
+void on_volume_change(VolumeChangeType type)
+{
+	switch (type)
+	{
+	case VolumeChangeType::UP:
+		increase_volume();
+		break;
+    case VolumeChangeType::DOWN:
+	    decrease_volume();
+        break;
+    }
+}
+
 void on_app_close(AppCloseType type)
 {
     if (type == AppCloseType::SUSPEND) {
@@ -106,7 +148,7 @@ void on_app_close(AppCloseType type)
         default: break;
     }
 
-    Log::info(LOGMSG("Closing Pegasus, goodbye!"));
+    Log::info(LOGMSG("Closing frontloader, goodbye!"));
     Log::close();
 
     QCoreApplication::quit();
@@ -136,7 +178,7 @@ Backend::~Backend()
     delete m_providerman;
     delete m_api_private;
     delete m_api_public;
-
+	unloadFrontloader();
 #if defined(WITH_SDL_GAMEPAD) || defined(WITH_SDL_POWER)
     SDL_Quit();
 #endif
@@ -146,7 +188,7 @@ Backend::Backend(const CliArgs& args)
     : m_args(args)
 {
     // Make sure this comes before any file related operations
-    AppSettings::general.portable = args.portable;
+//    AppSettings::general.portable = args.portable;
 
     Log::init(args.silent);
     print_metainfo();
@@ -154,6 +196,7 @@ Backend::Backend(const CliArgs& args)
 
     AppSettings::load_providers();
     AppSettings::load_config();
+	loadFrontloader();
 
     m_api_public = new model::ApiObject(args);
     m_api_private = new model::Internal(args);
@@ -226,7 +269,62 @@ Backend::Backend(const CliArgs& args)
 
     // quit/reboot/shutdown request
     QObject::connect(&m_api_private->system(), &model::System::appCloseRequested, on_app_close);
+
+	// volume buttons
+	QObject::connect(&m_api_private->system(), &model::System::volumeChangeRequested, on_volume_change);
 }
+
+void Backend::copyDirectoryNested(const QString& from, const QString& to)
+{
+
+	QDirIterator it(from, QDirIterator::Subdirectories);
+
+	while (it.hasNext()) {
+
+		QString file_in = it.next();
+
+		QFileInfo file_info = QFileInfo(file_in);
+
+		QString file_out = file_in;
+		file_out.replace(from,to);
+
+		if(file_info.isFile())
+		{
+			//is file copy
+			QFile::copy(file_in, file_out);
+			if (QFileInfo(file_out).suffix() == "front" || QFileInfo(file_out).suffix() == "sh" || QFileInfo(file_out).suffix() == "AppImage")
+			{
+				QFile::setPermissions(file_out, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner | QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ExeGroup);
+			}
+		}
+
+		if(file_info.isDir())
+		{
+			//dir mkdir
+			QDir dir(file_out);
+			if (!dir.exists())
+				dir.mkpath(".");
+		}
+	}
+}
+
+void Backend::loadFrontloader()
+{
+	if ((!QFile::exists(paths::app_dir_path() + "/scripts")) || (!QFile::exists(paths::app_dir_path() + "/services")) || (!QFile::exists(paths::app_dir_path() + "/frontends")) || (!QFile::exists(paths::app_dir_path() + "/frontends/metadata.frontloader.txt")))
+	{
+		QDir(paths::app_dir_path()).mkdir("scripts");
+		QDir(paths::app_dir_path()).mkdir("services");
+		QDir(paths::app_dir_path()).mkdir("frontends");
+		copyDirectoryNested(":/frontloader", paths::app_dir_path());
+	}
+	QProcess::execute("/bin/bash", QStringList() << paths::app_dir_path() + "/scripts/Constructor.sh");
+}
+
+void Backend::unloadFrontloader()
+{
+	QProcess::execute("/bin/bash", QStringList() << paths::app_dir_path() + "/scripts/Destructor.sh");
+}
+
 
 void Backend::start()
 {

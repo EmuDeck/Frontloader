@@ -3,8 +3,15 @@ include(PegasusQtUtils)
 
 set(USE_SDL2 OFF CACHE INTERNAL "")
 
+pegasus_require_qt(COMPONENTS
+        Qml
+        Quick
+        Multimedia
+        Sql
+        Svg
+        )
 
-add_library(pegasus-backend
+add_library(frontloader-backend
     AppSettings.cpp
     AppSettings.h
     Backend.cpp
@@ -32,19 +39,13 @@ add_subdirectory(providers)
 add_subdirectory(types)
 add_subdirectory(utils)
 
-target_include_directories(pegasus-backend PUBLIC
+target_include_directories(frontloader-backend PUBLIC
     "${PROJECT_SOURCE_DIR}/thirdparty"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-pegasus_require_qt(COMPONENTS
-    Qml
-    Quick
-    Multimedia
-    Sql
-    Svg
-)
-target_link_libraries(pegasus-backend PUBLIC
+
+target_link_libraries(frontloader-backend PUBLIC
     Qt::Qml
     Qt::Quick
     Qt::Multimedia
@@ -54,13 +55,13 @@ target_link_libraries(pegasus-backend PUBLIC
 )
 
 include(PegasusCommonProps)
-pegasus_add_common_props_optimized(pegasus-backend)
+pegasus_add_common_props_optimized(frontloader-backend)
 
 
 # Animated PNG
 
 if(PEGASUS_ENABLE_APNG)
-    target_link_libraries(pegasus-backend PUBLIC apng)
+    target_link_libraries(frontloader-backend PUBLIC apng)
 endif()
 
 
@@ -68,9 +69,9 @@ endif()
 
 if(USE_SDL2)
     find_package(SDL2 REQUIRED)
-    target_include_directories(pegasus-backend PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(pegasus-backend PUBLIC ${SDL2_LIBRARIES})
-    target_compile_definitions(pegasus-backend PUBLIC SDL_MAIN_HANDLED)
+    target_include_directories(frontloader-backend PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(frontloader-backend PUBLIC ${SDL2_LIBRARIES})
+    target_compile_definitions(frontloader-backend PUBLIC SDL_MAIN_HANDLED)
     message("-- Found SDL2: ${SDL2_INCLUDE_DIRS}")
 endif()
 

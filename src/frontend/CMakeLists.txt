@@ -11,12 +11,12 @@ qtquick_compiler_add_resources(PEGASUS_QML_ASSETS
     "${PROJECT_SOURCE_DIR}/src/themes/themes.qrc"  # FIXME
 )
 
-add_library(pegasus-qml "${PEGASUS_QML_ASSETS}")
-target_link_libraries(pegasus-qml PUBLIC
+add_library(frontloader-qml "${PEGASUS_QML_ASSETS}")
+target_link_libraries(frontloader-qml PUBLIC
     Qt::Qml
     Qt::Quick
 )
 
 
 include(PegasusCommonProps)
-pegasus_add_common_props_optimized(pegasus-qml)
+pegasus_add_common_props_optimized(frontloader-qml)

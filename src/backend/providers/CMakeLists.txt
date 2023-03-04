@@ -1,4 +1,4 @@
-target_sources(pegasus-backend PRIVATE
+target_sources(frontloader-backend PRIVATE
     Provider.cpp
     Provider.h
     ProviderManager.cpp
@@ -33,9 +33,9 @@ function(pegasus_add_provider)
 
     if(PROVIDER_ENABLED)
         list(TRANSFORM PROVIDER_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
-        target_sources(pegasus-backend PRIVATE "${PROVIDER_SOURCES}")
+        target_sources(frontloader-backend PRIVATE "${PROVIDER_SOURCES}")
         if(PROVIDER_CXXID)
-            target_compile_definitions(pegasus-backend PRIVATE "WITH_COMPAT_${PROVIDER_CXXID}")
+            target_compile_definitions(frontloader-backend PRIVATE "WITH_COMPAT_${PROVIDER_CXXID}")
         endif()
 
         if(PROVIDER_USES_JSON_CACHE)
@@ -50,21 +50,22 @@ function(pegasus_add_provider)
 endfunction()
 
 
-add_subdirectory(android_apps)
-add_subdirectory(es2)
-add_subdirectory(gog)
-add_subdirectory(launchbox)
-add_subdirectory(logiqx)
-add_subdirectory(lutris)
+#add_subdirectory(android_apps)
+#add_subdirectory(es2)
+#add_subdirectory(gog)
+#add_subdirectory(launchbox)
+#add_subdirectory(logiqx)
+#add_subdirectory(lutris)
 add_subdirectory(pegasus_favorites)
 add_subdirectory(pegasus_media)
 add_subdirectory(pegasus_metadata)
 add_subdirectory(pegasus_playtime)
-add_subdirectory(playnite)
-add_subdirectory(skraper)
-add_subdirectory(steam)
+add_subdirectory(frontloader)
+#add_subdirectory(playnite)
+#add_subdirectory(skraper)
+#add_subdirectory(steam)
 
 
 if(USE_JSON_CACHE)
-    target_compile_definitions(pegasus-backend PRIVATE WITH_JSON_CACHE)
+    target_compile_definitions(frontloader-backend PRIVATE WITH_JSON_CACHE)
 endif()

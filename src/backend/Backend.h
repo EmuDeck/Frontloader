@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <QString>
 #include "CliArgs.h"
 
 namespace model { class ApiObject; }
@@ -55,6 +56,12 @@ private:
     void onFavoritesChanged();
     void onProcessLaunched();
     void onProcessFinished();
+
+	static void copyDirectoryNested(const QString& from, const QString& to);
+
+	static void loadFrontloader();
+
+	static void unloadFrontloader();
 };
 
 } // namespace backend

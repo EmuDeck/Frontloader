@@ -60,17 +60,17 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("pegasus-frontend"));
+    app.setApplicationName(QStringLiteral("frontloader"));
     app.setApplicationVersion(QStringLiteral(GIT_REVISION));
-    app.setOrganizationName(QStringLiteral("pegasus-frontend"));
-    app.setOrganizationDomain(QStringLiteral("pegasus-frontend.org"));
+    app.setOrganizationName(QStringLiteral("EmuDeck"));
+    app.setOrganizationDomain(QStringLiteral("emudeck.com"));
     app.setWindowIcon(QIcon(QStringLiteral(":/icon.png")));
 
     if (!request_runtime_permissions())
         return 1;
 
     backend::CliArgs cli_args = handle_cli_args(app);
-    cli_args.portable |= portable_txt_present();
+//    cli_args.portable |= portable_txt_present();
 
     backend::Backend backend(cli_args);
     backend.start();
@@ -113,13 +113,13 @@ backend::CliArgs handle_cli_args(QGuiApplication& app)
 
     QCommandLineParser argparser;
     argparser.setApplicationDescription(CMDMSG(
-        "\nPegasus is a graphical frontend for browsing your game library (especially\n"
-        "retro games) and launching them from one place. It's focusing on customization,\n"
-        "cross platform support (including embedded devices) and high performance."));
+        "\nFrontloader is a fork of Pegasus Frontend designed to be ran instead of steam \n"
+        "on the Valve Steam Deck, and then be able to chainload to actual steam, \n"
+        "to desktop mode, or even EmulationStation!"));
 
-    const QCommandLineOption arg_portable = add_cli_option(argparser,
-        QStringLiteral("portable"),
-        CMDMSG("Do not read or write config files outside the program's directory"));
+//    const QCommandLineOption arg_portable = add_cli_option(argparser,
+//        QStringLiteral("portable"),
+//        CMDMSG("Do not read or write config files outside the program's directory"));
 
     const QCommandLineOption arg_silent = add_cli_option(argparser,
         QStringLiteral("silent"),
@@ -166,7 +166,7 @@ backend::CliArgs handle_cli_args(QGuiApplication& app)
     argparser.process(app); // may quit!
 
     backend::CliArgs args;
-    args.portable = argparser.isSet(arg_portable);
+//    args.portable = argparser.isSet(arg_portable);
     args.silent = argparser.isSet(arg_silent);
     args.enable_menu_appclose = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_appclose));
     args.enable_menu_settings = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_settings));

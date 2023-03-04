@@ -70,6 +70,6 @@ QKeySequence qmlevent_to_keyseq(const QVariant& event_variant)
         return {};
 
     const int keyseq_key = event.key() | keymods_to_int(event.modifiers());
-    return QKeySequence(keyseq_key);
+    return {keyseq_key};
 }
 } // namespace utils

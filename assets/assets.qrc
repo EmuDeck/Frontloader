@@ -18,5 +18,20 @@
         <file>sdl2/gamecontrollerdb_205.txt</file>
         <file>sdl2/gamecontrollerdb_209.txt</file>
         <file>sdl2/gamecontrollerdb_2016.txt</file>
+        <file>frontloader/frontends/Desktop.front</file>
+        <file>frontloader/frontends/ES-DE.front</file>
+        <file>frontloader/frontends/metadata.frontloader.txt</file>
+        <file>frontloader/frontends/SteamOS.front</file>
+        <file>frontloader/frontends/media/Desktop/tile.png</file>
+        <file>frontloader/frontends/media/ES-DE/tile.png</file>
+        <file>frontloader/frontends/media/SteamOS/tile.png</file>
+        <file>frontloader/scripts/Constructor.sh</file>
+        <file>frontloader/scripts/Destructor.sh</file>
+        <file>frontloader/scripts/Events.sh</file>
+        <file>frontloader/scripts/Logging.sh</file>
+        <file>frontloader/scripts/Launchers.sh</file>
+        <file>frontloader/scripts/EmuDeck.sh</file>
+        <file>frontloader/services/example-service/events.sh</file>
+        <file>frontloader/services/example-service/meta.sh</file>
     </qresource>
 </RCC>

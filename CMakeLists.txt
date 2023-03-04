@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(pegasus-frontend
+project(frontloader
     DESCRIPTION "Cross platform, customizable graphical frontend for launching games"
     HOMEPAGE_URL "https://pegasus-frontend.org/"
     LANGUAGES CXX

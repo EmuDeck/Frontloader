@@ -7,8 +7,6 @@ macro(pegasus_require_qt)
         COMPONENTS
         ${ARGN})
 
-    find_package(Qt6 COMPONENTS ${QTREQ_COMPONENTS} QUIET)
-    if (NOT Qt6_FOUND)
-        find_package(Qt5 5.15 COMPONENTS ${QTREQ_COMPONENTS} REQUIRED)
-    endif()
+
+    find_package(Qt5 5.15 COMPONENTS ${QTREQ_COMPONENTS} REQUIRED)
 endmacro()

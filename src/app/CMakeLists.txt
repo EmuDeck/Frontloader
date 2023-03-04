@@ -9,7 +9,7 @@ pegasus_require_qt(COMPONENTS
 
 # Find TS files, compile them to QM and generate a QRC file collecting them
 
-file(GLOB PEGASUS_TS_FILES LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/lang/pegasus_*.ts")
+file(GLOB PEGASUS_TS_FILES LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/lang/frontloader_*.ts")
 qt_add_translation(PEGASUS_QM_FILES "${PEGASUS_TS_FILES}")
 
 set(PEGASUS_LOCALE_QRC "${CMAKE_CURRENT_BINARY_DIR}/locales.qrc")
@@ -23,40 +23,40 @@ endforeach()
 file(APPEND "${PEGASUS_LOCALE_QRC}" "</qresource></RCC>")
 qt_add_resources(PEGASUS_LOCALE_SRC "${PEGASUS_LOCALE_QRC}")
 
-add_library(pegasus-locales "${PEGASUS_LOCALE_SRC}")
+add_library(frontloader-locales "${PEGASUS_LOCALE_SRC}")
 
 
 # Main runtime
 
 if("${QT_VERSION_MAJOR}" GREATER_EQUAL 6)
-    qt_add_executable(pegasus-fe MANUAL_FINALIZATION WIN32 main.cpp)
+    qt_add_executable(frontloader MANUAL_FINALIZATION WIN32 main.cpp)
 else()
-    add_executable(pegasus-fe WIN32 main.cpp)
+    add_executable(frontloader WIN32 main.cpp)
 endif()
-target_include_directories(pegasus-fe PRIVATE
+target_include_directories(frontloader PRIVATE
     "${PROJECT_SOURCE_DIR}/src"
 )
-target_link_libraries(pegasus-fe PUBLIC
+target_link_libraries(frontloader PUBLIC
     Qt::Core
-    pegasus-assets
-    pegasus-backend
-    pegasus-locales
-    pegasus-qml
+    frontloader-assets
+    frontloader-backend
+    frontloader-locales
+    frontloader-qml
 )
-qt_import_qml_plugins(pegasus-fe)
+qt_import_qml_plugins(frontloader)
 
 include(PegasusCommonProps)
-pegasus_add_common_props_optimized(pegasus-fe)
+pegasus_add_common_props_optimized(frontloader)
 
 # TODO: Workaround for asset differences for now
-target_compile_definitions(pegasus-fe PRIVATE PEGASUS_USING_CMAKE)
+target_compile_definitions(frontloader PRIVATE PEGASUS_USING_CMAKE)
 
 if(PEGASUS_ENABLE_APNG)
-    target_compile_definitions(pegasus-fe PUBLIC WITH_APNG_SUPPORT)
+    target_compile_definitions(frontloader PUBLIC WITH_APNG_SUPPORT)
 endif()
 
 if("${QT_VERSION_MAJOR}" GREATER_EQUAL 6)
-    qt_finalize_executable(pegasus-fe)
+    qt_finalize_executable(frontloader)
 endif()
 
 
@@ -82,7 +82,7 @@ pegasus_set_installdir(INSTALL_DESKTOPDIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/app
 pegasus_set_installdir(INSTALL_APPSTREAMDIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/metainfo")
 
 if(INSTALL_BINDIR)
-    install(TARGETS pegasus-fe RUNTIME DESTINATION "${INSTALL_BINDIR}")
+    install(TARGETS frontloader RUNTIME DESTINATION "${INSTALL_BINDIR}")
 endif()
 
 if(INSTALL_DOCDIR)

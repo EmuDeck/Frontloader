@@ -53,6 +53,8 @@ class Keys : public QObject {
     KEYVEC_PROP(PAGE_UP, pageUp, isPageUp)
     KEYVEC_PROP(PAGE_DOWN, pageDown, isPageDown)
     KEYVEC_PROP(MAIN_MENU, menu, isMenu)
+    KEYVEC_PROP(VOL_UP, volUp, isVolUp)
+    KEYVEC_PROP(VOL_DOWN, volDown, isVolDown)
     #undef KEYVEC_PROP
 
 public:

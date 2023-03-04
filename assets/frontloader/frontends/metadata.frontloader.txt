@@ -1,0 +1,3 @@
+collection: Frontends
+extension: front
+launch: "{file.path}"

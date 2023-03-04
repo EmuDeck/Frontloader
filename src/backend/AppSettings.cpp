@@ -25,6 +25,7 @@
 #include "providers/pegasus_media/MediaProvider.h"
 #include "providers/pegasus_metadata/PegasusProvider.h"
 #include "providers/pegasus_playtime/PlaytimeStats.h"
+#include "providers/frontloader/FrontloaderProvider.h"
 #ifdef WITH_COMPAT_ES2
   #include "providers/es2/Es2Provider.h"
 #endif
@@ -73,6 +74,8 @@ HashMap<KeyEvent, QVector<QKeySequence>, EnumHash> default_keymap()
         { KeyEvent::PAGE_UP, { Qt::Key_PageUp, GamepadKeyId::L2 }},
         { KeyEvent::PAGE_DOWN, { Qt::Key_PageDown, GamepadKeyId::R2 }},
         { KeyEvent::MAIN_MENU, { Qt::Key_F1, GamepadKeyId::START }},
+        { KeyEvent::VOL_UP, { Qt::Key_VolumeUp }},
+        { KeyEvent::VOL_DOWN, { Qt::Key_VolumeDown }},
     };
 }
 
@@ -101,7 +104,8 @@ std::vector<std::unique_ptr<providers::Provider>> create_providers()
 
     std::vector<std::unique_ptr<providers::Provider>> out;
         MKENTRY(pegasus::PegasusProvider)
-        MKENTRY(media::MediaProvider)
+		MKENTRY(pegasus::FrontloaderProvider)
+		MKENTRY(media::MediaProvider)
 #ifdef WITH_COMPAT_STEAM
         MKENTRY(steam::SteamProvider)
 #endif
@@ -146,8 +150,8 @@ namespace appsettings {
 
 General::General()
     : DEFAULT_LOCALE(QStringLiteral("en"))
-    , DEFAULT_THEME(QStringLiteral(":/themes/pegasus-theme-grid/"))
-    , portable(false)
+    , DEFAULT_THEME(QStringLiteral(":/themes/Minimis/"))
+    , portable(true)
     , fullscreen(true)
     , mouse_support(true)
     , verify_files(true)

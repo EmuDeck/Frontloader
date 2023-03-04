@@ -1,4 +1,4 @@
-target_sources(pegasus-backend PRIVATE
+target_sources(frontloader-backend PRIVATE
     Api.cpp
     Api.h
     ObjectListModel.h
@@ -60,20 +60,20 @@ target_sources(pegasus-backend PRIVATE
 # Select gamepad implementation
 
 if(PEGASUS_USE_SDL2_GAMEPAD)
-    target_sources(pegasus-backend PRIVATE
+    target_sources(frontloader-backend PRIVATE
         internal/GamepadManagerSDL2.cpp
         internal/GamepadManagerSDL2.h
     )
-    target_compile_definitions(pegasus-backend PRIVATE WITH_SDL_GAMEPAD)
+    target_compile_definitions(frontloader-backend PRIVATE WITH_SDL_GAMEPAD)
     set(USE_SDL2 ON CACHE INTERNAL "")
     set(GAMEPAD_IMPL_NAME "SDL2" CACHE INTERNAL "")
 else()
-    target_sources(pegasus-backend PRIVATE
+    target_sources(frontloader-backend PRIVATE
         internal/GamepadManagerQt.cpp
         internal/GamepadManagerQt.h
     )
     pegasus_require_qt(COMPONENTS Gamepad)
-    target_link_libraries(pegasus-backend PUBLIC Qt::Gamepad)
+    target_link_libraries(frontloader-backend PUBLIC Qt::Gamepad)
     set(GAMEPAD_IMPL_NAME "Qt" CACHE INTERNAL "")
 endif()
 
@@ -81,7 +81,7 @@ endif()
 # Select battery info implementation
 
 if(PEGASUS_USE_SDL2_POWER)
-    target_compile_definitions(pegasus-backend PRIVATE WITH_SDL_POWER)
+    target_compile_definitions(frontloader-backend PRIVATE WITH_SDL_POWER)
     set(BATTERY_IMPL_NAME "SDL2" CACHE INTERNAL "")
     set(USE_SDL2 ON CACHE INTERNAL "")
 elseif(PEGASUS_ON_ANDROID)

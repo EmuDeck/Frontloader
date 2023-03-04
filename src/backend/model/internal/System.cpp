@@ -45,4 +45,14 @@ void System::suspend()
     emit appCloseRequested(AppCloseType::SUSPEND);
 }
 
+void System::volumeUp()
+{
+	emit volumeChangeRequested(VolumeChangeType::UP);
+}
+
+void System::volumeDown()
+{
+	emit volumeChangeRequested(VolumeChangeType::DOWN);
+}
+
 } // namespace model

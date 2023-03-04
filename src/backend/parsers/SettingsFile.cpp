@@ -82,6 +82,8 @@ ConfigEntryMaps::ConfigEntryMaps()
         { QStringLiteral("page-up"), KeyEvent::PAGE_UP },
         { QStringLiteral("page-down"), KeyEvent::PAGE_DOWN },
         { QStringLiteral("menu"), KeyEvent::MAIN_MENU },
+        { QStringLiteral("volUp"), KeyEvent::VOL_UP },
+        { QStringLiteral("volDown"), KeyEvent::VOL_DOWN },
     }
 {}
 

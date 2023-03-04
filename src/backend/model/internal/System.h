@@ -18,6 +18,7 @@
 #pragma once
 
 #include "types/AppCloseType.h"
+#include "types/VolumeChangeType.h"
 
 #include <QObject>
 
@@ -35,9 +36,12 @@ public:
     Q_INVOKABLE void reboot();
     Q_INVOKABLE void shutdown();
     Q_INVOKABLE void suspend();
+    Q_INVOKABLE void volumeUp();
+    Q_INVOKABLE void volumeDown();
 
 signals:
     void appCloseRequested(AppCloseType);
+	void volumeChangeRequested(VolumeChangeType);
 };
 
 } // namespace model
