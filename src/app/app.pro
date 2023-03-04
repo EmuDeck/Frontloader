@@ -1,4 +1,4 @@
-TARGET = pegasus-fe
+TARGET = frontloader
 CONFIG += c++11 warn_on exceptions_off rtti_off
 
 SOURCES += main.cpp
@@ -16,7 +16,7 @@ include($${TOP_SRCDIR}/src/link_to_frontend.pri)
 
 # Translations
 
-EXTRA_TRANSLATIONS = $$files($${TOP_SRCDIR}/lang/pegasus_*.ts)
+EXTRA_TRANSLATIONS = $$files($${TOP_SRCDIR}/lang/frontloader_*.ts)
 CONFIG += lrelease embed_translations
 
 
