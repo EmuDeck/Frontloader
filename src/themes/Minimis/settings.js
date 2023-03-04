@@ -30,9 +30,9 @@ function createCollectionMetadata(category, parent, collectionType, defaults) {
     }
 
     const boxArt = { art: 1, aspectRatioNative: true, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false };
-    const wide = { art: 0, aspectRatioNative: false, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: true };
-    const tall = { art: 0, aspectRatioNative: false, aspectRatioWidth: 2, aspectRatioHeight: 3, logoVisible: true };
-    const square = { art: 11, aspectRatioNative: false, aspectRatioWidth: 1, aspectRatioHeight: 1, logoVisible: true };
+    const wide = { art: 13, aspectRatioNative: false, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false };
+    const tall = { art: 14, aspectRatioNative: false, aspectRatioWidth: 2, aspectRatioHeight: 3, logoVisible: false };
+    const square = { art: 11, aspectRatioNative: false, aspectRatioWidth: 1, aspectRatioHeight: 1, logoVisible: false };
     const custom = wide;
 
     const presets = [ boxArt, wide, tall, square, custom ];
@@ -116,7 +116,7 @@ function createHeader(header, obj) {
 function createMetadata() {
     const metadata = {
         library: Object.assign(
-            createCollectionMetadata('library', null, 'library', { columns: 4, preset: 3 }),
+            createCollectionMetadata('library', null, 'library', { columns: 4, preset: 2 }),
         ),
         collections: Object.assign(
             createCollectionMetadata('collections', { key: 'collection1', name: 'Collection 1' }, 'collection', { type: 0, preset: 0 }),

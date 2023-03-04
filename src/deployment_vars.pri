@@ -9,9 +9,7 @@
 
 # The base/fallback installation directory
 isEmpty(INSTALLDIR) {
-    unix:!macx: INSTALLDIR = /opt/pegasus-frontend
-    macx: INSTALLDIR = /usr/local/pegasus-frontend
-    win32: INSTALLDIR = C:/pegasus-frontend
+    unix:!macx: INSTALLDIR = /
 }
 
 # Linux: installations are portable by default

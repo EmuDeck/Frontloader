@@ -22,15 +22,24 @@
         <file>frontloader/frontends/ES-DE.front</file>
         <file>frontloader/frontends/metadata.frontloader.txt</file>
         <file>frontloader/frontends/SteamOS.front</file>
+        <file>frontloader/frontends/media/Desktop/logo.png</file>
+        <file>frontloader/frontends/media/Desktop/poster.png</file>
+        <file>frontloader/frontends/media/Desktop/steam.png</file>
         <file>frontloader/frontends/media/Desktop/tile.png</file>
+        <file>frontloader/frontends/media/ES-DE/logo.png</file>
+        <file>frontloader/frontends/media/ES-DE/poster.png</file>
+        <file>frontloader/frontends/media/ES-DE/steam.png</file>
         <file>frontloader/frontends/media/ES-DE/tile.png</file>
+        <file>frontloader/frontends/media/SteamOS/logo.png</file>
+        <file>frontloader/frontends/media/SteamOS/poster.png</file>
+        <file>frontloader/frontends/media/SteamOS/steam.png</file>
         <file>frontloader/frontends/media/SteamOS/tile.png</file>
         <file>frontloader/scripts/Constructor.sh</file>
         <file>frontloader/scripts/Destructor.sh</file>
         <file>frontloader/scripts/Events.sh</file>
         <file>frontloader/scripts/Logging.sh</file>
-        <file>frontloader/scripts/Launchers.sh</file>
         <file>frontloader/scripts/EmuDeck.sh</file>
+        <file>frontloader/scripts/gamescope-session.sh</file>
         <file>frontloader/services/example-service/events.sh</file>
         <file>frontloader/services/example-service/meta.sh</file>
     </qresource>

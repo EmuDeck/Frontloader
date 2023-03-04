@@ -1,5 +1,8 @@
 #!/bin/bash
 cd "${0%/*}" || exit
-. ../scripts/Launchers.sh
+. ../scripts/Events.sh
+. ../scripts/EmuDeck.sh
 
-ES-DE
+onLaunch ES-DE
+  "$(EmulationFolder)/tools/EmulationStation-DE-x64_SteamDeck.AppImage"
+onExit ES-DE

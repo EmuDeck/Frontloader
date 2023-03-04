@@ -24,11 +24,6 @@ function onExit()
 function onConstruct()
 {
   info "Constructing..."
-
-  if [ -f /tmp/front-desktop ]; then
-    onExit Desktop
-    rm /tmp/front-desktop
-  fi
   callEventHandlers "construct" "$@"
 
   return 0
