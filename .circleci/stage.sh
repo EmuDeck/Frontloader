@@ -28,7 +28,7 @@ git config --global user.email "autodeploy@circleci.com"
 git config --global user.name "Circle CI"
 
 git init
-git remote add origin https://mmatyas:${GITHUB_TOKEN}@github.com/mmatyas/pegasus-deploy-staging.git
+git remote add origin https://mmatyas:${GITHUB_TOKEN}@github.com/EmuDeck/frontloader-deploy-staging.git
 git checkout -b continuous-${QT_TARGET}
 git add ./*
 git commit -m "Deployed from CircleCI"

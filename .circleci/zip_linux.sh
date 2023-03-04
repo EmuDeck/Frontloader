@@ -5,6 +5,6 @@ set -o nounset
 set -o xtrace
 
 zip -j dist/frontloader_$(git describe --always)_${QT_TARGET}.zip \
-    installdir/pegasus-fe \
+    installdir/frontloader \
     README.md \
     LICENSE.md
