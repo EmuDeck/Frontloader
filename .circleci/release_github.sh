@@ -15,7 +15,6 @@ TARGETS=" \
   x11-static \
 "
 EXPECTED_FILE_CNT=$(echo $TARGETS | wc -w)  # regular releases
-((EXPECTED_FILE_CNT++))  # + 1 deb
 
 
 # Collect
