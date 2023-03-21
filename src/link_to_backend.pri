@@ -10,7 +10,7 @@ macx: LIBS += -framework Cocoa
 
 win32:CONFIG(release, debug|release): LIBS += "-L$${TOP_BUILDDIR}/src/backend/release/"
 else:win32:CONFIG(debug, debug|release): LIBS += "-L$${TOP_BUILDDIR}/src/backend/debug/"
-else:unix: LIBS += "-L$${TOP_BUILDDIR}/src/backend/" -lx11
+else:unix: LIBS += "-L$${TOP_BUILDDIR}/src/backend/" -lX11
 
 LIBS += -lbackend
 INCLUDEPATH += \
