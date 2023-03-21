@@ -26,7 +26,6 @@
 #include <QSettings>
 #include <QtPlugin>
 #include <QWindow>
-#include <QWidget>
 #include <QtX11Extras/QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
