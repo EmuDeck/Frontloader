@@ -1,6 +1,6 @@
 # Link the project that includes this file to the Backend
 
-QT *= qml quick multimedia svg sql
+QT *= qml quick multimedia svg sql x11extras
 
 win32: LIBS += -luser32 -ladvapi32
 macx: LIBS += -framework Cocoa
@@ -10,7 +10,7 @@ macx: LIBS += -framework Cocoa
 
 win32:CONFIG(release, debug|release): LIBS += "-L$${TOP_BUILDDIR}/src/backend/release/"
 else:win32:CONFIG(debug, debug|release): LIBS += "-L$${TOP_BUILDDIR}/src/backend/debug/"
-else:unix: LIBS += "-L$${TOP_BUILDDIR}/src/backend/"
+else:unix: LIBS += "-L$${TOP_BUILDDIR}/src/backend/" -lx11
 
 LIBS += -lbackend
 INCLUDEPATH += \

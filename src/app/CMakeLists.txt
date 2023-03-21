@@ -43,7 +43,6 @@ target_link_libraries(frontloader PUBLIC
     Qt::Core
     Qt::X11Extras
     X11
-    xcb
     frontloader-assets
     frontloader-backend
     frontloader-locales
