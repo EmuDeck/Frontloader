@@ -18,7 +18,6 @@ import QtQuick.Window 2.2
 
 Window {
     id: appWindow
-
     function vpx(value) {
         return global.winScale * value;
     }
@@ -26,7 +25,7 @@ Window {
     visible: true
     width: 1280
     height: 720
-    title: "Pegasus"
+    title: "FrontLoader"
     color: "#000"
     visibility: Internal.settings.fullscreen ? Window.FullScreen : Window.AutomaticVisibility
     onClosing: {

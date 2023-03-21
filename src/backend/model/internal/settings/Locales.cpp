@@ -28,11 +28,11 @@
 namespace {
 std::vector<model::LocaleEntry> find_available_locales()
 {
-    constexpr int QM_PREFIX_LEN = 12; // length of "frontloader_"
+    constexpr int QM_PREFIX_LEN = 8; // length of "pegasus_"
     constexpr int QM_SUFFIX_LEN = 3; // length of ".qm"
 
     QStringList qm_files = QDir(QStringLiteral(":/i18n")).entryList(QStringList(QStringLiteral("*.qm")));
-    qm_files.append(QStringLiteral("frontloader_en.qm"));
+    qm_files.append(QStringLiteral("pegasus_en.qm"));
     qm_files.sort();
 
     std::vector<model::LocaleEntry> locales;

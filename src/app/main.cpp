@@ -25,6 +25,11 @@
 #include <QIcon>
 #include <QSettings>
 #include <QtPlugin>
+#include <QWindow>
+#include <QWidget>
+#include <QtX11Extras/QX11Info>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #ifdef Q_OS_ANDROID
 #include "backend/platform/AndroidHelpers.h"
@@ -74,9 +79,12 @@ int main(int argc, char *argv[])
 
     backend::Backend backend(cli_args);
     backend.start();
+//	app.topLevelWindows().first()->handle();
 
-    return app.exec();
+	return app.exec();
 }
+
+
 
 bool request_runtime_permissions()
 {

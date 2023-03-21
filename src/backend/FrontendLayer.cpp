@@ -20,6 +20,7 @@
 #include "Paths.h"
 #include "imggen/BlurhashProvider.h"
 #include "utils/DiskCachedNAM.h"
+#include "Log.h"
 
 #ifdef Q_OS_ANDROID
 #include "platform/AndroidAppIconProvider.h"
@@ -28,6 +29,11 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlNetworkAccessManagerFactory>
+#include <QtX11Extras/QX11Info>
+#include <QWindow>
+#include <X11/Xproto.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 
 namespace {
@@ -54,6 +60,12 @@ FrontendLayer::FrontendLayer(QObject* const api_public, QObject* const api_priva
     // Note: the pointer to the Api is non-owning and constant during the runtime
 }
 
+void set_property(Atom& atom, uint32_t data, Display* display, Window window)
+{
+	XChangeProperty(display, window, atom, XA_CARDINAL, 32, 1, reinterpret_cast<const unsigned char*>(&data), 1);
+	XFlush(display);
+}
+
 void FrontendLayer::rebuild()
 {
     Q_ASSERT(!m_engine);
@@ -67,11 +79,23 @@ void FrontendLayer::rebuild()
 #ifdef Q_OS_ANDROID
     m_engine->addImageProvider(QStringLiteral("androidicons"), new AndroidAppIconProvider);
 #endif
-
     m_engine->rootContext()->setContextProperty(QStringLiteral("api"), m_api_public);
     m_engine->rootContext()->setContextProperty(QStringLiteral("Api"), m_api_public);
     m_engine->rootContext()->setContextProperty(QStringLiteral("Internal"), m_api_private);
     m_engine->load(QUrl(QStringLiteral("qrc:/frontend/main.qml")));
+
+	Display* display  = QX11Info::display();
+	Atom steamAtom = XInternAtom(display, "STEAM_BIGPICTURE", False);
+	Atom overlayAtom = XInternAtom(display, "STEAM_OVERLAY", False);
+	Atom gameAtom = XInternAtom(display, "STEAM_GAME", False);
+	QWindow* qWindow = ((QWindow*)m_engine->rootObjects().first());
+	if (qWindow->isWindowType())
+	{
+		Window window = qWindow->winId();
+		set_property(steamAtom, 1, display, window);
+		set_property(overlayAtom, 0, display, window);
+		set_property(gameAtom, 769, display, window);
+	}
 
     emit rebuildComplete();
 }
