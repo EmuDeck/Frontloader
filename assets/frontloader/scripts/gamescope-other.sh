@@ -215,7 +215,6 @@ gamescope \
 	-R "$socket" -T "$stats" \
 	-O '*',eDP-1 \
 	--cursor-hotspot 5,3 --cursor /usr/share/steamos/steamos-cursor.png \
-	--prefer-vk-device 8086:46a6 \
 	&
 gamescope_pid="$!"
 
