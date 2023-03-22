@@ -38,8 +38,10 @@
         <file>frontloader/scripts/Destructor.sh</file>
         <file>frontloader/scripts/Events.sh</file>
         <file>frontloader/scripts/Logging.sh</file>
+        <file>frontloader/scripts/Launchers.sh</file>
         <file>frontloader/scripts/EmuDeck.sh</file>
-        <file>frontloader/scripts/gamescope-session.sh</file>
+        <file>frontloader/scripts/gamescope-steam.sh</file>
+        <file>frontloader/scripts/gamescope-other.sh</file>
         <file>frontloader/services/example-service/events.sh</file>
         <file>frontloader/services/example-service/meta.sh</file>
     </qresource>
