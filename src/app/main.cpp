@@ -18,6 +18,7 @@
 #include "backend/Backend.h"
 #include "backend/Paths.h"
 #include "backend/platform/TerminalKbd.h"
+#include "Log.h"
 
 #include <QCommandLineParser>
 #include <QFileInfo>
@@ -78,7 +79,6 @@ int main(int argc, char *argv[])
 
     backend::Backend backend(cli_args);
     backend.start();
-//	app.topLevelWindows().first()->handle();
 
 	return app.exec();
 }

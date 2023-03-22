@@ -86,15 +86,11 @@ void FrontendLayer::rebuild()
 
 	Display* display  = QX11Info::display();
 	Atom steamAtom = XInternAtom(display, "STEAM_BIGPICTURE", False);
-	Atom overlayAtom = XInternAtom(display, "STEAM_OVERLAY", False);
-	Atom gameAtom = XInternAtom(display, "STEAM_GAME", False);
 	QWindow* qWindow = ((QWindow*)m_engine->rootObjects().first());
 	if (qWindow->isWindowType())
 	{
 		Window window = qWindow->winId();
 		set_property(steamAtom, 1, display, window);
-		set_property(overlayAtom, 0, display, window);
-		set_property(gameAtom, 769, display, window);
 	}
 
     emit rebuildComplete();

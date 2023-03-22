@@ -2,7 +2,8 @@
 cd "${0%/*}" || exit
 . ../scripts/Events.sh
 . ../scripts/EmuDeck.sh
+. ../scripts/Launchers.sh
 
 onLaunch ES-DE
-  "$(EmulationFolder)/tools/EmulationStation-DE-x64_SteamDeck.AppImage"
+  launchOther "$(EmulationFolder)/tools/EmulationStation-DE-x64_SteamDeck.AppImage"
 onExit ES-DE

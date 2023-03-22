@@ -212,11 +212,14 @@ gamescope \
 	--hide-cursor-delay 3000 \
 	--max-scale 2 \
 	--fade-out-duration 200 \
-	-e -R "$socket" -T "$stats" \
+	-R "$socket" -T "$stats" \
 	-O '*',eDP-1 \
 	--cursor-hotspot 5,3 --cursor /usr/share/steamos/steamos-cursor.png \
+	--prefer-vk-device 8086:46a6 \
 	&
 gamescope_pid="$!"
+
+OLD_DISPLAY=$DISPLAY
 
 if read -r -t 3 response_x_display response_wl_display <> "$socket"; then
 	export DISPLAY="$response_x_display"
@@ -230,8 +233,6 @@ else
 fi
 
 xbindkeys -f /etc/xbindkeysrc
-
-steamargs=("-steamos3" "-steampal" "-steamdeck" "-gamepadui")
 
 # Input method support
 /usr/bin/ibus-daemon -d -r --panel=disable --emoji-extension=disable
@@ -268,8 +269,19 @@ fi
 # _eventually_ steam should learn to talk to udisks so we don't have to rube goldberg this info to it.
 /usr/bin/steamos-polkit-helpers/steamos-retrigger-automounts
 
+(while true; do
+    window=$(DISPLAY=$OLD_DISPLAY xdotool search --class gamescope)
+
+    if [[ -n "$window" ]]; then
+        echo >&2 "gamescope-session: $window $DISPLAY $OLD_DISPLAY $(DISPLAY=$OLD_DISPLAY xdotool getwindowclassname $window)"
+        DISPLAY=$OLD_DISPLAY xprop -f STEAM_BIGPICTURE 32c -set STEAM_BIGPICTURE 1 -id $window
+        break
+    fi
+done) &
+window_pid=$!
+
 mangoapp &
-steam "${steamargs[@]}"
+$@
 
 if [[ "$SECONDS" -lt "$short_session_duration" ]]; then
 	echo "frog" >> "$short_session_tracker_file"
@@ -279,7 +291,7 @@ fi
 
 # Ask gamescope to exit nicely
 kill $gamescope_pid
-
+kill $window_pid
 # Start a background sleep for five seconds because we don't trust it
 sleep 5 &
 sleep_pid=$!

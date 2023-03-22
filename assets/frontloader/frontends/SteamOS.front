@@ -2,7 +2,8 @@
 cd "${0%/*}" || exit
 . ../scripts/Events.sh
 . ../scripts/EmuDeck.sh
+. ../scripts/Launchers.sh
 
 onLaunch SteamOS
-  ../scripts/gamescope-session.sh
+    launchSteam
 onExit SteamOS
