@@ -142,7 +142,7 @@ void ProviderManager::onFavoritesChanged(const std::vector<model::Game*>& all_ga
         return;
 
     for (const auto& provider : AppSettings::providers())
-        provider->onGameFavoriteChanged(all_games);
+        provider->onGameFavoriteChanged(all_games, false);
 }
 
 void ProviderManager::onGameLaunched(model::GameFile* const game) const

@@ -34,7 +34,7 @@ public:
 
     Provider& run(SearchContext&) final;
 
-    void onGameFavoriteChanged(const std::vector<model::Game*>&) final;
+    void onGameFavoriteChanged(const std::vector<model::Game*>&, bool) final;
 
 signals:
     void startedWriting();

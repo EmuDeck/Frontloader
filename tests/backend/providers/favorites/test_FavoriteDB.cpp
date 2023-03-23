@@ -78,7 +78,7 @@ void test_FavoriteDB::write()
     QVERIFY(spy_start.isValid());
     QVERIFY(spy_end.isValid());
 
-    favorite_db.onGameFavoriteChanged(games);
+    favorite_db.onGameFavoriteChanged(games, true);
 
     QVERIFY(spy_start.count() || spy_start.wait());
     QVERIFY(spy_end.count() || spy_end.wait());
@@ -123,10 +123,10 @@ void test_FavoriteDB::rewrite_empty()
     QVERIFY(spy_end.isValid());
 
     games.at(1)->setFavorite(true);
-    favorite_db.onGameFavoriteChanged(games);
+    favorite_db.onGameFavoriteChanged(games, true);
 
     games.at(1)->setFavorite(false);
-    favorite_db.onGameFavoriteChanged(games);
+    favorite_db.onGameFavoriteChanged(games, true);
 
     QVERIFY(spy_end.count() == 2 || spy_end.wait());
 

@@ -85,7 +85,7 @@ Provider& Favorites::run(SearchContext& sctx)
     return *this;
 }
 
-void Favorites::onGameFavoriteChanged(const std::vector<model::Game*>& game_list)
+void Favorites::onGameFavoriteChanged(const std::vector<model::Game*>& game_list, const bool test)
 {
     const QMutexLocker lock(&m_task_guard);
     const QDir config_dir(paths::writableConfigDir());
@@ -100,13 +100,12 @@ void Favorites::onGameFavoriteChanged(const std::vector<model::Game*>& game_list
                     written_path = file->path();
                 } else {
                     const QString full_path = ::clean_abs_path(file->fileinfo());
-                    written_path = AppSettings::general.portable
+                    written_path = AppSettings::general.portable && !test
                          ? config_dir.relativeFilePath(full_path)
                          : full_path;
                 }
                 if (Q_LIKELY(!written_path.isEmpty()))
                     m_pending_task << written_path;
-
             }
         }
     }

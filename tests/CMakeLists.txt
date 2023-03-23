@@ -14,7 +14,7 @@ function(pegasus_cxx_test name)
     add_executable("${name}" "${name}.cpp")
     add_test(NAME "${name}" COMMAND "${name}")
 
-    target_link_libraries("${name}" PRIVATE Qt::Test pegasus-backend)
+    target_link_libraries("${name}" PRIVATE Qt::Test frontloader-backend)
     pegasus_add_common_props("${name}")
 endfunction()
 
@@ -24,7 +24,7 @@ function(pegasus_qml_test name)
     add_test(NAME "${name}" COMMAND "${name}" -input "${CMAKE_CURRENT_LIST_DIR}")
     qt_import_qml_plugins("${name}")
 
-    target_link_libraries("${name}" PRIVATE Qt::QuickTest pegasus-backend)
+    target_link_libraries("${name}" PRIVATE Qt::QuickTest frontloader-backend)
     pegasus_add_common_props("${name}")
 endfunction()
 
