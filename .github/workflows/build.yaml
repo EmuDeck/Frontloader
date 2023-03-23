@@ -8,8 +8,18 @@ env:
 
 
 jobs:
-  x11-cmake:
-    runs-on: ubuntu-20.04
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "SteamDeck", artifact: "SteamDeck.tar.xz",
+            os: ubuntu-20.04,
+            build_type: "Release"
+          }
     env:
       QT_TARGET: x11-static
       SDL_TARGET: x11-bionic
@@ -70,11 +80,94 @@ jobs:
           -G Ninja
           -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always
           -DCMAKE_INSTALL_PREFIX=/usr/
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DPEGASUS_ENABLE_APNG=ON
           -DPEGASUS_STATIC_CXX=ON
       - name: Build
         working-directory: build
         run: ninja
+
       - name: Test
         working-directory: build
-        run: xvfb-run -a ctest --rerun-failed --output-on-failure
+        run: xvfb-run -a ctest --rerun-failed --output-on-
+
+      - name: Install Strip
+        run: /opt/cmake/bin/cmake --install build --prefix instdir --strip
+
+      - name: Pack
+        working-directory: instdir
+        run: /opt/cmake/bin/cmake -E tar cJfv ../${{ matrix.config.artifact }} .
+
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          path: ./${{ matrix.config.artifact }}
+          name: ${{ matrix.config.artifact }}
+
+  release:
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Store Release url
+        run: |
+          echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
+
+      - uses: actions/upload-artifact@v1
+        with:
+          path: ./upload_url
+          name: upload_url
+
+  publish:
+    if: contains(github.ref, 'tags/v')
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "SteamDeck", artifact: "SteamDeck.tar.xz",
+            os: ubuntu-latest
+          }
+    needs: release
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ matrix.config.artifact }}
+          path: ./
+
+      - name: Download URL
+        uses: actions/download-artifact@v1
+        with:
+          name: upload_url
+          path: ./
+      - id: set_upload_url
+        run: |
+          upload_url=`cat ./upload_url`
+          echo ::set-output name=upload_url::$upload_url
+
+      - name: Upload to Release
+        id: upload_to_release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
+          asset_path: ./${{ matrix.config.artifact }}
+          asset_name: Frontloader-${{ github.ref }}-${{ matrix.config.artifact }}
+          asset_content_type: application/x-gtar
