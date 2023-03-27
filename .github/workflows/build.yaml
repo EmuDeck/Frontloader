@@ -99,7 +99,7 @@ jobs:
               echo "tag_name=${{ github.ref_name }}" >> $GITHUB_ENV
               echo "prerelease=false" >> $GITHUB_ENV
           else
-              echo "release_name=Continuous $(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
+              echo "release_name=Canary $(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
               echo "release_body=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
               echo "tag_name=$(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
               echo "prerelease=true" >> $GITHUB_ENV

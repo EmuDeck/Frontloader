@@ -5,7 +5,7 @@ pushd ~/Frontloader || exit
 
 IFS=$' \t\r\n'
 
-tag=$(curl --silent https://api.github.com/repos/EmuDeck/Frontloader/releases | jq -r 'map(select(.prerelease==false)) | first | .tag_name')
+tag=$(curl --silent https://api.github.com/repos/EmuDeck/Frontloader/releases | jq -r 'map(select(.prerelease==true)) | first | .tag_name')
 
 file="Frontloader-$tag-SteamDeck-Release.tar.xz"
 
