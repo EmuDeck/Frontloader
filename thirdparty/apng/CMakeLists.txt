@@ -13,5 +13,5 @@ add_library(apng
     apngreader_p.h
 )
 
-target_link_libraries(apng PUBLIC Qt::Gui)
+target_link_libraries(apng PUBLIC Qt::Gui png)
 target_compile_definitions(apng PRIVATE QT_STATICPLUGIN)

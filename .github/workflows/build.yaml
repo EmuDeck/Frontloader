@@ -1,12 +1,5 @@
 on: [push, pull_request, workflow_dispatch]
 
-env:
-  TOOLS_URL: https://github.com/mmatyas/pegasus-frontend/releases/download/alpha1
-  QT_VERSION: qt5156
-  QT_VERSION_PRETTY: "5.15.6"
-  SDL_VERSION: "2.0.20"
-
-
 jobs:
   build:
     name: ${{ matrix.config.name }}
@@ -16,20 +9,19 @@ jobs:
       matrix:
         config:
           - {
-            name: "SteamDeck", artifact: "SteamDeck.tar.xz",
-            os: ubuntu-20.04,
-            build_type: "Release"
+            name: "SteamDeck GCC Release", artifact: "SteamDeck-Release.tar.xz",
+            os: ubuntu-22.04, QT_TARGET: x11-static, SDL_TARGET: x11-bionic,
+            build_type: "Release", cc: "gcc-10", cxx: "g++-10"
           }
-    env:
-      QT_TARGET: x11-static
-      SDL_TARGET: x11-bionic
+          - {
+            name: "SteamDeck GCC Debug", artifact: "SteamDeck-Debug.tar.xz",
+            os: ubuntu-22.04, QT_TARGET: x11-static, SDL_TARGET: x11-bionic,
+            build_type: "Debug", cc: "gcc-10", cxx: "g++-10"
+          }
     steps:
-      - name: GCC PPA
-        run: sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-        if: matrix.os == 'ubuntu-20.04'
       - name: APT deps
         run: sudo apt-get update && sudo apt-get install -y
-          g++-10
+          libunwind-dev
           libasound-dev
           libgl1-mesa-dev
           libgstreamer-plugins-base1.0-dev
@@ -49,54 +41,39 @@ jobs:
           libxi-dev
           libxkbcommon-dev
           libxkbcommon-x11-dev
-          libzstd-dev
+          libpng16-16
+          qtbase5-dev
+          qttools5-dev
+          qtchooser
+          qt5-qmake
+          qtbase5-dev-tools
+          qtmultimedia5-dev
+          qtdeclarative5-dev
+          libqt5svg5-dev
+          libqt5x11extras5-dev
+          qml-module-qttest
+          libsdl2-dev
           ninja-build
           xvfb
-      - name: Get Qt
-        run: |
-          curl -L "${TOOLS_URL}/${QT_VERSION}_${QT_TARGET}.tar.xz" | sudo tar xJf - -C /opt/
-          curl -L "${TOOLS_URL}/SDL2-${SDL_VERSION}_${SDL_TARGET}.tar.xz" | tar xJf - -C /opt/
-          curl -L "${TOOLS_URL}/apng_patched_headers.tar.xz" | sudo tar xJf - -C "/opt/${QT_VERSION}_${QT_TARGET}/include/"
-          /opt/${QT_VERSION}_${QT_TARGET}/bin/qmake --version
-      - name: Get CMake
-        run: |
-          curl -L "${TOOLS_URL}/cmake-linux-x64.tar.xz" | sudo tar xJf - -C /opt/
-          /opt/cmake/bin/cmake --version
-
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
           fetch-depth: 200
-      - run: git fetch --tags -f
-      - run: mkdir build
-
-      - name: Configure
-        working-directory: build
-        env:
-          CC: gcc-10
-          CXX: g++-10
-        run: /opt/cmake/bin/cmake ..
-          -DCMAKE_PREFIX_PATH="/opt/${QT_VERSION}_${QT_TARGET};/opt/SDL2-${SDL_VERSION}"
-          -G Ninja
-          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always
-          -DCMAKE_INSTALL_PREFIX=/usr/
-          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-          -DPEGASUS_ENABLE_APNG=ON
-          -DPEGASUS_STATIC_CXX=ON
-      - name: Build
-        working-directory: build
-        run: ninja
-
+      - name: Build project
+        uses: nicledomaS/cmake_build_action@v1.4
+        with:
+          submodule_update: ON
+          cmake_args: -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }};-DCMAKE_CXX_FLAGS=-fdiagnostics-color=always;-DPEGASUS_ENABLE_APNG=ON;-DPEGASUS_STATIC_CXX=ON;-DPEGASUS_INSTALLDIR=${{ github.workspace }}/install;-GNinja
       - name: Test
         working-directory: build
-        run: xvfb-run -a ctest --rerun-failed --output-on-
-
-      - name: Install Strip
-        run: /opt/cmake/bin/cmake --install build --prefix instdir --strip
-
+        run: xvfb-run -a ctest --output-on-failure -C ${{ matrix.config.build_type }} --parallel 2
+      - name: Install
+        working-directory: build
+        run: ninja install
       - name: Pack
-        working-directory: instdir
-        run: /opt/cmake/bin/cmake -E tar cJfv ../${{ matrix.config.artifact }} .
+        working-directory: install
+        run: tar cJfv ../${{ matrix.config.artifact }} .
+
 
       - name: Upload
         uses: actions/upload-artifact@v1
@@ -105,19 +82,32 @@ jobs:
           name: ${{ matrix.config.artifact }}
 
   release:
-    if: contains(github.ref, 'tags/v')
     runs-on: ubuntu-latest
     needs: build
 
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          fetch-depth: 200
+      - name: Gen Release Name
+        run: |
+          if [[ "$REF" == *"tags/v"* ]]
+          then
+              echo "release_name=Release ${{ github.ref_name }}" >> $GITHUB_ENV
+          else
+              echo "release_name=Continuous $(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
+          fi
+        env:
+          REF: ${{ github.ref }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ env.release_name }}
           draft: false
           prerelease: false
 
@@ -131,7 +121,6 @@ jobs:
           name: upload_url
 
   publish:
-    if: contains(github.ref, 'tags/v')
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
@@ -139,12 +128,30 @@ jobs:
       matrix:
         config:
           - {
-            name: "SteamDeck", artifact: "SteamDeck.tar.xz",
-            os: ubuntu-latest
+            name: "SteamDeck GCC Release", artifact: "SteamDeck-Release.tar.xz",
+            os: ubuntu-20.04
+          }
+          - {
+            name: "SteamDeck GCC Debug", artifact: "SteamDeck-Debug.tar.xz",
+            os: ubuntu-20.04
           }
     needs: release
 
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          fetch-depth: 200
+      - name: Gen Release Version
+        run: |
+          if [[ "$REF" == *"tags/v"* ]]
+          then
+              echo "release_version=${{ github.ref_name }}" >> $GITHUB_ENV
+          else
+              echo "release_version=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+          fi
+        env:
+          REF: ${{ github.ref }}
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
@@ -159,7 +166,7 @@ jobs:
       - id: set_upload_url
         run: |
           upload_url=`cat ./upload_url`
-          echo ::set-output name=upload_url::$upload_url
+          echo "upload_url=$upload_url" >> $GITHUB_OUTPUT
 
       - name: Upload to Release
         id: upload_to_release
@@ -169,5 +176,5 @@ jobs:
         with:
           upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
           asset_path: ./${{ matrix.config.artifact }}
-          asset_name: Frontloader-${{ github.ref }}-${{ matrix.config.artifact }}
+          asset_name: Frontloader-${{ env.release_version }}-${{ matrix.config.artifact }}
           asset_content_type: application/x-gtar
