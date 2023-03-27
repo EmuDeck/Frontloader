@@ -95,10 +95,12 @@ jobs:
           if [[ "$REF" == *"tags/v"* ]]
           then
               echo "release_name=Release ${{ github.ref_name }}" >> $GITHUB_ENV
+              echo "release_body=$(git tag -l -n999 ${{ github.ref_name }})" >> $GITHUB_ENV
               echo "tag_name=${{ github.ref_name }}" >> $GITHUB_ENV
               echo "prerelease=false" >> $GITHUB_ENV
           else
               echo "release_name=Continuous $(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
+              echo "release_body=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
               echo "tag_name=$(git rev-parse --short ${{ github.sha }} )" >> $GITHUB_ENV
               echo "prerelease=true" >> $GITHUB_ENV
           fi
@@ -112,6 +114,7 @@ jobs:
         with:
           tag_name: ${{ env.tag_name }}
           release_name: ${{ env.release_name }}
+          body: ${{ env.release_body }}
           draft: false
           prerelease: ${{ env.prerelease }}
 
