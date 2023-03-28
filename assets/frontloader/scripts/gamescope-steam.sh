@@ -233,12 +233,8 @@ fi
 
 xbindkeys -f /etc/xbindkeysrc
 
-steamargs=("-steamos3" "-steampal" "-steamdeck" "-gamepadui")
-
 # Input method support
 /usr/bin/ibus-daemon -d -r --panel=disable --emoji-extension=disable
-
-# steamargs+=("-steamfs")
 
 (while true; do
     /usr/lib/hwsupport/power-button-handler.py
@@ -282,7 +278,7 @@ done) &
 window_pid=$!
 
 mangoapp &
-steam "${steamargs[@]}"
+$@
 
 if [[ "$SECONDS" -lt "$short_session_duration" ]]; then
 	echo "frog" >> "$short_session_tracker_file"

@@ -242,6 +242,9 @@ void ProcessLauncher::runProcess(const QString& command, const QStringList& args
     m_process->setProcessChannelMode(QProcess::ForwardedChannels);
     m_process->setInputChannelMode(QProcess::ForwardedInputChannel);
     m_process->setWorkingDirectory(workdir);
+	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+	env.insert("DISPLAY", QString(":%1").arg(QString::number(QString(qgetenv("DISPLAY")).remove(0, 1).toInt() + 1)));
+	m_process->setProcessEnvironment(env);
     m_process->start(command, args, QProcess::ReadOnly);
     m_process->waitForStarted(-1);
 

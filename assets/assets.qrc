@@ -21,6 +21,7 @@
         <file>frontloader/frontends/Desktop.front</file>
         <file>frontloader/frontends/ES-DE.front</file>
         <file>frontloader/frontends/metadata.frontloader.txt</file>
+        <file>frontloader/frontends/OGUI.front</file>
         <file>frontloader/frontends/SteamOS.front</file>
         <file>frontloader/frontends/media/Desktop/logo.png</file>
         <file>frontloader/frontends/media/Desktop/poster.png</file>

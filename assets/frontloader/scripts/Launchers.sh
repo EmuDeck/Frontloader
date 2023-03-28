@@ -4,8 +4,8 @@ cd "${0%/*}" || return
 
 function launchSteam()
 {
-  info "Starting nested gamescope for Steam"
-  ../scripts/gamescope-steam.sh
+  info "Starting nested gamescope for command $* with steam integration"
+  ../scripts/gamescope-steam.sh "$@"
 }
 
 function launchOther()

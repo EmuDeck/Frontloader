@@ -4,6 +4,6 @@ cd "${0%/*}" || exit
 . ../scripts/EmuDeck.sh
 . ../scripts/Launchers.sh
 
-onLaunch SteamOS
-  launchSteam steam -steamos3 -steampal -steamdeck -gamepadui
-onExit SteamOS
+onLaunch OGUI
+  launchSteam ~/.local/bin/opengamepadui
+onExit OGUI
