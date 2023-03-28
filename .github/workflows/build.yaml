@@ -4,57 +4,41 @@ jobs:
   build:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    container:
+      image: ${{ matrix.config.container }}
     strategy:
       fail-fast: false
       matrix:
         config:
           - {
             name: "SteamDeck GCC Release", artifact: "SteamDeck-Release.tar.xz",
-            os: ubuntu-22.04, QT_TARGET: x11-static, SDL_TARGET: x11-bionic,
-            build_type: "Release", cc: "gcc-10", cxx: "g++-10"
+            os: ubuntu-22.04, container: "ghcr.io/steamdeckhomebrew/holo-base:latest",
+            build_type: "Release", deps:
+                                      "sudo pacman -S --noconfirm --disable-download-timeout
+                                        nodejs
+                                        git
+                                        cmake
+                                        ninja
+                                        xorg-server-xvfb
+                                        qt5
+                                        sdl2"
           }
           - {
             name: "SteamDeck GCC Debug", artifact: "SteamDeck-Debug.tar.xz",
-            os: ubuntu-22.04, QT_TARGET: x11-static, SDL_TARGET: x11-bionic,
-            build_type: "Debug", cc: "gcc-10", cxx: "g++-10"
+            os: ubuntu-22.04, container: "ghcr.io/steamdeckhomebrew/holo-base:latest",
+            build_type: "Debug", deps:
+                                    "sudo pacman -S --noconfirm --disable-download-timeout
+                                      nodejs
+                                      git
+                                      cmake
+                                      ninja
+                                      xorg-server-xvfb
+                                      qt5
+                                      sdl2"
           }
     steps:
-      - name: APT deps
-        run: sudo apt-get update && sudo apt-get install -y
-          libunwind-dev
-          libasound-dev
-          libgl1-mesa-dev
-          libgstreamer-plugins-base1.0-dev
-          libpulse-dev
-          libudev-dev
-          libxcb-glx0-dev
-          libxcb-icccm4-dev
-          libxcb-image0-dev
-          libxcb-keysyms1-dev
-          libxcb-randr0-dev
-          libxcb-render-util0-dev
-          libxcb-shape0-dev
-          libxcb-sync-dev
-          libxcb-util-dev
-          libxcb-xfixes0-dev
-          libxcb-xinerama0-dev
-          libxi-dev
-          libxkbcommon-dev
-          libxkbcommon-x11-dev
-          libpng16-16
-          qtbase5-dev
-          qttools5-dev
-          qtchooser
-          qt5-qmake
-          qtbase5-dev-tools
-          qtmultimedia5-dev
-          qtdeclarative5-dev
-          libqt5svg5-dev
-          libqt5x11extras5-dev
-          qml-module-qttest
-          libsdl2-dev
-          ninja-build
-          xvfb
+      - name: Get deps
+        run: ${{ matrix.config.deps }}
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
@@ -62,8 +46,8 @@ jobs:
       - name: Build project
         uses: nicledomaS/cmake_build_action@v1.4
         with:
-          submodule_update: ON
-          cmake_args: -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }};-DCMAKE_CXX_FLAGS=-fdiagnostics-color=always;-DPEGASUS_ENABLE_APNG=ON;-DPEGASUS_STATIC_CXX=ON;-DPEGASUS_INSTALLDIR=${{ github.workspace }}/install;-GNinja
+          submodule_update: OFF
+          cmake_args: -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }};-DCMAKE_CXX_FLAGS=-fdiagnostics-color=always;-DPEGASUS_ENABLE_APNG=OFF;-DPEGASUS_STATIC_CXX=ON;-DPEGASUS_INSTALLDIR=/__w/Frontloader/Frontloader/install;-GNinja
       - name: Test
         working-directory: build
         run: xvfb-run -a ctest --output-on-failure -C ${{ matrix.config.build_type }} --parallel 2
@@ -78,7 +62,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
-          path: ./${{ matrix.config.artifact }}
+          path: ${{ matrix.config.artifact }}
           name: ${{ matrix.config.artifact }}
 
   release:
