@@ -1,8 +1,8 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
 Name=Install Frontloader
-Exec=sh -c 'if curl -S -s -L -O --output-dir /tmp/ --connect-timeout 60 https://raw.githubusercontent.com/EmuDeck/Frontloader/master/gui_install.sh; then bash /tmp/user_install_script.sh; else echo "Something went wrong, please report this if it is a bug"; read; fi'
+Exec=sh -c 'curl -s https://raw.githubusercontent.com/EmuDeck/Frontloader/master/gui_install.sh | bash'
 Icon=steamdeck-gaming-return
-Terminal=true
+Terminal=false
 Type=Application
 StartupNotify=false
