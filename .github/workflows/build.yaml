@@ -126,6 +126,10 @@ jobs:
             name: "SteamDeck GCC Debug", artifact: "SteamDeck-Debug.tar.xz",
             os: ubuntu-20.04
           }
+          - {
+            name: "Installer", artifact: "install_frontloader.desktop",
+            os: ubuntu-20.04
+          }
     needs: release
 
     steps:
