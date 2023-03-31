@@ -48,7 +48,7 @@ namespace appsettings
 		bool fullscreen;
 		bool autoboot;
 		QString autobootGame;
-		int autobootGameIndex;
+		quint32 autobootTimeout;
 		bool mouse_support;
 		bool verify_files;
 		QString locale;

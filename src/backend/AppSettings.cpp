@@ -153,7 +153,7 @@ namespace appsettings
 
 	General::General()
 			: DEFAULT_LOCALE(QStringLiteral("en")), DEFAULT_AUTOBOOT_GAME(QStringLiteral("SteamOS")), DEFAULT_THEME(QStringLiteral(":/themes/Minimis/")), portable(true),
-			  fullscreen(true), autoboot(false), autobootGame(QStringLiteral("SteamOS")), mouse_support(true), verify_files(true), locale() // intentionally blank
+			  fullscreen(true), autoboot(false), autobootGame(QStringLiteral("SteamOS")), autobootTimeout(5), mouse_support(true), verify_files(true), locale() // intentionally blank
 			, theme(DEFAULT_THEME)
 	{}
 

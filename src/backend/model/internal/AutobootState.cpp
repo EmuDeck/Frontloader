@@ -46,6 +46,7 @@ namespace model
 		m_cancelled = true;
 		emit runningChanged();
 		emit cancelledChanged();
+		emit autobootCancelled();
 	}
 
 

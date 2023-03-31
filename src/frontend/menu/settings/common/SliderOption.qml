@@ -23,7 +23,7 @@ FocusScope {
 
     property alias label: label.text
     property alias desc: description.text
-    property alias checked: toggle.checked
+    property alias value: slider.value
 
     property int fontSize: vpx(22)
     property int horizontalPadding: vpx(30)
@@ -76,16 +76,14 @@ FocusScope {
         }
     }
 
-    Switch {
-        id: toggle
-        hovered: parent.focus || mouseArea.containsMouse
+    SimpleSlider {
+        id: slider
+        pressed: parent.focus || mouseArea.containsMouse
 
         focus: true
-
         anchors.right: parent.right
         anchors.rightMargin: horizontalPadding
         anchors.verticalCenter: parent.verticalCenter
-
         height: fontSize * 1.15
     }
 
@@ -93,7 +91,6 @@ FocusScope {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: toggle.checked = !toggle.checked
         cursorShape: Qt.PointingHandCursor
     }
 }

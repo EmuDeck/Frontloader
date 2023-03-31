@@ -21,7 +21,8 @@ QtObject {
     enum Type {
         Bool,
         Button,
-        Select
+        Select,
+        Slider
     }
 
     required property string label
@@ -31,6 +32,9 @@ QtObject {
 
     property bool boolValue
     property var boolSetter: (val) => {}
+
+    property int sliderValue
+    property var sliderSetter: (val) => {}
 
     property Item selectBox
     property string selectValue

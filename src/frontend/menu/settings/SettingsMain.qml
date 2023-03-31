@@ -61,6 +61,15 @@ FocusScope {
             selectValue: Internal.settings.autobootGames.currentName
             section: "general"
         },
+        SettingsEntry {
+            label: QT_TR_NOOP("Autoboot timeout")
+            type: SettingsEntry.Type.Slider
+            sliderValue: Internal.settings.autobootTimeout
+            sliderSetter: (val) => {
+                return Internal.settings.autobootTimeout = val;
+            }
+            section: "general"
+        },
 
         SettingsEntry {
             label: QT_TR_NOOP("Change controls...")
@@ -193,6 +202,18 @@ FocusScope {
                 label: qsTr(model.label) + api.tr
                 value: model.selectValue
                 onActivate: model.selectBox.focus = true
+            }
+
+        }
+
+        DelegateChoice {
+            roleValue: SettingsEntry.Type.Slider
+
+            SliderOption {
+                label: qsTr(model.label) + api.tr
+                desc: qsTr(model.desc) + api.tr
+                value: model.sliderValue
+                onValueChanged: model.sliderSetter(value)
             }
 
         }

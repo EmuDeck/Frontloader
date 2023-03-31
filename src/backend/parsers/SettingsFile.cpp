@@ -73,6 +73,7 @@ namespace appsettings
 			{QStringLiteral("fullscreen"),          GeneralOption::FULLSCREEN},
 			{QStringLiteral("autoboot"),            GeneralOption::AUTOBOOT},
 			{QStringLiteral("autoboot-game"),       GeneralOption::AUTOBOOTGAME},
+			{QStringLiteral("autoboot-timeout"),    GeneralOption::AUTOBOOTTIMEOUT},
 			{QStringLiteral("input-mouse-support"), GeneralOption::MOUSE_SUPPORT},
 			{QStringLiteral("verify-files"),        GeneralOption::VERIFY_FILES},
 			{QStringLiteral("locale"),              GeneralOption::LOCALE},
@@ -188,6 +189,14 @@ namespace appsettings
 			case ConfigEntryGeneralOption::AUTOBOOTGAME:
 				AppSettings::general.autobootGame = val;
 				break;
+			case ConfigEntryGeneralOption::AUTOBOOTTIMEOUT:
+			{
+				bool ok;
+				quint32 timeout = val.toUInt(&ok);
+				if (ok)
+					AppSettings::general.autobootTimeout = timeout;
+				break;
+			}
 			case ConfigEntryGeneralOption::MOUSE_SUPPORT:
 				if (!store_bool_maybe(val, AppSettings::general.mouse_support))
 					log_needs_bool(lineno, key);
@@ -334,13 +343,14 @@ namespace appsettings
 		                           : AppSettings::general.theme;
 
 		GeneralStrMap option_values{
-				{GeneralOption::FULLSCREEN,    AppSettings::general.fullscreen ? STR_TRUE : STR_FALSE},
-				{GeneralOption::AUTOBOOT,      AppSettings::general.autoboot ? STR_TRUE : STR_FALSE},
-				{GeneralOption::AUTOBOOTGAME,  AppSettings::general.autobootGame},
-				{GeneralOption::MOUSE_SUPPORT, AppSettings::general.mouse_support ? STR_TRUE : STR_FALSE},
-				{GeneralOption::VERIFY_FILES,  AppSettings::general.verify_files ? STR_TRUE : STR_FALSE},
-				{GeneralOption::LOCALE,        AppSettings::general.locale},
-				{GeneralOption::THEME,         theme_path},
+				{GeneralOption::FULLSCREEN,       AppSettings::general.fullscreen ? STR_TRUE : STR_FALSE},
+				{GeneralOption::AUTOBOOT,         AppSettings::general.autoboot ? STR_TRUE : STR_FALSE},
+				{GeneralOption::AUTOBOOTGAME,     AppSettings::general.autobootGame},
+				{GeneralOption::AUTOBOOTTIMEOUT,  QString::number(AppSettings::general.autobootTimeout)},
+				{GeneralOption::MOUSE_SUPPORT,    AppSettings::general.mouse_support ? STR_TRUE : STR_FALSE},
+				{GeneralOption::VERIFY_FILES,     AppSettings::general.verify_files ? STR_TRUE : STR_FALSE},
+				{GeneralOption::LOCALE,           AppSettings::general.locale},
+				{GeneralOption::THEME,            theme_path},
 		};
 
 		for (const auto &entry: option_values)

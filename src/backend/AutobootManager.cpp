@@ -35,18 +35,18 @@ void AutobootManager::run(const QString& autobootGame)
 	                             {
 		                             emit autobootStarted();
 
-		                             const qint64 progress_sections = 5;
+		                             const qint64 progress_sections = AppSettings::general.autobootTimeout;
 
 		                             m_progress_step = 1.f / std::max<qint64>(progress_sections, 1);
-		                             m_current_stage = QString();
 		                             m_current_progress = 0.f;
 		                             QElapsedTimer progress_timer;
 		                             progress_timer.start();
-		                             while (progress_timer.elapsed() / 1000 < progress_sections && m_future.isRunning())
+		                             m_current_stage = QString("Booting %1 in %2 seconds").arg(autobootGame, QString::number(progress_sections - (progress_timer.elapsed() / 1000)));
+		                             while (progress_timer.elapsed() / 1000 <= progress_sections && !m_future.isCanceled())
 		                             {
 			                             m_current_stage = QString("Booting %1 in %2 seconds").arg(autobootGame, QString::number(progress_sections - (progress_timer.elapsed() / 1000)));
 			                             emit autobootProgressChanged(m_current_progress, m_current_stage);
-//			                             Log::info(m_current_stage);
+			                             Log::info(m_current_stage);
 
 										 QThread::sleep(1);
 
@@ -62,4 +62,5 @@ void AutobootManager::run(const QString& autobootGame)
 void AutobootManager::onAutobootCancelled()
 {
 	m_future.cancel();
+	m_future.waitForFinished();
 }

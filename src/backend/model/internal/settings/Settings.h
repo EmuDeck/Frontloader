@@ -45,6 +45,9 @@ namespace model
 	    Q_PROPERTY(QString autobootGame
 				           READ autobootGame WRITE setAutobootGame
 				           NOTIFY autobootGameChanged)
+		Q_PROPERTY(uint autobootTimeout
+				           READ autobootTimeout WRITE setAutobootTimeout
+				           NOTIFY autobootTimeoutChanged)
 		Q_PROPERTY(bool mouseSupport
 				           READ mouseSupport WRITE setMouseSupport
 				           NOTIFY mouseSupportChanged)
@@ -82,6 +85,12 @@ namespace model
 
 		void setAutobootGame(const QString&);
 
+		quint32 autobootTimeout() const
+		{
+			return AppSettings::general.autobootTimeout; }
+
+		void setAutobootTimeout(const quint32&);
+
 		bool mouseSupport() const
 		{ return AppSettings::general.mouse_support; }
 
@@ -111,6 +120,8 @@ namespace model
 		void autobootChanged();
 
 		void autobootGameChanged();
+
+		void autobootTimeoutChanged();
 
 		void mouseSupportChanged();
 

@@ -116,6 +116,17 @@ namespace model
 		emit autobootGameChanged();
 	}
 
+	void Settings::setAutobootTimeout(const quint32& new_val)
+	{
+		if (new_val == AppSettings::general.autobootGame)
+			return;
+
+		AppSettings::general.autobootTimeout = new_val;
+		AppSettings::save_config();
+
+		emit autobootGameChanged();
+	}
+
 	void Settings::setMouseSupport(bool new_val)
 	{
 		if (new_val == AppSettings::general.mouse_support)
