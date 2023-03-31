@@ -18,18 +18,23 @@
 #pragma once
 
 class QString;
+
 class QFileInfo;
 
 /// Returns a cleaned absoluteFilePath
-QString clean_abs_path(const QFileInfo&);
-/// Returns a cleaned absolutePath
-QString clean_abs_dir(const QFileInfo&);
-/// Returns a displayable absoluteFilePath
-QString pretty_path(const QFileInfo&);
-/// Returns a displayable absolutePath
-QString pretty_dir(const QFileInfo&);
-/// Returns a displayable path
-QString pretty_path(const QString&);
+QString clean_abs_path(const QFileInfo &);
 
-template <typename T>
+/// Returns a cleaned absolutePath
+QString clean_abs_dir(const QFileInfo &);
+
+/// Returns a displayable absoluteFilePath
+QString pretty_path(const QFileInfo &);
+
+/// Returns a displayable absolutePath
+QString pretty_dir(const QFileInfo &);
+
+/// Returns a displayable path
+QString pretty_path(const QString &);
+
+template<typename T>
 void pretty_dir(T) = delete;

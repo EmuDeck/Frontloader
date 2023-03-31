@@ -20,25 +20,25 @@
 #include <QStringList>
 
 
-SqliteDb::SqliteDb(const QString& db_path)
-    : m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
+SqliteDb::SqliteDb(const QString &db_path)
+		: m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
 {
-    m_db.setDatabaseName(db_path);
+	m_db.setDatabaseName(db_path);
 }
 
 SqliteDb::~SqliteDb()
 {
-    if (!m_db.isOpen())
-        return;
+	if (!m_db.isOpen())
+		return;
 
-    m_db.rollback();
+	m_db.rollback();
 
-    const auto connection = m_db.connectionName();
-    m_db = QSqlDatabase();
-    QSqlDatabase::removeDatabase(connection);
+	const auto connection = m_db.connectionName();
+	m_db = QSqlDatabase();
+	QSqlDatabase::removeDatabase(connection);
 }
 
-bool SqliteDb::hasTable(const QString& table_name)
+bool SqliteDb::hasTable(const QString &table_name)
 {
-    return m_db.tables().contains(table_name);
+	return m_db.tables().contains(table_name);
 }

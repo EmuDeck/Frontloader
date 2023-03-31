@@ -1,9 +1,9 @@
 pegasus_add_provider(
-    NAME "Logiqx"
-    CXXID LOGIQX
-    SOURCES
+        NAME "Logiqx"
+        CXXID LOGIQX
+        SOURCES
         LogiqxProvider.cpp
         LogiqxProvider.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

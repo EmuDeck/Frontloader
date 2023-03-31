@@ -24,74 +24,99 @@
 #include <QString>
 #include <QRegularExpression>
 
-namespace metafile { struct Entry; }
-namespace metafile { struct Error; }
-namespace model { class Game; }
-namespace model { class Collection; }
-namespace providers { class SearchContext; }
+namespace metafile
+{
+	struct Entry;
+}
+namespace metafile
+{
+	struct Error;
+}
+namespace model
+{
+	class Game;
+}
+namespace model
+{
+	class Collection;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
 
-namespace providers {
-namespace pegasus {
+namespace providers
+{
+	namespace pegasus
+	{
 
-enum class CollAttrib : unsigned char;
-enum class GameAttrib : unsigned char;
-struct FileFilter;
-
-
-struct ParserState {
-    const QString& path;
-    const QDir dir;
-    model::Game* cur_game = nullptr;
-    model::Collection* cur_coll = nullptr;
-    std::vector<FileFilter> filters;
-    std::vector<model::Collection*> all_colls;
-    size_t found_issues = 0;
-
-    explicit ParserState(const QString&);
-    NO_COPY_NO_MOVE(ParserState)
-};
+		enum class CollAttrib : unsigned char;
+		enum class GameAttrib : unsigned char;
+		struct FileFilter;
 
 
-class Metadata {
-public:
-    explicit Metadata(QString);
+		struct ParserState
+		{
+			const QString &path;
+			const QDir dir;
+			model::Game* cur_game = nullptr;
+			model::Collection* cur_coll = nullptr;
+			std::vector<FileFilter> filters;
+			std::vector<model::Collection*> all_colls;
+			size_t found_issues = 0;
 
-    std::vector<FileFilter> apply_metafile(const QString&, SearchContext&) const;
-
-private:
-    const QString m_log_tag;
-
-    const QLatin1String m_primary_key_collection;
-    const QLatin1String m_primary_key_game;
-
-    const HashMap<QString, CollAttrib> m_coll_attribs;
-    const HashMap<QString, GameAttrib> m_game_attribs;
-    //const HashMap<QString, GameFileAttrib> gamefile_attribs;
-
-    const QRegularExpression rx_asset_key;
-    const QRegularExpression rx_count_range;
-    const QRegularExpression rx_percent;
-    const QRegularExpression rx_float;
-    const QRegularExpression rx_date;
-    const QRegularExpression rx_unescaped_newline;
-    const QRegularExpression rx_uri;
+			explicit ParserState(const QString &);
+			NO_COPY_NO_MOVE(ParserState)
+		};
 
 
-    void print_error(ParserState&, const metafile::Error&) const;
-    void print_warning(ParserState&, const metafile::Entry&, const QString&) const;
+		class Metadata
+		{
+		public:
+			explicit Metadata(QString);
 
-    const QString& first_line_of(ParserState&, const metafile::Entry&) const;
-    void replace_newlines(QString&) const;
+			std::vector<FileFilter> apply_metafile(const QString &, SearchContext &) const;
 
-    void apply_collection_entry(ParserState&, const metafile::Entry&) const;
-    void apply_game_entry(ParserState&, const metafile::Entry&, SearchContext&) const;
-    bool apply_extra_entry_maybe(ParserState&, const metafile::Entry&) const;
-    bool apply_asset_entry_maybe(ParserState&, const metafile::Entry&) const;
-    void apply_entry(ParserState&, const metafile::Entry&, SearchContext&) const;
+		private:
+			const QString m_log_tag;
 
-    QString assetline_to_url(ParserState&, const metafile::Entry&, const QString&) const;
-};
+			const QLatin1String m_primary_key_collection;
+			const QLatin1String m_primary_key_game;
 
-} // namespace pegasus
+			const HashMap<QString, CollAttrib> m_coll_attribs;
+			const HashMap<QString, GameAttrib> m_game_attribs;
+			//const HashMap<QString, GameFileAttrib> gamefile_attribs;
+
+			const QRegularExpression rx_asset_key;
+			const QRegularExpression rx_count_range;
+			const QRegularExpression rx_percent;
+			const QRegularExpression rx_float;
+			const QRegularExpression rx_date;
+			const QRegularExpression rx_unescaped_newline;
+			const QRegularExpression rx_uri;
+
+
+			void print_error(ParserState &, const metafile::Error &) const;
+
+			void print_warning(ParserState &, const metafile::Entry &, const QString &) const;
+
+			const QString &first_line_of(ParserState &, const metafile::Entry &) const;
+
+			void replace_newlines(QString &) const;
+
+			void apply_collection_entry(ParserState &, const metafile::Entry &) const;
+
+			void apply_game_entry(ParserState &, const metafile::Entry &, SearchContext &) const;
+
+			bool apply_extra_entry_maybe(ParserState &, const metafile::Entry &) const;
+
+			bool apply_asset_entry_maybe(ParserState &, const metafile::Entry &) const;
+
+			void apply_entry(ParserState &, const metafile::Entry &, SearchContext &) const;
+
+			QString assetline_to_url(ParserState &, const metafile::Entry &, const QString &) const;
+		};
+
+	} // namespace pegasus
 } // namespace providers

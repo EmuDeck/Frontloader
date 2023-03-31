@@ -25,34 +25,41 @@
 class QXmlStreamReader;
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-enum class EmulatorField : unsigned char;
-enum class PlatformField : unsigned char;
-struct Emulator;
+		enum class EmulatorField : unsigned char;
+		enum class PlatformField : unsigned char;
+		struct Emulator;
 
-class EmulatorsXml {
-public:
-    explicit EmulatorsXml(QString, QDir);
+		class EmulatorsXml
+		{
+		public:
+			explicit EmulatorsXml(QString, QDir);
 
-    HashMap<QString, Emulator> find() const;
+			HashMap<QString, Emulator> find() const;
 
-private:
-    const QString m_log_tag;
-    const QDir m_lb_root;
+		private:
+			const QString m_log_tag;
+			const QDir m_lb_root;
 
-    const HashMap<QString, EmulatorField> m_emulator_keys;
-    const HashMap<QString, PlatformField> m_platform_keys;
+			const HashMap<QString, EmulatorField> m_emulator_keys;
+			const HashMap<QString, PlatformField> m_platform_keys;
 
-    void log_xml_warning(const QString&, const size_t, const QString&) const;
-    HashMap<EmulatorField, QString> read_emulator_node(QXmlStreamReader&) const;
-    HashMap<PlatformField, QString> read_platform_node(QXmlStreamReader&) const;
-    bool emulator_fields_valid(const QString&, const size_t, const HashMap<EmulatorField, QString>&) const;
-    bool platform_fields_valid(const QString&, const size_t, const HashMap<PlatformField, QString>&) const;
-};
+			void log_xml_warning(const QString &, const size_t, const QString &) const;
 
-HashMap<QString, Emulator> find_emulators(const QString&, const QDir&);
+			HashMap<EmulatorField, QString> read_emulator_node(QXmlStreamReader &) const;
 
-} // namespace launchbox
+			HashMap<PlatformField, QString> read_platform_node(QXmlStreamReader &) const;
+
+			bool emulator_fields_valid(const QString &, const size_t, const HashMap<EmulatorField, QString> &) const;
+
+			bool platform_fields_valid(const QString &, const size_t, const HashMap<PlatformField, QString> &) const;
+		};
+
+		HashMap<QString, Emulator> find_emulators(const QString &, const QDir &);
+
+	} // namespace launchbox
 } // namespace providers

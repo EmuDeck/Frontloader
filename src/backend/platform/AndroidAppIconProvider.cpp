@@ -22,34 +22,34 @@
 
 
 AndroidAppIconProvider::AndroidAppIconProvider()
-    : QQuickImageProvider(QQuickImageProvider::Pixmap)
+		: QQuickImageProvider(QQuickImageProvider::Pixmap)
 {}
 
-QPixmap AndroidAppIconProvider::requestPixmap(const QString& id, QSize*, const QSize&)
+QPixmap AndroidAppIconProvider::requestPixmap(const QString &id, QSize*, const QSize &)
 {
-    static constexpr auto JNI_CLASS = "org/pegasus_frontend/android/MainActivity";
-    static constexpr auto APPICON_METHOD = "appIcon";
-    static constexpr auto APPICON_SIGNATURE = "(Ljava/lang/String;)[B";
-    static constexpr auto APPICON_FMT = "PNG";
+	static constexpr auto JNI_CLASS = "org/pegasus_frontend/android/MainActivity";
+	static constexpr auto APPICON_METHOD = "appIcon";
+	static constexpr auto APPICON_SIGNATURE = "(Ljava/lang/String;)[B";
+	static constexpr auto APPICON_FMT = "PNG";
 
-    QAndroidJniEnvironment jni_env;
-    const auto jni_packagename = QAndroidJniObject::fromString(id);
-    const auto jni_iconbytes_raw = QAndroidJniObject::callStaticObjectMethod(JNI_CLASS,
-                                                                             APPICON_METHOD, APPICON_SIGNATURE,
-                                                                             jni_packagename.object<jstring>());
-    const auto jni_iconbytes_arr = jni_iconbytes_raw.object<jbyteArray>();
-    if (!jni_iconbytes_arr)
-        return QPixmap();
+	QAndroidJniEnvironment jni_env;
+	const auto jni_packagename = QAndroidJniObject::fromString(id);
+	const auto jni_iconbytes_raw = QAndroidJniObject::callStaticObjectMethod(JNI_CLASS,
+	                                                                         APPICON_METHOD, APPICON_SIGNATURE,
+	                                                                         jni_packagename.object<jstring>());
+	const auto jni_iconbytes_arr = jni_iconbytes_raw.object<jbyteArray>();
+	if (!jni_iconbytes_arr)
+		return QPixmap();
 
-    const auto jni_iconbytes_len = jni_env->GetArrayLength(jni_iconbytes_arr);
-    if (jni_iconbytes_len <= 0)
-        return QPixmap();
+	const auto jni_iconbytes_len = jni_env->GetArrayLength(jni_iconbytes_arr);
+	if (jni_iconbytes_len <= 0)
+		return QPixmap();
 
-    jbyte* const jni_iconbytes_p = jni_env->GetByteArrayElements(jni_iconbytes_arr, nullptr);
-    if (!jni_iconbytes_p)
-        return QPixmap();
+	jbyte* const jni_iconbytes_p = jni_env->GetByteArrayElements(jni_iconbytes_arr, nullptr);
+	if (!jni_iconbytes_p)
+		return QPixmap();
 
-    QImage image(QImage::fromData(reinterpret_cast<const uchar*>(jni_iconbytes_p), jni_iconbytes_len, APPICON_FMT));
-    jni_env->ReleaseByteArrayElements(jni_iconbytes_arr, jni_iconbytes_p, JNI_ABORT);
-    return QPixmap::fromImage(std::move(image));
+	QImage image(QImage::fromData(reinterpret_cast<const uchar*>(jni_iconbytes_p), jni_iconbytes_len, APPICON_FMT));
+	jni_env->ReleaseByteArrayElements(jni_iconbytes_arr, jni_iconbytes_p, JNI_ABORT);
+	return QPixmap::fromImage(std::move(image));
 }

@@ -24,37 +24,57 @@
 #include <QString>
 
 
-namespace model {
+namespace model
+{
 
-class GamepadManagerBackend : public QObject {
-    Q_OBJECT
+	class GamepadManagerBackend : public QObject
+	{
+	Q_OBJECT
 
-public:
-    GamepadManagerBackend(QObject* parent = nullptr);
-    virtual ~GamepadManagerBackend();
+	public:
+		GamepadManagerBackend(QObject* parent = nullptr);
 
-    virtual void start(const backend::CliArgs&) {}
-    virtual void stop() {}
+		virtual ~GamepadManagerBackend();
 
-    virtual void start_recording(int, GamepadButton) {}
-    virtual void start_recording(int, GamepadAxis) {}
-    virtual void cancel_recording() {}
+		virtual void start(const backend::CliArgs &)
+		{}
 
-    virtual QString mapping_for_button(int, GamepadButton) const { return QString(); }
-    virtual QString mapping_for_axis(int, GamepadAxis) const { return QString(); }
+		virtual void stop()
+		{}
 
-signals:
-    void connected(int, QString);
-    void disconnected(int);
-    void nameChanged(int, QString);
+		virtual void start_recording(int, GamepadButton)
+		{}
 
-    void buttonChanged(int, GamepadButton, bool);
-    void axisChanged(int, GamepadAxis, double);
+		virtual void start_recording(int, GamepadAxis)
+		{}
 
-    void buttonConfigured(int, GamepadButton);
-    void axisConfigured(int, GamepadAxis);
-    void configurationCanceled(int);
-};
+		virtual void cancel_recording()
+		{}
+
+		virtual QString mapping_for_button(int, GamepadButton) const
+		{ return QString(); }
+
+		virtual QString mapping_for_axis(int, GamepadAxis) const
+		{ return QString(); }
+
+	signals:
+
+		void connected(int, QString);
+
+		void disconnected(int);
+
+		void nameChanged(int, QString);
+
+		void buttonChanged(int, GamepadButton, bool);
+
+		void axisChanged(int, GamepadAxis, double);
+
+		void buttonConfigured(int, GamepadButton);
+
+		void axisConfigured(int, GamepadAxis);
+
+		void configurationCanceled(int);
+	};
 
 } // namespace model
 

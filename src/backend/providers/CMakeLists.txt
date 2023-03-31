@@ -1,13 +1,13 @@
 target_sources(frontloader-backend PRIVATE
-    Provider.cpp
-    Provider.h
-    ProviderManager.cpp
-    ProviderManager.h
-    ProviderUtils.cpp
-    ProviderUtils.h
-    SearchContext.cpp
-    SearchContext.h
-)
+        Provider.cpp
+        Provider.h
+        ProviderManager.cpp
+        ProviderManager.h
+        ProviderUtils.cpp
+        ProviderUtils.h
+        SearchContext.cpp
+        SearchContext.h
+        )
 
 
 set(OPTIONAL_PROVIDERS CACHE INTERNAL "")
@@ -15,38 +15,38 @@ set(USE_JSON_CACHE OFF CACHE INTERNAL "")
 
 function(pegasus_add_provider)
     cmake_parse_arguments(PROVIDER
-        "INTERNAL;USES_JSON_CACHE"
-        "NAME;CXXID"
-        "SOURCES;PLATFORMS"
-        ${ARGN})
+            "INTERNAL;USES_JSON_CACHE"
+            "NAME;CXXID"
+            "SOURCES;PLATFORMS"
+            ${ARGN})
 
     set(PROVIDER_ENABLED OFF)
-    if("ALL" IN_LIST PROVIDER_PLATFORMS)
+    if ("ALL" IN_LIST PROVIDER_PLATFORMS)
         set(PROVIDER_ENABLED ON)
-    else()
-        foreach(PLATFORM IN LISTS PROVIDER_PLATFORMS)
-            if(DEFINED "PEGASUS_ON_${PLATFORM}")
+    else ()
+        foreach (PLATFORM IN LISTS PROVIDER_PLATFORMS)
+            if (DEFINED "PEGASUS_ON_${PLATFORM}")
                 set(PROVIDER_ENABLED ON)
-            endif()
-        endforeach()
-    endif()
+            endif ()
+        endforeach ()
+    endif ()
 
-    if(PROVIDER_ENABLED)
+    if (PROVIDER_ENABLED)
         list(TRANSFORM PROVIDER_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
         target_sources(frontloader-backend PRIVATE "${PROVIDER_SOURCES}")
-        if(PROVIDER_CXXID)
+        if (PROVIDER_CXXID)
             target_compile_definitions(frontloader-backend PRIVATE "WITH_COMPAT_${PROVIDER_CXXID}")
-        endif()
+        endif ()
 
-        if(PROVIDER_USES_JSON_CACHE)
+        if (PROVIDER_USES_JSON_CACHE)
             set(USE_JSON_CACHE ON CACHE INTERNAL "")
-        endif()
+        endif ()
 
-        if(NOT PROVIDER_INTERNAL)
+        if (NOT PROVIDER_INTERNAL)
             list(APPEND OPTIONAL_PROVIDERS "${PROVIDER_NAME}")
             set(OPTIONAL_PROVIDERS "${OPTIONAL_PROVIDERS}" CACHE INTERNAL "")
-        endif()
-    endif()
+        endif ()
+    endif ()
 endfunction()
 
 
@@ -66,6 +66,6 @@ add_subdirectory(frontloader)
 #add_subdirectory(steam)
 
 
-if(USE_JSON_CACHE)
+if (USE_JSON_CACHE)
     target_compile_definitions(frontloader-backend PRIVATE WITH_JSON_CACHE)
-endif()
+endif ()

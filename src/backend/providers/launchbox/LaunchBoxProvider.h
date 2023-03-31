@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-class LaunchboxProvider : public Provider {
-    Q_OBJECT
+		class LaunchboxProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit LaunchboxProvider(QObject* parent = nullptr);
+		public:
+			explicit LaunchboxProvider(QObject* parent = nullptr);
 
-    Provider& run(providers::SearchContext&) final;
-};
+			Provider &run(providers::SearchContext &) final;
+		};
 
-} // namespace launchbox
+	} // namespace launchbox
 } // namespace providers

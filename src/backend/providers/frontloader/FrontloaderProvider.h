@@ -20,24 +20,27 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace pegasus {
+namespace providers
+{
+	namespace pegasus
+	{
 
-class FrontloaderProvider : public Provider {
-    Q_OBJECT
+		class FrontloaderProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit FrontloaderProvider(QObject* parent = nullptr);
+		public:
+			explicit FrontloaderProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
+			Provider &run(SearchContext &) final;
 
-private:
-	static bool is_metadata_file(const QString &filename);
+		private:
+			static bool is_metadata_file(const QString &filename);
 
-	static std::vector<QString> find_metafiles_in(const QString &dir_path);
+			static std::vector<QString> find_metafiles_in(const QString &dir_path);
 
-	static std::vector<QString> find_all_metafiles();
-};
+			static std::vector<QString> find_all_metafiles();
+		};
 
-} // namespace pegasus
+	} // namespace pegasus
 } // namespace providers

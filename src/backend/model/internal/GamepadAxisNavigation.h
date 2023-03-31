@@ -23,19 +23,22 @@
 #include <QObject>
 
 
-class GamepadAxisNavigation : public QObject {
-    Q_OBJECT
+class GamepadAxisNavigation : public QObject
+{
+Q_OBJECT
 
 public:
-    explicit GamepadAxisNavigation(QObject* parent = nullptr);
+	explicit GamepadAxisNavigation(QObject* parent = nullptr);
 
 public slots:
-    void onAxisEvent(int deviceId, GamepadAxis axis, double axisValue);
+
+	void onAxisEvent(int deviceId, GamepadAxis axis, double axisValue);
 
 signals:
-    void buttonChanged(int deviceId, GamepadButton button, bool pressed);
+
+	void buttonChanged(int deviceId, GamepadButton button, bool pressed);
 
 private:
-    using DeviceAxes = HashMap<GamepadAxis, double, EnumHash>;
-    HashMap<int, DeviceAxes> devices;
+	using DeviceAxes = HashMap<GamepadAxis, double, EnumHash>;
+	HashMap<int, DeviceAxes> devices;
 };

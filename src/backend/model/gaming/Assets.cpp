@@ -20,46 +20,49 @@
 #include <QUrl>
 
 
-namespace model {
-
-Assets::Assets(QObject* parent)
-    : QObject(parent)
-{}
-
-const QStringList& Assets::get(AssetType key) const {
-    static const QStringList empty;
-
-    const auto it = m_asset_lists.find(key);
-    if (it != m_asset_lists.cend())
-        return it->second;
-
-    return empty;
-}
-
-const QString& Assets::getFirst(AssetType key) const {
-    static const QString empty;
-
-    const QStringList& list = get(key);
-    if (!list.isEmpty())
-        return list.constFirst();
-
-    return empty;
-}
-
-Assets& Assets::add_file(AssetType key, QString path)
+namespace model
 {
-    QString uri = QUrl::fromLocalFile(std::move(path)).toString();
-    return add_uri(key, std::move(uri));
-}
 
-Assets& Assets::add_uri(AssetType key, QString url)
-{
-    QStringList& target = m_asset_lists[key];
+	Assets::Assets(QObject* parent)
+			: QObject(parent)
+	{}
 
-    if (!url.isEmpty() && !target.contains(url))
-        target.append(std::move(url));
+	const QStringList &Assets::get(AssetType key) const
+	{
+		static const QStringList empty;
 
-    return *this;
-}
+		const auto it = m_asset_lists.find(key);
+		if (it != m_asset_lists.cend())
+			return it->second;
+
+		return empty;
+	}
+
+	const QString &Assets::getFirst(AssetType key) const
+	{
+		static const QString empty;
+
+		const QStringList &list = get(key);
+		if (!list.isEmpty())
+			return list.constFirst();
+
+		return empty;
+	}
+
+	Assets &Assets::add_file(AssetType key, QString path)
+	{
+		QString uri = QUrl::fromLocalFile(std::move(path)).toString();
+		return add_uri(key, std::move(uri));
+	}
+
+	Assets &Assets::add_uri(AssetType key, QString url)
+	{
+		QStringList &target = m_asset_lists[key];
+
+		if (!url.isEmpty() && !target.contains(url))
+			target.append(std::move(url));
+
+		return *this;
+	}
 
 } // namespace model

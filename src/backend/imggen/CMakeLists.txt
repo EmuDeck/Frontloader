@@ -1,4 +1,4 @@
 target_sources(frontloader-backend PRIVATE
-    BlurhashProvider.cpp
-    BlurhashProvider.h
-)
+        BlurhashProvider.cpp
+        BlurhashProvider.h
+        )

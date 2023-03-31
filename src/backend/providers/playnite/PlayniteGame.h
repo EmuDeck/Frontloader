@@ -18,38 +18,42 @@
 
 #include <QString>
 
-namespace providers {
-namespace playnite {
+namespace providers
+{
+	namespace playnite
+	{
 
-struct PlayniteGame {
-    struct PlayAction {
-        int type;
-        QString path;
-        QString arguments;
-        QString working_dir;
-        QString emulator_id;
-        QString emulator_profile_id;
-    };
+		struct PlayniteGame
+		{
+			struct PlayAction
+			{
+				int type;
+				QString path;
+				QString arguments;
+				QString working_dir;
+				QString emulator_id;
+				QString emulator_profile_id;
+			};
 
-    QString background_image;
-    QString description;
-    QStringList genre_ids;
-    QString cover_image;
-    QString game_id;
-    QString platform_id;
-    QStringList publisher_ids;
-    QStringList developer_ids;
-    QString release_date;
-    float community_score = 0.0f;
-    QString id;
-    QString name;
-    QString source_id;
-    QString install_directory;
-    QString game_image_path;
-    bool installed = false;
-    bool hidden = false;
-    PlayAction play_action;
-};
+			QString background_image;
+			QString description;
+			QStringList genre_ids;
+			QString cover_image;
+			QString game_id;
+			QString platform_id;
+			QStringList publisher_ids;
+			QStringList developer_ids;
+			QString release_date;
+			float community_score = 0.0f;
+			QString id;
+			QString name;
+			QString source_id;
+			QString install_directory;
+			QString game_image_path;
+			bool installed = false;
+			bool hidden = false;
+			PlayAction play_action;
+		};
 
-} // namespace playnite
+	} // namespace playnite
 } // namespace providers

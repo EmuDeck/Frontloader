@@ -20,6 +20,7 @@
 #include "AppSettings.h"
 #include "KeyEditor.h"
 #include "Locales.h"
+#include "AutobootGames.h"
 #include "Themes.h"
 #include "Providers.h"
 #include "utils/QmlHelpers.h"
@@ -27,58 +28,99 @@
 #include <QObject>
 
 
-namespace model {
+namespace model
+{
 
 /// Provides a settings interface for the frontend layer
-class Settings : public QObject {
-    Q_OBJECT
+	class Settings : public QObject
+	{
+	Q_OBJECT
 
-    Q_PROPERTY(bool fullscreen
-               READ fullscreen WRITE setFullscreen
-               NOTIFY fullscreenChanged)
-    Q_PROPERTY(bool mouseSupport
-               READ mouseSupport WRITE setMouseSupport
-               NOTIFY mouseSupportChanged)
-    Q_PROPERTY(bool verifyFiles
-               READ verifyFiles WRITE setVerifyFiles
-               NOTIFY verifyFilesChanged)
-    Q_PROPERTY(QStringList gameDirs READ gameDirs NOTIFY gameDirsChanged)
-    Q_PROPERTY(QStringList androidGrantedDirs READ androidGrantedDirs NOTIFY androidDirsChanged)
+		Q_PROPERTY(bool fullscreen
+				           READ fullscreen WRITE setFullscreen
+				           NOTIFY fullscreenChanged)
+		Q_PROPERTY(bool autoboot
+				           READ autoboot WRITE setAutoboot
+				           NOTIFY autobootChanged)
+	    Q_PROPERTY(QString autobootGame
+				           READ autobootGame WRITE setAutobootGame
+				           NOTIFY autobootGameChanged)
+		Q_PROPERTY(bool mouseSupport
+				           READ mouseSupport WRITE setMouseSupport
+				           NOTIFY mouseSupportChanged)
+		Q_PROPERTY(bool verifyFiles
+				           READ verifyFiles WRITE setVerifyFiles
+				           NOTIFY verifyFilesChanged)
+		Q_PROPERTY(QStringList gameDirs READ gameDirs NOTIFY gameDirsChanged)
+		Q_PROPERTY(QStringList androidGrantedDirs READ androidGrantedDirs NOTIFY androidDirsChanged)
 
-    QML_CONST_PROPERTY(model::KeyEditor, keyEditor)
-    QML_CONST_PROPERTY(model::Locales, locales)
-    QML_CONST_PROPERTY(model::Themes, themes)
-    QML_CONST_PROPERTY(model::Providers, providers)
+	QML_CONST_PROPERTY(model::KeyEditor, keyEditor)
+	QML_CONST_PROPERTY(model::Locales, locales)
+	QML_CONST_PROPERTY(model::AutobootGames, autobootGames)
+	QML_CONST_PROPERTY(model::Themes, themes)
+	QML_CONST_PROPERTY(model::Providers, providers)
 
-public:
-    explicit Settings(QObject* parent = nullptr);
-    void postInit();
+	public:
+		explicit Settings(QObject* parent = nullptr);
 
-    bool fullscreen() const { return AppSettings::general.fullscreen; }
-    void setFullscreen(bool);
+		void postInit();
 
-    bool mouseSupport() const { return AppSettings::general.mouse_support; }
-    void setMouseSupport(bool);
+		bool fullscreen() const
+		{ return AppSettings::general.fullscreen; }
 
-    bool verifyFiles() const { return AppSettings::general.verify_files; }
-    void setVerifyFiles(bool);
+		void setFullscreen(bool);
 
-    QStringList gameDirs() const;
-    Q_INVOKABLE void addGameDir(const QString&);
-    Q_INVOKABLE void removeGameDirs(const QVariantList&);
+		bool autoboot() const
+		{
+			return AppSettings::general.autoboot; }
 
-    QStringList androidGrantedDirs() const;
-    Q_INVOKABLE void requestAndroidDir();
+		void setAutoboot(bool);
 
-    Q_INVOKABLE void reloadProviders();
+		QString autobootGame() const
+		{
+			return AppSettings::general.autobootGame; }
 
-signals:
-    void fullscreenChanged();
-    void mouseSupportChanged();
-    void verifyFilesChanged();
-    void gameDirsChanged();
-    void androidDirsChanged();
-    void providerReloadingRequested();
-};
+		void setAutobootGame(const QString&);
+
+		bool mouseSupport() const
+		{ return AppSettings::general.mouse_support; }
+
+		void setMouseSupport(bool);
+
+		bool verifyFiles() const
+		{ return AppSettings::general.verify_files; }
+
+		void setVerifyFiles(bool);
+
+		QStringList gameDirs() const;
+
+		Q_INVOKABLE void addGameDir(const QString &);
+
+		Q_INVOKABLE void removeGameDirs(const QVariantList &);
+
+		QStringList androidGrantedDirs() const;
+
+		Q_INVOKABLE void requestAndroidDir();
+
+		Q_INVOKABLE void reloadProviders();
+
+	signals:
+
+		void fullscreenChanged();
+
+		void autobootChanged();
+
+		void autobootGameChanged();
+
+		void mouseSupportChanged();
+
+		void verifyFilesChanged();
+
+		void gameDirsChanged();
+
+		void androidDirsChanged();
+
+		void providerReloadingRequested();
+	};
 
 } // namespace model

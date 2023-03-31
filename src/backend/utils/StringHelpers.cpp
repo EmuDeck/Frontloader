@@ -23,33 +23,38 @@
 #include <cstring>
 
 
-namespace utils {
-std::string trimmed(const char* const str)
+namespace utils
 {
-    size_t from = 0;
-    size_t to = ::strlen(str);
-    while (from < to && std::isspace(str[from]))
-        from++;
-    while (from < to && std::isspace(str[to - 1]))
-        to--;
-    return std::string(str + from, to - from);
-}
+	std::string trimmed(const char* const str)
+	{
+		size_t from = 0;
+		size_t to = ::strlen(str);
+		while (from < to && std::isspace(str[from]))
+		{
+			from++;
+		}
+		while (from < to && std::isspace(str[to - 1]))
+		{
+			to--;
+		}
+		return std::string(str + from, to - from);
+	}
 
-bool as_bool(const QString& str, bool& success)
-{
-    static const HashMap<QString, bool> STR_BOOL_VALS {
-        { QStringLiteral("yes"), true },
-        { QStringLiteral("on"), true },
-        { QStringLiteral("true"), true },
-        { QStringLiteral("no"), false },
-        { QStringLiteral("off"), false },
-        { QStringLiteral("false"), false },
-    };
+	bool as_bool(const QString &str, bool &success)
+	{
+		static const HashMap<QString, bool> STR_BOOL_VALS{
+				{QStringLiteral("yes"),   true},
+				{QStringLiteral("on"),    true},
+				{QStringLiteral("true"),  true},
+				{QStringLiteral("no"),    false},
+				{QStringLiteral("off"),   false},
+				{QStringLiteral("false"), false},
+		};
 
-    const auto it = STR_BOOL_VALS.find(str.toLower());
-    success = it != STR_BOOL_VALS.cend();
-    return success
-        ? it->second
-        : false;
-}
+		const auto it = STR_BOOL_VALS.find(str.toLower());
+		success = it != STR_BOOL_VALS.cend();
+		return success
+		       ? it->second
+		       : false;
+	}
 } // namespace utils

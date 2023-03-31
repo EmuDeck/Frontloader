@@ -22,24 +22,37 @@
 #include <QString>
 #include <vector>
 
-namespace model { class Collection; }
-namespace model { class Game; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Collection;
+}
+namespace model
+{
+	class Game;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
 
-namespace providers {
-namespace gog {
+namespace providers
+{
+	namespace gog
+	{
 
-class Gamelist {
-public:
-    explicit Gamelist(QString);
+		class Gamelist
+		{
+		public:
+			explicit Gamelist(QString);
 
-    using OptionsMap = HashMap<QString, std::vector<QString>>;
-    HashMap<QString, model::Game*> find(const OptionsMap&, model::Collection&, SearchContext&) const;
+			using OptionsMap = HashMap<QString, std::vector<QString>>;
 
-private:
-    const QString m_log_tag;
-};
+			HashMap<QString, model::Game*> find(const OptionsMap &, model::Collection &, SearchContext &) const;
 
-} // namespace gog
+		private:
+			const QString m_log_tag;
+		};
+
+	} // namespace gog
 } // namespace providers

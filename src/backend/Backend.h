@@ -19,49 +19,68 @@
 
 #include <QString>
 #include "CliArgs.h"
+#include "AutobootManager.h"
 
-namespace model { class ApiObject; }
-namespace model { class Internal; }
+namespace model
+{
+	class ApiObject;
+}
+namespace model
+{
+	class Internal;
+}
 class FrontendLayer;
+
 class ProcessLauncher;
+
 class ProviderManager;
 
 
-namespace backend {
+namespace backend
+{
 
-class Backend {
-public:
-    explicit Backend();
-    explicit Backend(const CliArgs&);
-    ~Backend();
+	class Backend
+	{
+	public:
+		explicit Backend();
 
-    Backend(const Backend&) = delete;
-    Backend& operator=(const Backend&) = delete;
+		explicit Backend(const CliArgs&);
 
-    void start();
+		~Backend();
 
-private:
-    const CliArgs m_args;
+		Backend(const Backend &) = delete;
 
-    // frontend <-> api <-> launcher
-    // NOTE: unique_ptr had forward declaration issues
-    model::ApiObject* m_api_public;
-    model::Internal* m_api_private;
-    FrontendLayer* m_frontend;
-    ProcessLauncher* m_launcher;
-    ProviderManager* m_providerman;
+		Backend &operator=(const Backend &) = delete;
 
-    void onScanRequested();
-    void onScanFinished();
-    void onFavoritesChanged();
-    void onProcessLaunched();
-    void onProcessFinished();
+		void start();
 
-	static void copyDirectoryNested(const QString& from, const QString& to);
+	private:
+		const CliArgs m_args;
 
-	static void loadFrontloader();
+		// frontend <-> api <-> launcher
+		// NOTE: unique_ptr had forward declaration issues
+		model::ApiObject* m_api_public;
+		model::Internal* m_api_private;
+		FrontendLayer* m_frontend;
+		ProcessLauncher* m_launcher;
+		ProviderManager* m_providerman;
+		AutobootManager* m_autobootman;
 
-	static void unloadFrontloader();
-};
+		void onScanRequested();
+
+		void onScanFinished();
+
+		void onFavoritesChanged();
+
+		void onProcessLaunched();
+
+		void onProcessFinished();
+
+		static void copyDirectoryNested(const QString &from, const QString &to);
+
+		static void loadFrontloader();
+
+		static void unloadFrontloader();
+	};
 
 } // namespace backend

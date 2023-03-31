@@ -22,33 +22,39 @@
 #include <QMutex>
 
 
-namespace providers {
-namespace favorites {
+namespace providers
+{
+	namespace favorites
+	{
 
-class Favorites : public Provider {
-    Q_OBJECT
+		class Favorites : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit Favorites(QString db_path, QObject* parent = nullptr);
-    explicit Favorites(QObject* parent = nullptr);
+		public:
+			explicit Favorites(QString db_path, QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
+			explicit Favorites(QObject* parent = nullptr);
 
-    void onGameFavoriteChanged(const std::vector<model::Game*>&, bool) final;
+			Provider &run(SearchContext &) final;
 
-signals:
-    void startedWriting();
-    void finishedWriting();
+			void onGameFavoriteChanged(const std::vector<model::Game*> &, bool) final;
 
-private:
-    const QString m_db_path;
+		signals:
 
-    QStringList m_pending_task;
-    QStringList m_active_task;
-    QMutex m_task_guard;
+			void startedWriting();
 
-    void start_processing();
-};
+			void finishedWriting();
 
-} // namespace favorites
+		private:
+			const QString m_db_path;
+
+			QStringList m_pending_task;
+			QStringList m_active_task;
+			QMutex m_task_guard;
+
+			void start_processing();
+		};
+
+	} // namespace favorites
 } // namespace providers

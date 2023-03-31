@@ -18,11 +18,13 @@
 #pragma once
 
 class QNetworkAccessManager;
+
 class QObject;
 
 
-namespace utils {
+namespace utils
+{
 
-QNetworkAccessManager* create_disc_cached_nam(QObject* parent);
+	QNetworkAccessManager* create_disc_cached_nam(QObject* parent);
 
 } // namespace utils

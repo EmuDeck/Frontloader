@@ -21,37 +21,35 @@
 #include "Game.h"
 
 
-namespace model {
-
-CollectionData::CollectionData(QString new_name)
-    : name(std::move(new_name))
-    , sort_by(name)
-    , m_short_name(name.toLower())
-{}
-
-void CollectionData::set_short_name(const QString& name)
+namespace model
 {
-    Q_ASSERT(!name.isEmpty());
-    m_short_name = name.toLower();
-}
 
-Collection::Collection(QString name, QObject* parent)
-    : QObject(parent)
-    , m_data(std::move(name))
-    , m_assets(new model::Assets(this))
-{}
+	CollectionData::CollectionData(QString new_name)
+			: name(std::move(new_name)), sort_by(name), m_short_name(name.toLower())
+	{}
 
-Collection& Collection::setGames(std::vector<model::Game*>&& games)
-{
-    std::sort(games.begin(), games.end(), model::sort_games);
+	void CollectionData::set_short_name(const QString &name)
+	{
+		Q_ASSERT(!name.isEmpty());
+		m_short_name = name.toLower();
+	}
 
-    Q_ASSERT(!m_games);
-    m_games = new GameListModel(this);
-    m_games->update(std::move(games));
-    return *this;
-}
+	Collection::Collection(QString name, QObject* parent)
+			: QObject(parent), m_data(std::move(name)), m_assets(new model::Assets(this))
+	{}
 
-bool sort_collections(const model::Collection* const a, const model::Collection* const b) {
-    return QString::localeAwareCompare(a->sortBy(), b->sortBy()) < 0;
-}
+	Collection &Collection::setGames(std::vector<model::Game*> &&games)
+	{
+		std::sort(games.begin(), games.end(), model::sort_games);
+
+		Q_ASSERT(!m_games);
+		m_games = new GameListModel(this);
+		m_games->update(std::move(games));
+		return *this;
+	}
+
+	bool sort_collections(const model::Collection* const a, const model::Collection* const b)
+	{
+		return QString::localeAwareCompare(a->sortBy(), b->sortBy()) < 0;
+	}
 } // namespace model

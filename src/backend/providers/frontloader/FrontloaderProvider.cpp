@@ -29,89 +29,99 @@
 #include <QTextStream>
 
 
-namespace {
+namespace
+{
 
 } // namespace
 
 
-namespace providers {
-namespace pegasus {
-
-FrontloaderProvider::FrontloaderProvider(QObject* parent)
-    : Provider(QLatin1String("frontloader"), QStringLiteral("Frontloader"), PROVIDER_FLAG_INTERNAL, parent)
-{}
-
-bool FrontloaderProvider::is_metadata_file(const QString& filename)
+namespace providers
 {
-	return filename == QLatin1String("metadata.pegasus.txt")
-	       || filename == QLatin1String("metadata.frontloader.txt")
-	       || filename == QLatin1String("metadata.txt")
-	       || filename.endsWith(QLatin1String(".metadata.pegasus.txt"))
-	       || filename.endsWith(QLatin1String(".metadata.frontloader.txt"))
-	       || filename.endsWith(QLatin1String(".metadata.txt"));
-}
+	namespace pegasus
+	{
 
-std::vector<QString> FrontloaderProvider::find_metafiles_in(const QString& dir_path)
-{
-	constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
-	constexpr auto dir_flags = QDirIterator::FollowSymlinks;
+		FrontloaderProvider::FrontloaderProvider(QObject* parent)
+				: Provider(QLatin1String("frontloader"), QStringLiteral("Frontloader"), PROVIDER_FLAG_INTERNAL, parent)
+		{}
 
-	std::vector<QString> result;
-
-	QDirIterator dir_it(dir_path, dir_filters, dir_flags);
-	while (dir_it.hasNext()) {
-		dir_it.next();
-		if (is_metadata_file(dir_it.fileName())) {
-			QString path = ::clean_abs_path(dir_it.fileInfo());
-			result.emplace_back(std::move(path));
+		bool FrontloaderProvider::is_metadata_file(const QString &filename)
+		{
+			return filename == QLatin1String("metadata.pegasus.txt")
+			       || filename == QLatin1String("metadata.frontloader.txt")
+			       || filename == QLatin1String("metadata.txt")
+			       || filename.endsWith(QLatin1String(".metadata.pegasus.txt"))
+			       || filename.endsWith(QLatin1String(".metadata.frontloader.txt"))
+			       || filename.endsWith(QLatin1String(".metadata.txt"));
 		}
-	}
 
-	return result;
-}
+		std::vector<QString> FrontloaderProvider::find_metafiles_in(const QString &dir_path)
+		{
+			constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
+			constexpr auto dir_flags = QDirIterator::FollowSymlinks;
 
-std::vector<QString> FrontloaderProvider::find_all_metafiles()
-{
-	std::vector<QString> result = find_metafiles_in(paths::app_dir_path() + "/frontends");
-	VEC_REMOVE_DUPLICATES(result);
-	return result;
-}
+			std::vector<QString> result;
 
-Provider& FrontloaderProvider::run(SearchContext& sctx)
-{
-    const std::vector<QString> metafile_paths = find_all_metafiles();
-    if (metafile_paths.empty()) {
-        Log::info(display_name(), LOGMSG("No metadata files found"));
-        return *this;
-    }
+			QDirIterator dir_it(dir_path, dir_filters, dir_flags);
+			while (dir_it.hasNext())
+			{
+				dir_it.next();
+				if (is_metadata_file(dir_it.fileName()))
+				{
+					QString path = ::clean_abs_path(dir_it.fileInfo());
+					result.emplace_back(std::move(path));
+				}
+			}
 
-    const Metadata metahelper(display_name());
-    std::vector<FileFilter> all_filters;
+			return result;
+		}
 
-    const float progress_step = 1.f / metafile_paths.size();
-    float progress = 0.f;
+		std::vector<QString> FrontloaderProvider::find_all_metafiles()
+		{
+			std::vector<QString> result = find_metafiles_in(paths::app_dir_path() + "/frontends");
+			VEC_REMOVE_DUPLICATES(result);
+			return result;
+		}
 
-    for (const QString& path : metafile_paths) {
-        Log::info(display_name(), LOGMSG("Found `%1`").arg(::pretty_path(path)));
+		Provider &FrontloaderProvider::run(SearchContext &sctx)
+		{
+			const std::vector<QString> metafile_paths = find_all_metafiles();
+			if (metafile_paths.empty())
+			{
+				Log::info(display_name(), LOGMSG("No metadata files found"));
+				return *this;
+			}
 
-        std::vector<FileFilter> filters = metahelper.apply_metafile(path, sctx);
-        all_filters.insert(all_filters.end(),
-            std::make_move_iterator(filters.begin()),
-            std::make_move_iterator(filters.end()));
+			const Metadata metahelper(display_name());
+			std::vector<FileFilter> all_filters;
 
-        progress += progress_step;
-        emit progressChanged(progress);
-    }
+			const float progress_step = 1.f / metafile_paths.size();
+			float progress = 0.f;
 
-    for (FileFilter& filter : all_filters) {
-        apply_filter(filter, sctx);
+			for (const QString &path: metafile_paths)
+			{
+				Log::info(display_name(), LOGMSG("Found `%1`").arg(::pretty_path(path)));
 
-        for (QString& dir_path : filter.directories)
-            sctx.pegasus_add_game_dir(dir_path);
-    }
+				std::vector<FileFilter> filters = metahelper.apply_metafile(path, sctx);
+				all_filters.insert(all_filters.end(),
+				                   std::make_move_iterator(filters.begin()),
+				                   std::make_move_iterator(filters.end()));
 
-    return *this;
-}
+				progress += progress_step;
+				emit progressChanged(progress);
+			}
 
-} // namespace pegasus
+			for (FileFilter &filter: all_filters)
+			{
+				apply_filter(filter, sctx);
+
+				for (QString &dir_path: filter.directories)
+				{
+					sctx.pegasus_add_game_dir(dir_path);
+				}
+			}
+
+			return *this;
+		}
+
+	} // namespace pegasus
 } // namespace providers

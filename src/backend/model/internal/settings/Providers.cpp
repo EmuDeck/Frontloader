@@ -21,91 +21,97 @@
 #include "providers/Provider.h"
 
 
-namespace model {
-ProviderEntry::ProviderEntry(const size_t idx)
-    : m_idx(idx)
-{}
-
-bool ProviderEntry::enabled() const {
-    return AppSettings::providers().at(m_idx)->enabled();
-}
-
-void ProviderEntry::setEnabled(bool value) {
-    AppSettings::providers().at(m_idx)->setEnabled(value);
-}
-
-const QString& ProviderEntry::name() const {
-    return AppSettings::providers().at(m_idx)->display_name();
-}
-
-
-Providers::Providers(QObject* parent)
-    : QAbstractListModel(parent)
-    , m_role_names({
-        { Roles::Name, QByteArrayLiteral("name") },
-        { Roles::Enabled, QByteArrayLiteral("enabled") },
-    })
+namespace model
 {
-    for (size_t i = 0; i < AppSettings::providers().size(); i++) {
-        const auto& ptr = AppSettings::providers().at(i);
-        if ((ptr->flags() & providers::PROVIDER_FLAG_INTERNAL) == 0)
-            m_providers.emplace_back(i);
-    }
-}
+	ProviderEntry::ProviderEntry(const size_t idx)
+			: m_idx(idx)
+	{}
 
-int Providers::count() const
-{
-    return static_cast<int>(m_providers.size());
-}
+	bool ProviderEntry::enabled() const
+	{
+		return AppSettings::providers().at(m_idx)->enabled();
+	}
 
-int Providers::rowCount(const QModelIndex& parent) const
-{
-    if (parent.isValid())
-        return 0;
+	void ProviderEntry::setEnabled(bool value)
+	{
+		AppSettings::providers().at(m_idx)->setEnabled(value);
+	}
 
-    return count();
-}
+	const QString &ProviderEntry::name() const
+	{
+		return AppSettings::providers().at(m_idx)->display_name();
+	}
 
-QVariant Providers::data(const QModelIndex& index, int role) const
-{
-    if (!index.isValid() || rowCount() <= index.row())
-        return {};
 
-    const auto& provider = m_providers.at(static_cast<size_t>(index.row()));
-    switch (role) {
-        case Roles::Name:
-            return provider.name();
-        case Roles::Enabled:
-            return provider.enabled();
-        default:
-            return {};
-    }
-}
+	Providers::Providers(QObject* parent)
+			: QAbstractListModel(parent), m_role_names({
+					                                           {Roles::Name,    QByteArrayLiteral("name")},
+					                                           {Roles::Enabled, QByteArrayLiteral("enabled")},
+			                                           })
+	{
+		for (size_t i = 0; i < AppSettings::providers().size(); i++)
+		{
+			const auto &ptr = AppSettings::providers().at(i);
+			if ((ptr->flags() & providers::PROVIDER_FLAG_INTERNAL) == 0)
+				m_providers.emplace_back(i);
+		}
+	}
 
-bool Providers::setData(const QModelIndex& index, const QVariant& value, int role)
-{
-    if (data(index, role) == value)
-        return false;
+	int Providers::count() const
+	{
+		return static_cast<int>(m_providers.size());
+	}
 
-    auto& provider = m_providers.at(static_cast<size_t>(index.row()));
-    switch (role) {
-        case Roles::Enabled:
-            provider.setEnabled(value.toBool());
-            break;
-        default:
-            return false;
-    }
+	int Providers::rowCount(const QModelIndex &parent) const
+	{
+		if (parent.isValid())
+			return 0;
 
-    emit dataChanged(index, index, QVector<int>() << role);
-    AppSettings::save_config();
-    return true;
-}
+		return count();
+	}
 
-Qt::ItemFlags Providers::flags(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return Qt::NoItemFlags;
+	QVariant Providers::data(const QModelIndex &index, int role) const
+	{
+		if (!index.isValid() || rowCount() <= index.row())
+			return {};
 
-    return Qt::ItemIsEditable | Qt::ItemNeverHasChildren | QAbstractListModel::flags(index);
-}
+		const auto &provider = m_providers.at(static_cast<size_t>(index.row()));
+		switch (role)
+		{
+			case Roles::Name:
+				return provider.name();
+			case Roles::Enabled:
+				return provider.enabled();
+			default:
+				return {};
+		}
+	}
+
+	bool Providers::setData(const QModelIndex &index, const QVariant &value, int role)
+	{
+		if (data(index, role) == value)
+			return false;
+
+		auto &provider = m_providers.at(static_cast<size_t>(index.row()));
+		switch (role)
+		{
+			case Roles::Enabled:
+				provider.setEnabled(value.toBool());
+				break;
+			default:
+				return false;
+		}
+
+		emit dataChanged(index, index, QVector<int>() << role);
+		AppSettings::save_config();
+		return true;
+	}
+
+	Qt::ItemFlags Providers::flags(const QModelIndex &index) const
+	{
+		if (!index.isValid())
+			return Qt::NoItemFlags;
+
+		return Qt::ItemIsEditable | Qt::ItemNeverHasChildren | QAbstractListModel::flags(index);
+	}
 } // namespace model

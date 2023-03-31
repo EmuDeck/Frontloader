@@ -37,34 +37,35 @@
 #endif
 
 
-namespace {
-    int m_tty = -1;
-    int m_old_kbd_mode = 0;
+namespace
+{
+	int m_tty = -1;
+	int m_old_kbd_mode = 0;
 }
 
 void TerminalKbd::on_startup()
 {
-    m_tty = ::isatty(0) ? 0 : -1;
-    ::ioctl(m_tty, KDGKBMODE, &m_old_kbd_mode);
+	m_tty = ::isatty(0) ? 0 : -1;
+	::ioctl(m_tty, KDGKBMODE, &m_old_kbd_mode);
 }
 
 void TerminalKbd::enable()
 {
-    if (m_tty == -1)
-        return;
+	if (m_tty == -1)
+		return;
 
-    ::ioctl(m_tty, KDSKBMUTE, 0);
-    ::ioctl(m_tty, KDSKBMODE, m_old_kbd_mode);
+	::ioctl(m_tty, KDSKBMUTE, 0);
+	::ioctl(m_tty, KDSKBMODE, m_old_kbd_mode);
 }
 
 void TerminalKbd::disable()
 {
-    if (m_tty == -1)
-        return;
+	if (m_tty == -1)
+		return;
 
-    ::ioctl(m_tty, KDGKBMODE, &m_old_kbd_mode);
-    ::ioctl(m_tty, KDSKBMUTE, 1);
-    ::ioctl(m_tty, KDSKBMODE, KBD_OFF_MODE);
+	::ioctl(m_tty, KDGKBMODE, &m_old_kbd_mode);
+	::ioctl(m_tty, KDSKBMUTE, 1);
+	::ioctl(m_tty, KDSKBMODE, KBD_OFF_MODE);
 }
 
 #else

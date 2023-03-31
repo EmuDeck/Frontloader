@@ -18,53 +18,56 @@
 #include "ScannerState.h"
 
 
-namespace model {
-ScannerState::ScannerState(QObject* parent)
-    : QObject(parent)
-{}
-
-void ScannerState::reset()
+namespace model
 {
-    m_progress = 0.f;
-    emit progressChanged();
+	ScannerState::ScannerState(QObject* parent)
+			: QObject(parent)
+	{}
 
-    m_stage = QString();
-    emit stageChanged();
-}
+	void ScannerState::reset()
+	{
+		m_progress = 0.f;
+		emit progressChanged();
 
-void ScannerState::onScanStarted()
-{
-    m_running = true;
-    emit runningChanged();
-}
+		m_stage = QString();
+		emit stageChanged();
+	}
 
-void ScannerState::onScanProgressChanged(float value, QString stage)
-{
-    Q_ASSERT(value <= 1.f);
+	void ScannerState::onScanStarted()
+	{
+		m_running = true;
+		emit runningChanged();
+	}
 
-    if (value > m_progress) {
-        m_progress = value;
-        emit progressChanged();
-    }
-    if (stage != m_stage) {
-        m_stage = std::move(stage);
-        emit stageChanged();
-    }
-}
+	void ScannerState::onScanProgressChanged(float value, QString stage)
+	{
+		Q_ASSERT(value <= 1.f);
 
-void ScannerState::onScanFinished()
-{
-    // Do nothing, we're waiting for post processing to complete too
-}
+		if (value > m_progress)
+		{
+			m_progress = value;
+			emit progressChanged();
+		}
+		if (stage != m_stage)
+		{
+			m_stage = std::move(stage);
+			emit stageChanged();
+		}
+	}
 
-void ScannerState::onUiProcessing()
-{
-    onScanProgressChanged(1.f, QString());
-}
+	void ScannerState::onScanFinished()
+	{
+		// Do nothing, we're waiting for post processing to complete too
+	}
 
-void ScannerState::onUiReady()
-{
-    m_running = false;
-    emit runningChanged();
-}
+	void ScannerState::onUiProcessing()
+	{
+		onScanProgressChanged(1.f, QString());
+	}
+
+	void ScannerState::onUiReady()
+	{
+		m_running = false;
+		emit runningChanged();
+	}
 } // namespace model

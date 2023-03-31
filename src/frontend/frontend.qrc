@@ -3,6 +3,7 @@
         <file>main.qml</file>
         <file>MenuLayer.qml</file>
         <file>SplashLayer.qml</file>
+        <file>AutobootLayer.qml</file>
         <file>assets/volume.wav</file>
         <file>assets/dir-icon.png</file>
         <file>assets/logo.png</file>

@@ -18,6 +18,7 @@ import QtQuick.Window 2.2
 
 Window {
     id: appWindow
+
     function vpx(value) {
         return global.winScale * value;
     }
@@ -65,6 +66,7 @@ Window {
 
     SoundEffect {
         id: sfxVolume
+
         source: "assets/volume.wav"
     }
 
@@ -106,7 +108,7 @@ Window {
             readonly property url apiThemePath: Internal.settings.themes.currentQmlPath
 
             function getThemeFile() {
-                if (Internal.scanner.running)
+                if (Internal.scanner.running || Internal.autoboot.running)
                     return "";
 
                 if (api.collections.count === 0)
@@ -124,19 +126,16 @@ Window {
                     event.accepted = true;
                     mainMenu.focus = true;
                 }
-
                 if (api.keys.isVolUp(event)) {
                     event.accepted = true;
                     Internal.system.volumeUp();
                     sfxVolume.play();
                 }
-
                 if (api.keys.isVolDown(event)) {
                     event.accepted = true;
                     Internal.system.volumeDown();
                     sfxVolume.play();
                 }
-
                 if (event.key === Qt.Key_F5) {
                     event.accepted = true;
                     theme.source = "";
@@ -153,9 +152,9 @@ Window {
             }
             onLoaded: item.focus = focus
             onFocusChanged: {
-                if (item) {
+                if (item)
                     item.focus = focus;
-                }
+
             }
         }
 
@@ -167,9 +166,9 @@ Window {
             asynchronous: true
             onLoaded: item.focus = focus
             onFocusChanged: {
-                if (item) {
+                if (item)
                     item.focus = focus;
-                }
+
             }
             enabled: focus
         }
@@ -281,10 +280,18 @@ Window {
         function onRunningChanged() {
             if (Internal.scanner.running)
                 splashScreen.focus = true;
-
         }
 
         target: Internal.scanner
+    }
+
+    Connections {
+        function onRunningChanged() {
+            if (Internal.autoboot.running)
+                autobootScreen.focus = true;
+        }
+
+        target: Internal.autoboot
     }
 
     SplashLayer {
@@ -308,6 +315,36 @@ Window {
         stage: Internal.scanner.stage
         onSkinLoadingChanged: hideMaybe()
         onDataLoadingChanged: hideMaybe()
+    }
+
+    AutobootLayer {
+        id: autobootScreen
+
+        readonly property bool dataLoading: Internal.autoboot.running
+        readonly property bool skinLoading: theme.status === Loader.Null || theme.status === Loader.Loading
+
+        function hideMaybeAutoboot() {
+            if (focus && !dataLoading && !skinLoading) {
+                content.focus = true;
+                Internal.autoboot.reset();
+            }
+        }
+
+        Keys.onPressed: {
+            if (api.keys.isCancel(event) || api.keys.isAccept(event)) {
+                event.accepted = true;
+                Internal.autoboot.cancel();
+            }
+        }
+
+        focus: false
+        enabled: true
+        visible: focus
+        showDataProgressText: dataLoading
+        progress: Internal.autoboot.progress
+        stage: Internal.autoboot.stage
+        onSkinLoadingChanged: hideMaybeAutoboot()
+        onDataLoadingChanged: hideMaybeAutoboot()
     }
 
 }

@@ -18,14 +18,18 @@
 #pragma once
 
 
-namespace platform {
+namespace platform
+{
 /// Contains the implementation of platform-specific system calls,
 /// such as reboot or shutdown
-namespace power {
+	namespace power
+	{
 
-void reboot();
-void shutdown();
-void suspend();
+		void reboot();
 
-} // namespace power
+		void shutdown();
+
+		void suspend();
+
+	} // namespace power
 } // namespace platform

@@ -21,64 +21,66 @@
 #include "utils/KeySequenceTools.h"
 
 
-namespace {
-bool valid_event_id(int event_id)
+namespace
 {
-    return 0 <= event_id && event_id < model::KeyEditor::eventCount();
-}
+	bool valid_event_id(int event_id)
+	{
+		return 0 <= event_id && event_id < model::KeyEditor::eventCount();
+	}
 } // namespace
 
 
-namespace model {
-
-KeyEditor::KeyEditor(QObject* parent)
-    : QObject(parent)
-{}
-
-void KeyEditor::addKey(int event_id, const QVariant& event)
+namespace model
 {
-    if (!valid_event_id(event_id))
-        return;
 
-    QKeySequence keyseq = utils::qmlevent_to_keyseq(event);
-    if (keyseq.isEmpty())
-        return;
+	KeyEditor::KeyEditor(QObject* parent)
+			: QObject(parent)
+	{}
 
-    AppSettings::keys.add_key(static_cast<::KeyEvent>(event_id), std::move(keyseq));
-    AppSettings::save_config();
-    emit keysChanged();
-}
+	void KeyEditor::addKey(int event_id, const QVariant &event)
+	{
+		if (!valid_event_id(event_id))
+			return;
 
-void KeyEditor::deleteKeyCode(int event_id, const int keycode)
-{
-    if (!valid_event_id(event_id) || keycode == 0)
-        return;
+		QKeySequence keyseq = utils::qmlevent_to_keyseq(event);
+		if (keyseq.isEmpty())
+			return;
 
-    AppSettings::keys.del_key(static_cast<::KeyEvent>(event_id), QKeySequence(keycode));
-    AppSettings::save_config();
-    emit keysChanged();
-}
+		AppSettings::keys.add_key(static_cast<::KeyEvent>(event_id), std::move(keyseq));
+		AppSettings::save_config();
+		emit keysChanged();
+	}
 
-void KeyEditor::replaceKeyCode(int event_id, const int old_keycode, const QVariant& new_keyevent)
-{
-    if (!valid_event_id(event_id) || old_keycode == 0)
-        return;
+	void KeyEditor::deleteKeyCode(int event_id, const int keycode)
+	{
+		if (!valid_event_id(event_id) || keycode == 0)
+			return;
 
-    QKeySequence keyseq_new = utils::qmlevent_to_keyseq(new_keyevent);
-    if (keyseq_new.isEmpty())
-        return;
+		AppSettings::keys.del_key(static_cast<::KeyEvent>(event_id), QKeySequence(keycode));
+		AppSettings::save_config();
+		emit keysChanged();
+	}
 
-    AppSettings::keys.del_key(static_cast<::KeyEvent>(event_id), QKeySequence(old_keycode));
-    AppSettings::keys.add_key(static_cast<::KeyEvent>(event_id), std::move(keyseq_new));
-    AppSettings::save_config();
-    emit keysChanged();
-}
+	void KeyEditor::replaceKeyCode(int event_id, const int old_keycode, const QVariant &new_keyevent)
+	{
+		if (!valid_event_id(event_id) || old_keycode == 0)
+			return;
 
-void KeyEditor::resetKeys()
-{
-    AppSettings::keys.resetAll();
-    AppSettings::save_config();
-    emit keysChanged();
-}
+		QKeySequence keyseq_new = utils::qmlevent_to_keyseq(new_keyevent);
+		if (keyseq_new.isEmpty())
+			return;
+
+		AppSettings::keys.del_key(static_cast<::KeyEvent>(event_id), QKeySequence(old_keycode));
+		AppSettings::keys.add_key(static_cast<::KeyEvent>(event_id), std::move(keyseq_new));
+		AppSettings::save_config();
+		emit keysChanged();
+	}
+
+	void KeyEditor::resetKeys()
+	{
+		AppSettings::keys.resetAll();
+		AppSettings::save_config();
+		emit keysChanged();
+	}
 
 } // namespace model

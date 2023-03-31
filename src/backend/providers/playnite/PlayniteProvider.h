@@ -18,22 +18,27 @@
 
 #include "providers/Provider.h"
 
-namespace providers {
-namespace playnite {
-struct PlayniteGame;
-struct PlayniteComponents;
+namespace providers
+{
+	namespace playnite
+	{
+		struct PlayniteGame;
+		struct PlayniteComponents;
 
-class PlayniteProvider : public Provider {
-    Q_OBJECT
+		class PlayniteProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit PlayniteProvider(QObject* parent = nullptr);
-    Provider& run(SearchContext&) final;
+		public:
+			explicit PlayniteProvider(QObject* parent = nullptr);
 
-private:
-    std::vector<model::Game*> create_games(const QString& playnite_path, SearchContext& sctx);
-    bool validate_game(const PlayniteGame& game, const PlayniteComponents& components) const;
-};
+			Provider &run(SearchContext &) final;
 
-} // namespace playnite
+		private:
+			std::vector<model::Game*> create_games(const QString &playnite_path, SearchContext &sctx);
+
+			bool validate_game(const PlayniteGame &game, const PlayniteComponents &components) const;
+		};
+
+	} // namespace playnite
 } // namespace providers

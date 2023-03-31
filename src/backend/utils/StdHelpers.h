@@ -42,18 +42,18 @@
 
 
 template<typename List1, typename List2>
-typename List1::iterator vec_append_move(List1& dest, List2&& src)
+typename List1::iterator vec_append_move(List1 &dest, List2 &&src)
 {
-    auto result = dest.insert(
-        dest.end(),
-        std::make_move_iterator(src.begin()),
-        std::make_move_iterator(src.end()));
-    src.clear();
-    return result;
+	auto result = dest.insert(
+			dest.end(),
+			std::make_move_iterator(src.begin()),
+			std::make_move_iterator(src.end()));
+	src.clear();
+	return result;
 }
 
 template<typename List1, typename List2>
-typename List1::iterator vec_append_copy(List1& dest, const List2& src)
+typename List1::iterator vec_append_copy(List1 &dest, const List2 &src)
 {
-    return dest.insert(dest.end(), src.cbegin(), src.cend());
+	return dest.insert(dest.end(), src.cbegin(), src.cend());
 }

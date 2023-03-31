@@ -22,40 +22,41 @@
 #include <QKeySequence>
 
 
-namespace {
-int get_modifiers(int keycode)
+namespace
 {
-    return static_cast<int>(static_cast<unsigned>(keycode) & Qt::KeyboardModifierMask);
-}
+	int get_modifiers(int keycode)
+	{
+		return static_cast<int>(static_cast<unsigned>(keycode) & Qt::KeyboardModifierMask);
+	}
 } // namespace
 
 
-namespace model {
+namespace model
+{
 
-Key::Key(QObject* parent)
-    : QObject(parent)
-    , m_modifiers(Qt::NoModifier)
-    , m_key(Qt::Key_unknown)
-{}
+	Key::Key(QObject* parent)
+			: QObject(parent), m_modifiers(Qt::NoModifier), m_key(Qt::Key_unknown)
+	{}
 
-Key::Key(const QKeySequence& keyseq, QObject* parent)
-    : QObject(parent)
-    , m_modifiers(keyseq.isEmpty() ? static_cast<int>(Qt::NoModifier) : get_modifiers(keyseq[0]))
-    , m_key(keyseq.isEmpty() ? static_cast<int>(Qt::Key_unknown) : keyseq[0] - m_modifiers)
-{}
+	Key::Key(const QKeySequence &keyseq, QObject* parent)
+			: QObject(parent),
+			  m_modifiers(keyseq.isEmpty() ? static_cast<int>(Qt::NoModifier) : get_modifiers(keyseq[0])),
+			  m_key(keyseq.isEmpty() ? static_cast<int>(Qt::Key_unknown) : keyseq[0] - m_modifiers)
+	{}
 
 // NOTE: toString was already taken...
-QString Key::name() const
-{
-    const QKeySequence keyseq(keyCode());
+	QString Key::name() const
+	{
+		const QKeySequence keyseq(keyCode());
 
-    const auto gamepad_it = AppSettings::gamepadButtonNames.find(keyseq);
-    if (gamepad_it != AppSettings::gamepadButtonNames.cend()) {
-        return QStringLiteral("Gamepad %1 (%2)")
-            .arg(QString::number(keyseq[0] - GamepadKeyId::A), gamepad_it->second);
-    }
+		const auto gamepad_it = AppSettings::gamepadButtonNames.find(keyseq);
+		if (gamepad_it != AppSettings::gamepadButtonNames.cend())
+		{
+			return QStringLiteral("Gamepad %1 (%2)")
+					.arg(QString::number(keyseq[0] - GamepadKeyId::A), gamepad_it->second);
+		}
 
-    return keyseq.toString(QKeySequence::NativeText);
-}
+		return keyseq.toString(QKeySequence::NativeText);
+	}
 
 } // namespace model

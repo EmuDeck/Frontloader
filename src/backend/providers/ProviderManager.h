@@ -20,42 +20,61 @@
 #include <QObject>
 #include <QFuture>
 
-namespace model { class Collection; }
-namespace model { class Game; }
-namespace model { class GameFile; }
+namespace model
+{
+	class Collection;
+}
+namespace model
+{
+	class Game;
+}
+namespace model
+{
+	class GameFile;
+}
 
 
-class ProviderManager : public QObject {
-    Q_OBJECT
+class ProviderManager : public QObject
+{
+Q_OBJECT
 
 public:
-    explicit ProviderManager(QObject* parent = nullptr);
+	explicit ProviderManager(QObject* parent = nullptr);
 
-    void run();
+	void run();
 
-    void onGameLaunched(model::GameFile* const) const;
-    void onGameFinished(model::GameFile* const) const;
-    void onFavoritesChanged(const std::vector<model::Game*>&) const;
+	void onGameLaunched(model::GameFile* const) const;
 
-    std::vector<model::Collection*>& foundCollections() { return m_found_collections; }
-    std::vector<model::Game*>& foundGames() { return m_found_games; }
+	void onGameFinished(model::GameFile* const) const;
+
+	void onFavoritesChanged(const std::vector<model::Game*> &) const;
+
+	std::vector<model::Collection*> &foundCollections()
+	{ return m_found_collections; }
+
+	std::vector<model::Game*> &foundGames()
+	{ return m_found_games; }
 
 signals:
-    void scanStarted();
-    void scanProgressChanged(float, QString);
-    void scanFinished();
+
+	void scanStarted();
+
+	void scanProgressChanged(float, QString);
+
+	void scanFinished();
 
 private slots:
-    void onProviderProgressChanged(float);
+
+	void onProviderProgressChanged(float);
 
 private:
-    QFuture<void> m_future;
-    float m_progress_step = 1.f;
-    float m_current_progress = 0.f;
-    QString m_current_stage;
+	QFuture<void> m_future;
+	float m_progress_step = 1.f;
+	float m_current_progress = 0.f;
+	QString m_current_stage;
 
-    std::vector<model::Collection*> m_found_collections;
-    std::vector<model::Game*> m_found_games;
+	std::vector<model::Collection*> m_found_collections;
+	std::vector<model::Game*> m_found_games;
 
-    void finalize();
+	void finalize();
 };

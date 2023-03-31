@@ -20,32 +20,43 @@
 
 #include <QDir>
 
-namespace providers {
-namespace playnite {
-struct PlayniteGame;
-struct PlayniteEmulator;
-struct PlayniteComponents;
+namespace providers
+{
+	namespace playnite
+	{
+		struct PlayniteGame;
+		struct PlayniteEmulator;
+		struct PlayniteComponents;
 
-class PlayniteMetadataParser {
-public:
-    PlayniteMetadataParser(QString log_tag, const QDir& playnite_dir);
-    PlayniteComponents parse_metadata() const;
+		class PlayniteMetadataParser
+		{
+		public:
+			PlayniteMetadataParser(QString log_tag, const QDir &playnite_dir);
 
-private:
-    const QString m_log_tag;
-    const QDir m_playnite_dir;
-    const QDir::Filters m_dir_filters;
-    const QStringList m_json_ext_list;
+			PlayniteComponents parse_metadata() const;
 
-    HashMap<QString, QString> parse_platform_metadata() const;
-    HashMap<QString, QString> parse_source_metadata() const;
-    HashMap<QString, QString> parse_company_metadata() const;
-    HashMap<QString, QString> parse_genre_metadata() const;
-    HashMap<QString, PlayniteEmulator> parse_emulator_metadata() const;
-    std::vector<PlayniteGame> parse_game_metadata() const;
-    QJsonObject get_json_object_from_file(const QString& file_path) const;
-    HashMap<QString, QString> parse_id_name_files(const QString& rel_path) const;
-};
+		private:
+			const QString m_log_tag;
+			const QDir m_playnite_dir;
+			const QDir::Filters m_dir_filters;
+			const QStringList m_json_ext_list;
 
-} // namespace playnite
+			HashMap<QString, QString> parse_platform_metadata() const;
+
+			HashMap<QString, QString> parse_source_metadata() const;
+
+			HashMap<QString, QString> parse_company_metadata() const;
+
+			HashMap<QString, QString> parse_genre_metadata() const;
+
+			HashMap<QString, PlayniteEmulator> parse_emulator_metadata() const;
+
+			std::vector<PlayniteGame> parse_game_metadata() const;
+
+			QJsonObject get_json_object_from_file(const QString &file_path) const;
+
+			HashMap<QString, QString> parse_id_name_files(const QString &rel_path) const;
+		};
+
+	} // namespace playnite
 } // namespace providers

@@ -20,84 +20,92 @@
 using DeviceAxes = HashMap<GamepadAxis, double, EnumHash>;
 
 
-namespace {
-enum class AxisZone : unsigned char {
-    DEAD, // center
-    POSITIVE,
-    NEGATIVE,
-};
-
-AxisZone axis_zone(double axis_value)
+namespace
 {
-    static constexpr double DEADZONE = 0.5;
+	enum class AxisZone : unsigned char
+	{
+		DEAD, // center
+		POSITIVE,
+		NEGATIVE,
+	};
 
-    if (-DEADZONE < axis_value && axis_value < DEADZONE)
-        return AxisZone::DEAD;
+	AxisZone axis_zone(double axis_value)
+	{
+		static constexpr double DEADZONE = 0.5;
 
-    return axis_value > 0
-        ? AxisZone::POSITIVE
-        : AxisZone::NEGATIVE;
-}
+		if (-DEADZONE < axis_value && axis_value < DEADZONE)
+			return AxisZone::DEAD;
 
-GamepadButton axis_valchange_to_button(GamepadAxis axis, double axis_change)
-{
-    const bool is_negative = (axis_change < 0);
-    const bool is_horizontal = (axis == GamepadAxis::LEFTX ||
-                                axis == GamepadAxis::RIGHTX);
-    return is_horizontal
-        ? (is_negative ? GamepadButton::LEFT : GamepadButton::RIGHT)
-        : (is_negative ? GamepadButton::UP : GamepadButton::DOWN);
-}
+		return axis_value > 0
+		       ? AxisZone::POSITIVE
+		       : AxisZone::NEGATIVE;
+	}
 
-GamepadButton reverse_button(GamepadButton button)
-{
-    switch (button) {
-        case GamepadButton::LEFT: return GamepadButton::RIGHT;
-        case GamepadButton::RIGHT: return GamepadButton::LEFT;
-        case GamepadButton::UP: return GamepadButton::DOWN;
-        case GamepadButton::DOWN: return GamepadButton::UP;
-        default: Q_UNREACHABLE();
-    }
-}
+	GamepadButton axis_valchange_to_button(GamepadAxis axis, double axis_change)
+	{
+		const bool is_negative = (axis_change < 0);
+		const bool is_horizontal = (axis == GamepadAxis::LEFTX ||
+		                            axis == GamepadAxis::RIGHTX);
+		return is_horizontal
+		       ? (is_negative ? GamepadButton::LEFT : GamepadButton::RIGHT)
+		       : (is_negative ? GamepadButton::UP : GamepadButton::DOWN);
+	}
 
-double axis_val_or_zero(const DeviceAxes& axes, GamepadAxis axis)
-{
-    const auto it = axes.find(axis);
-    if (it != axes.cend())
-        return it->second;
+	GamepadButton reverse_button(GamepadButton button)
+	{
+		switch (button)
+		{
+			case GamepadButton::LEFT:
+				return GamepadButton::RIGHT;
+			case GamepadButton::RIGHT:
+				return GamepadButton::LEFT;
+			case GamepadButton::UP:
+				return GamepadButton::DOWN;
+			case GamepadButton::DOWN:
+				return GamepadButton::UP;
+			default:
+				Q_UNREACHABLE();
+		}
+	}
 
-    return 0.0;
-}
+	double axis_val_or_zero(const DeviceAxes &axes, GamepadAxis axis)
+	{
+		const auto it = axes.find(axis);
+		if (it != axes.cend())
+			return it->second;
+
+		return 0.0;
+	}
 } // namespace
 
 
 GamepadAxisNavigation::GamepadAxisNavigation(QObject* parent)
-    : QObject(parent)
+		: QObject(parent)
 {}
 
 void GamepadAxisNavigation::onAxisEvent(int deviceId, GamepadAxis axis, double axisValue)
 {
-    if (axis == GamepadAxis::INVALID)
-        return;
+	if (axis == GamepadAxis::INVALID)
+		return;
 
-    // NOTE: the point here is that if the device or axis wasn't
-    // registered yet, it will be created automatically
-    DeviceAxes& device_axes = devices[deviceId];
-    const double prev_value = axis_val_or_zero(device_axes, axis);
-    device_axes[axis] = axisValue;
+	// NOTE: the point here is that if the device or axis wasn't
+	// registered yet, it will be created automatically
+	DeviceAxes &device_axes = devices[deviceId];
+	const double prev_value = axis_val_or_zero(device_axes, axis);
+	device_axes[axis] = axisValue;
 
-    const AxisZone prev_zone = axis_zone(prev_value);
-    const AxisZone curr_zone = axis_zone(axisValue);
-    if (prev_zone == curr_zone)
-        return;
+	const AxisZone prev_zone = axis_zone(prev_value);
+	const AxisZone curr_zone = axis_zone(axisValue);
+	if (prev_zone == curr_zone)
+		return;
 
-    const double val_change = axisValue - prev_value;
-    const GamepadButton pressed_btn = axis_valchange_to_button(axis, val_change);
-    const GamepadButton released_btn = reverse_button(pressed_btn);
+	const double val_change = axisValue - prev_value;
+	const GamepadButton pressed_btn = axis_valchange_to_button(axis, val_change);
+	const GamepadButton released_btn = reverse_button(pressed_btn);
 
-    if (prev_zone != AxisZone::DEAD)
-        emit buttonChanged(deviceId, released_btn, false);
+	if (prev_zone != AxisZone::DEAD)
+			emit buttonChanged(deviceId, released_btn, false);
 
-    if (curr_zone != AxisZone::DEAD)
-        emit buttonChanged(deviceId, pressed_btn, true);
+	if (curr_zone != AxisZone::DEAD)
+			emit buttonChanged(deviceId, pressed_btn, true);
 }

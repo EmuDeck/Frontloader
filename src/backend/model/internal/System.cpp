@@ -18,41 +18,42 @@
 #include "System.h"
 
 
-namespace model {
-
-System::System(QObject* parent)
-    : QObject(parent)
+namespace model
 {
-}
 
-void System::quit()
-{
-    emit appCloseRequested(AppCloseType::QUIT);
-}
+	System::System(QObject* parent)
+			: QObject(parent)
+	{
+	}
 
-void System::reboot()
-{
-    emit appCloseRequested(AppCloseType::REBOOT);
-}
+	void System::quit()
+	{
+		emit appCloseRequested(AppCloseType::QUIT);
+	}
 
-void System::shutdown()
-{
-    emit appCloseRequested(AppCloseType::SHUTDOWN);
-}
+	void System::reboot()
+	{
+		emit appCloseRequested(AppCloseType::REBOOT);
+	}
 
-void System::suspend()
-{
-    emit appCloseRequested(AppCloseType::SUSPEND);
-}
+	void System::shutdown()
+	{
+		emit appCloseRequested(AppCloseType::SHUTDOWN);
+	}
 
-void System::volumeUp()
-{
-	emit volumeChangeRequested(VolumeChangeType::UP);
-}
+	void System::suspend()
+	{
+		emit appCloseRequested(AppCloseType::SUSPEND);
+	}
 
-void System::volumeDown()
-{
-	emit volumeChangeRequested(VolumeChangeType::DOWN);
-}
+	void System::volumeUp()
+	{
+		emit volumeChangeRequested(VolumeChangeType::UP);
+	}
+
+	void System::volumeDown()
+	{
+		emit volumeChangeRequested(VolumeChangeType::DOWN);
+	}
 
 } // namespace model

@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace es2 {
+namespace providers
+{
+	namespace es2
+	{
 
-class Es2Provider : public Provider {
-    Q_OBJECT
+		class Es2Provider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit Es2Provider(QObject* parent = nullptr);
+		public:
+			explicit Es2Provider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace es2
+	} // namespace es2
 } // namespace providers

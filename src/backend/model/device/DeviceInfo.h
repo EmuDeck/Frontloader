@@ -21,50 +21,65 @@
 #include <QTimer>
 
 
-namespace model {
-class DeviceInfo : public QObject {
-    Q_OBJECT
-    Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+namespace model
+{
+	class DeviceInfo : public QObject
+	{
+	Q_OBJECT
+		Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
 
-    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
-    Q_PROPERTY(bool batteryCharging READ batteryCharging NOTIFY batteryStatusChanged)
-    Q_PROPERTY(float batteryPercent READ batteryPercent NOTIFY batteryLifeChanged)
-    Q_PROPERTY(int batterySeconds READ batterySeconds NOTIFY batteryLifeChanged)
+		Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
+		Q_PROPERTY(bool batteryCharging READ batteryCharging NOTIFY batteryStatusChanged)
+		Q_PROPERTY(float batteryPercent READ batteryPercent NOTIFY batteryLifeChanged)
+		Q_PROPERTY(int batterySeconds READ batterySeconds NOTIFY batteryLifeChanged)
 
-public:
-    explicit DeviceInfo(QObject* parent = nullptr);
+	public:
+		explicit DeviceInfo(QObject* parent = nullptr);
 
-    enum class BatteryStatus {
-        Unknown,
-        NoBattery,
-        Discharging,
-        Charging,
-        Charged,
-    };
-    Q_ENUM(BatteryStatus)
+		enum class BatteryStatus
+		{
+			Unknown,
+			NoBattery,
+			Discharging,
+			Charging,
+			Charged,
+		};
 
-    struct BatteryInfo {
-        BatteryStatus status;
-        float percent;
-        int seconds;
-    };
+		Q_ENUM(BatteryStatus)
 
-    BatteryStatus batteryStatus() const { return m_battery.status; }
-    bool batteryCharging() const {
-        return m_battery.status == BatteryStatus::Charging || m_battery.status == BatteryStatus::Charged;
-    }
-    float batteryPercent() const { return m_battery.percent; }
-    int batterySeconds() const { return m_battery.seconds; }
+		struct BatteryInfo
+		{
+			BatteryStatus status;
+			float percent;
+			int seconds;
+		};
 
-signals:
-    void batteryStatusChanged();
-    void batteryLifeChanged();
+		BatteryStatus batteryStatus() const
+		{ return m_battery.status; }
 
-private slots:
-    void poll_battery();
+		bool batteryCharging() const
+		{
+			return m_battery.status == BatteryStatus::Charging || m_battery.status == BatteryStatus::Charged;
+		}
 
-private:
-    QTimer m_battery_poll;
-    BatteryInfo m_battery;
-};
+		float batteryPercent() const
+		{ return m_battery.percent; }
+
+		int batterySeconds() const
+		{ return m_battery.seconds; }
+
+	signals:
+
+		void batteryStatusChanged();
+
+		void batteryLifeChanged();
+
+	private slots:
+
+		void poll_battery();
+
+	private:
+		QTimer m_battery_poll;
+		BatteryInfo m_battery;
+	};
 } // namespace model

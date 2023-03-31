@@ -23,10 +23,11 @@
 
 // Lightweight (and hacky) reproduction of KeyEvent
 // because the proper implementation is private in Qt
-class FakeQKeyEvent : public QObject {
-    Q_OBJECT
+class FakeQKeyEvent : public QObject
+{
+Q_OBJECT
 public:
-    explicit FakeQKeyEvent();
+	explicit FakeQKeyEvent();
 
-    QKeyEvent event;
+	QKeyEvent event;
 };

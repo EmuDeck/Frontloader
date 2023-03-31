@@ -20,21 +20,24 @@
 class QStringList;
 
 
-enum class ScriptEvent : unsigned char {
-    QUIT,
-    REBOOT,
-    SHUTDOWN,
-    CONFIG_CHANGED,
-    SETTINGS_CHANGED,
-    CONTROLS_CHANGED,
-    PROCESS_STARTED,
-    PROCESS_FINISHED,
+enum class ScriptEvent : unsigned char
+{
+	QUIT,
+	REBOOT,
+	SHUTDOWN,
+	CONFIG_CHANGED,
+	SETTINGS_CHANGED,
+	CONTROLS_CHANGED,
+	PROCESS_STARTED,
+	PROCESS_FINISHED,
 };
 
 
 /// A utility class for finding and running external scripts
-class ScriptRunner {
+class ScriptRunner
+{
 public:
-    static void run(ScriptEvent);
-    static void run(ScriptEvent, const QStringList&);
+	static void run(ScriptEvent);
+
+	static void run(ScriptEvent, const QStringList &);
 };

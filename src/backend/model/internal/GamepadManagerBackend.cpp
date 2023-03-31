@@ -18,15 +18,16 @@
 #include "GamepadManagerBackend.h"
 
 
-namespace model {
-
-GamepadManagerBackend::GamepadManagerBackend(QObject* parent)
-    : QObject(parent)
-{}
-
-GamepadManagerBackend::~GamepadManagerBackend()
+namespace model
 {
-    stop();
-}
+
+	GamepadManagerBackend::GamepadManagerBackend(QObject* parent)
+			: QObject(parent)
+	{}
+
+	GamepadManagerBackend::~GamepadManagerBackend()
+	{
+		stop();
+	}
 
 } // namespace model

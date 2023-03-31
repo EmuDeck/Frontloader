@@ -26,35 +26,46 @@
 #define LOGMSG(str) QStringLiteral(str)
 
 
-class LogSink {
+class LogSink
+{
 public:
-    LogSink();
-    virtual ~LogSink();
-    NO_COPY_NO_MOVE(LogSink)
+	LogSink();
 
-    virtual void info(const QString&) = 0;
-    virtual void warning(const QString&) = 0;
-    virtual void error(const QString&) = 0;
+	virtual ~LogSink();
+	NO_COPY_NO_MOVE(LogSink)
+
+	virtual void info(const QString &) = 0;
+
+	virtual void warning(const QString &) = 0;
+
+	virtual void error(const QString &) = 0;
 };
 
 
-class Log {
+class Log
+{
 public:
-    Log() = delete;
-    NO_COPY_NO_MOVE(Log)
+	Log() = delete;
+	NO_COPY_NO_MOVE(Log)
 
-    static void init(bool silent = false);
-    static void init_qttest();
-    static void close();
+	static void init(bool silent = false);
 
-    static void info(const QString& message);
-    static void warning(const QString& message);
-    static void error(const QString& message);
+	static void init_qttest();
 
-    static void info(const QString& tag, const QString& message);
-    static void warning(const QString& tag, const QString& message);
-    static void error(const QString& tag, const QString& message);
+	static void close();
+
+	static void info(const QString &message);
+
+	static void warning(const QString &message);
+
+	static void error(const QString &message);
+
+	static void info(const QString &tag, const QString &message);
+
+	static void warning(const QString &tag, const QString &message);
+
+	static void error(const QString &tag, const QString &message);
 
 private:
-    static std::vector<std::unique_ptr<LogSink>> m_sinks;
+	static std::vector<std::unique_ptr<LogSink>> m_sinks;
 };

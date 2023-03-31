@@ -18,35 +18,43 @@
 
 #include <QString>
 
-namespace providers {
-namespace playnite {
+namespace providers
+{
+	namespace playnite
+	{
 
-struct PlayniteGame;
-struct PlayniteComponents;
+		struct PlayniteGame;
+		struct PlayniteComponents;
 
-struct PlayniteGameLaunchInfo {
-    enum class LaunchType {
-        STEAM,
-        INSTALLED,
-        EMULATOR,
-        UNKNOWN,
-    };
+		struct PlayniteGameLaunchInfo
+		{
+			enum class LaunchType
+			{
+				STEAM,
+				INSTALLED,
+				EMULATOR,
+				UNKNOWN,
+			};
 
-    LaunchType type = LaunchType::UNKNOWN;
-    QString path;
-    QString working_dir;
-    QString launch_cmd;
-};
+			LaunchType type = LaunchType::UNKNOWN;
+			QString path;
+			QString working_dir;
+			QString launch_cmd;
+		};
 
-class PlayniteLaunchHelper {
-public:
-    PlayniteLaunchHelper();
-    PlayniteGameLaunchInfo get_game_launch_info(const PlayniteGame& game_info, const PlayniteComponents& components) const;
-    static PlayniteGameLaunchInfo::LaunchType get_launch_type_enum(int type);
+		class PlayniteLaunchHelper
+		{
+		public:
+			PlayniteLaunchHelper();
 
-private:
-    const QString m_steam_call;
-};
+			PlayniteGameLaunchInfo
+			get_game_launch_info(const PlayniteGame &game_info, const PlayniteComponents &components) const;
 
-} // namespace playnite
+			static PlayniteGameLaunchInfo::LaunchType get_launch_type_enum(int type);
+
+		private:
+			const QString m_steam_call;
+		};
+
+	} // namespace playnite
 } // namespace providers

@@ -20,9 +20,10 @@
 #include <QQuickImageProvider>
 
 
-class BlurhashProvider : public QQuickImageProvider {
+class BlurhashProvider : public QQuickImageProvider
+{
 public:
-    BlurhashProvider();
+	BlurhashProvider();
 
-    QImage requestImage(const QString&, QSize*, const QSize&) override;
+	QImage requestImage(const QString &, QSize*, const QSize &) override;
 };

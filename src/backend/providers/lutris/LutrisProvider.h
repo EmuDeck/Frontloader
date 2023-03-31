@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace lutris {
+namespace providers
+{
+	namespace lutris
+	{
 
-class LutrisProvider : public Provider {
-    Q_OBJECT
+		class LutrisProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit LutrisProvider(QObject* parent = nullptr);
+		public:
+			explicit LutrisProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace lutris
+	} // namespace lutris
 } // namespace providers

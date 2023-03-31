@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace logiqx {
+namespace providers
+{
+	namespace logiqx
+	{
 
-class LogiqxProvider : public Provider {
-    Q_OBJECT
+		class LogiqxProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit LogiqxProvider(QObject* parent = nullptr);
+		public:
+			explicit LogiqxProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace logiqx
+	} // namespace logiqx
 } // namespace providers

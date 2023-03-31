@@ -22,25 +22,33 @@
 #include <QObject>
 
 
-namespace model {
-class Key : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(int key READ key CONSTANT)
-    Q_PROPERTY(int modifiers READ modifiers CONSTANT)
-    Q_PROPERTY(int keyCode READ keyCode CONSTANT)
+namespace model
+{
+	class Key : public QObject
+	{
+	Q_OBJECT
+		Q_PROPERTY(int key READ key CONSTANT)
+		Q_PROPERTY(int modifiers READ modifiers CONSTANT)
+		Q_PROPERTY(int keyCode READ keyCode CONSTANT)
 
-public:
-    explicit Key(QObject* parent = nullptr);
-    explicit Key(const QKeySequence&, QObject* parent = nullptr);
+	public:
+		explicit Key(QObject* parent = nullptr);
 
-    int key() const { return m_key; }
-    int modifiers() const { return m_modifiers; }
-    int keyCode() const { return m_key + m_modifiers; }
+		explicit Key(const QKeySequence &, QObject* parent = nullptr);
 
-    Q_INVOKABLE QString name() const;
+		int key() const
+		{ return m_key; }
 
-private:
-    const int m_modifiers;
-    const int m_key;
-};
+		int modifiers() const
+		{ return m_modifiers; }
+
+		int keyCode() const
+		{ return m_key + m_modifiers; }
+
+		Q_INVOKABLE QString name() const;
+
+	private:
+		const int m_modifiers;
+		const int m_key;
+	};
 } // namespace model

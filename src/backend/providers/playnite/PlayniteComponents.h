@@ -21,17 +21,20 @@
 
 #include <QString>
 
-namespace providers {
-namespace playnite {
+namespace providers
+{
+	namespace playnite
+	{
 
-struct PlayniteComponents {
-    HashMap<QString, QString> sources;
-    HashMap<QString, PlayniteEmulator> emulators;
-    HashMap<QString, QString> platforms;
-    HashMap<QString, QString> companies;
-    HashMap<QString, QString> genres;
-    std::vector<PlayniteGame> games;
-};
+		struct PlayniteComponents
+		{
+			HashMap<QString, QString> sources;
+			HashMap<QString, PlayniteEmulator> emulators;
+			HashMap<QString, QString> platforms;
+			HashMap<QString, QString> companies;
+			HashMap<QString, QString> genres;
+			std::vector<PlayniteGame> games;
+		};
 
-} // namespace playnite
+	} // namespace playnite
 } // namespace providers

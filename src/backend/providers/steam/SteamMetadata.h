@@ -19,24 +19,34 @@
 
 #include <QString>
 
-namespace model { class Game; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Game;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
 
-namespace providers {
-namespace steam {
+namespace providers
+{
+	namespace steam
+	{
 
-class Metadata {
-public:
-    explicit Metadata(QString);
+		class Metadata
+		{
+		public:
+			explicit Metadata(QString);
 
-    bool fill_from_cache(const QString&, model::Game&) const;
-    void fill_from_network(const QString&, model::Game&, SearchContext&) const;
+			bool fill_from_cache(const QString &, model::Game &) const;
 
-private:
-    const QString m_log_tag;
-    const QString m_json_cache_dir;
-};
+			void fill_from_network(const QString &, model::Game &, SearchContext &) const;
 
-} // namespace steam
+		private:
+			const QString m_log_tag;
+			const QString m_json_cache_dir;
+		};
+
+	} // namespace steam
 } // namespace providers

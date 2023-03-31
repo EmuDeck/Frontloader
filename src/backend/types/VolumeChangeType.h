@@ -17,7 +17,8 @@
 
 #pragma once
 
-enum VolumeChangeType : unsigned char {
-    UP,
-    DOWN
+enum VolumeChangeType : unsigned char
+{
+	UP,
+	DOWN
 };

@@ -1,7 +1,7 @@
 pegasus_add_provider(
-    NAME "LaunchBox"
-    CXXID LAUNCHBOX
-    SOURCES
+        NAME "LaunchBox"
+        CXXID LAUNCHBOX
+        SOURCES
         LaunchBoxAssets.cpp
         LaunchBoxAssets.h
         LaunchBoxEmulatorsXml.cpp
@@ -14,6 +14,6 @@ pegasus_add_provider(
         LaunchBoxProvider.h
         LaunchBoxXml.cpp
         LaunchBoxXml.h
-    PLATFORMS
+        PLATFORMS
         WINDOWS
 )

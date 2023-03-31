@@ -17,71 +17,72 @@
 
 #include "Gamepad.h"
 
-namespace model {
-
-Gamepad::Gamepad(const int device_id, QString name, QObject* parent)
-    : QObject(parent)
-    , m_device_id(device_id)
-    , m_name(std::move(name))
-{}
-
-void Gamepad::setName(QString name)
+namespace model
 {
-    m_name = std::move(name);
-    emit nameChanged(m_name);
-}
 
-void Gamepad::setButtonState(GamepadButton button, bool pressed)
-{
+	Gamepad::Gamepad(const int device_id, QString name, QObject* parent)
+			: QObject(parent), m_device_id(device_id), m_name(std::move(name))
+	{}
+
+	void Gamepad::setName(QString name)
+	{
+		m_name = std::move(name);
+		emit nameChanged(m_name);
+	}
+
+	void Gamepad::setButtonState(GamepadButton button, bool pressed)
+	{
 #define GEN(key, target) \
     case GamepadButton::key: \
         m_button##target = pressed; \
         emit button##target##Changed(m_button##target); \
         break
 
-    switch (button) {
-        GEN(UP, Up);
-        GEN(DOWN, Down);
-        GEN(LEFT, Left);
-        GEN(RIGHT, Right);
-        GEN(SOUTH, South);
-        GEN(EAST, East);
-        GEN(WEST, West);
-        GEN(NORTH, North);
-        GEN(L1, L1);
-        GEN(L2, L2);
-        GEN(L3, L3);
-        GEN(R1, R1);
-        GEN(R2, R2);
-        GEN(R3, R3);
-        GEN(SELECT, Select);
-        GEN(START, Start);
-        GEN(GUIDE, Guide);
-        default:
-            break;
-    }
+		switch (button)
+		{
+			GEN(UP, Up);
+			GEN(DOWN, Down);
+			GEN(LEFT, Left);
+			GEN(RIGHT, Right);
+			GEN(SOUTH, South);
+			GEN(EAST, East);
+			GEN(WEST, West);
+			GEN(NORTH, North);
+			GEN(L1, L1);
+			GEN(L2, L2);
+			GEN(L3, L3);
+			GEN(R1, R1);
+			GEN(R2, R2);
+			GEN(R3, R3);
+			GEN(SELECT, Select);
+			GEN(START, Start);
+			GEN(GUIDE, Guide);
+			default:
+				break;
+		}
 
 #undef GEN
-}
+	}
 
-void Gamepad::setAxisState(GamepadAxis button, double value)
-{
+	void Gamepad::setAxisState(GamepadAxis button, double value)
+	{
 #define GEN(key, target) \
     case GamepadAxis::key: \
         m_axis##target = value; \
         emit axis##target##Changed(m_axis##target); \
         break
 
-    switch (button) {
-        GEN(LEFTX, LeftX);
-        GEN(LEFTY, LeftY);
-        GEN(RIGHTX, RightX);
-        GEN(RIGHTY, RightY);
-        default:
-            break;
-    }
+		switch (button)
+		{
+			GEN(LEFTX, LeftX);
+			GEN(LEFTY, LeftY);
+			GEN(RIGHTX, RightX);
+			GEN(RIGHTY, RightY);
+			default:
+				break;
+		}
 
 #undef GEN
-}
+	}
 
 } // namespace model

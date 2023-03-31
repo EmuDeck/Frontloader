@@ -22,29 +22,42 @@
 #include <QRegularExpression>
 #include <QStringList>
 
-namespace model { class Game; }
-namespace model { class Collection; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Game;
+}
+namespace model
+{
+	class Collection;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
 
-namespace providers {
-namespace steam {
+namespace providers
+{
+	namespace steam
+	{
 
-class Gamelist {
-public:
-    explicit Gamelist(QString);
+		class Gamelist
+		{
+		public:
+			explicit Gamelist(QString);
 
-    HashMap<QString, model::Game*> find_in(const QString&, const QString&, model::Collection&, SearchContext&) const;
+			HashMap<QString, model::Game*>
+			find_in(const QString &, const QString &, model::Collection &, SearchContext &) const;
 
-private:
-    const QString m_log_tag;
-    const QStringList m_name_filters;
-    const std::vector<QLatin1String> m_ignored_manifests;
-    const QRegularExpression m_rx_acf_appid;
-    const QRegularExpression m_rx_acf_title;
+		private:
+			const QString m_log_tag;
+			const QStringList m_name_filters;
+			const std::vector<QLatin1String> m_ignored_manifests;
+			const QRegularExpression m_rx_acf_appid;
+			const QRegularExpression m_rx_acf_title;
 
-    std::pair<QString, QString> read_manifest_file(const QString&) const;
-};
+			std::pair<QString, QString> read_manifest_file(const QString &) const;
+		};
 
-} // namespace steam
+	} // namespace steam
 } // namespace providers

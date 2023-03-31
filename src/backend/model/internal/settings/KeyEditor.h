@@ -22,25 +22,32 @@
 #include <QObject>
 
 
-namespace model {
-class KeyEditor: public QObject {
-    Q_OBJECT
-    Q_PROPERTY(int eventCount READ eventCount CONSTANT)
+namespace model
+{
+	class KeyEditor : public QObject
+	{
+	Q_OBJECT
+		Q_PROPERTY(int eventCount READ eventCount CONSTANT)
 
-public:
-    explicit KeyEditor(QObject* parent = nullptr);
+	public:
+		explicit KeyEditor(QObject* parent = nullptr);
 
-    // NOTE: keycode = key + modifier flags
-    Q_INVOKABLE void addKey(int event_id, const QVariant& keyevent);
-    Q_INVOKABLE void deleteKeyCode(int event_id, const int keycode);
-    Q_INVOKABLE void replaceKeyCode(int event_id, const int old_keycode, const QVariant& new_keyevent);
-    Q_INVOKABLE void resetKeys();
+		// NOTE: keycode = key + modifier flags
+		Q_INVOKABLE void addKey(int event_id, const QVariant &keyevent);
 
-    static constexpr int eventCount() {
-        return static_cast<int>(::KeyEvent::VOL_DOWN) + 1;
-    }
+		Q_INVOKABLE void deleteKeyCode(int event_id, const int keycode);
 
-signals:
-    void keysChanged();
-};
+		Q_INVOKABLE void replaceKeyCode(int event_id, const int old_keycode, const QVariant &new_keyevent);
+
+		Q_INVOKABLE void resetKeys();
+
+		static constexpr int eventCount()
+		{
+			return static_cast<int>(::KeyEvent::VOL_DOWN) + 1;
+		}
+
+	signals:
+
+		void keysChanged();
+	};
 } // namespace model

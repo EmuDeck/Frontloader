@@ -31,76 +31,82 @@
 #include <QStringBuilder>
 
 
-namespace {
-AssetType detect_asset_type(const QString& basename, const QString& ext)
+namespace
 {
-    const AssetType type = pegasus_assets::str_to_type(basename);
-    if (pegasus_assets::allowed_asset_exts(type).contains(ext))
-        return type;
+	AssetType detect_asset_type(const QString &basename, const QString &ext)
+	{
+		const AssetType type = pegasus_assets::str_to_type(basename);
+		if (pegasus_assets::allowed_asset_exts(type).contains(ext))
+			return type;
 
-    return AssetType::UNKNOWN;
-}
+		return AssetType::UNKNOWN;
+	}
 
-HashMap<QString, model::Game*> create_lookup_map(const HashMap<QString, model::GameFile*>& games)
-{
-    HashMap<QString, model::Game*> out;
+	HashMap<QString, model::Game*> create_lookup_map(const HashMap<QString, model::GameFile*> &games)
+	{
+		HashMap<QString, model::Game*> out;
 
-    // TODO: C++17
-    for (const auto& pair : games) {
-        const QFileInfo fi(pair.first);
-        model::Game* const game_ptr = pair.second->parentGame();
+		// TODO: C++17
+		for (const auto &pair: games)
+		{
+			const QFileInfo fi(pair.first);
+			model::Game* const game_ptr = pair.second->parentGame();
 
-        QString extless_path = ::clean_abs_dir(fi) % QChar('/') % fi.completeBaseName();
-        out.emplace(std::move(extless_path), game_ptr);
+			QString extless_path = ::clean_abs_dir(fi) % QChar('/') % fi.completeBaseName();
+			out.emplace(std::move(extless_path), game_ptr);
 
-        // NOTE: the files are not necessarily in the same directory
-        QString title_path = ::clean_abs_dir(fi) % QChar('/') % game_ptr->title();
-        out.emplace(std::move(title_path), game_ptr);
-    }
+			// NOTE: the files are not necessarily in the same directory
+			QString title_path = ::clean_abs_dir(fi) % QChar('/') % game_ptr->title();
+			out.emplace(std::move(title_path), game_ptr);
+		}
 
-    return out;
-}
+		return out;
+	}
 } // namespace
 
 
-namespace providers {
-namespace media {
-
-MediaProvider::MediaProvider(QObject* parent)
-    : Provider(QLatin1String("pegasus_media"), QStringLiteral("Media"), PROVIDER_FLAG_INTERNAL, parent)
-{}
-
-Provider& MediaProvider::run(SearchContext& sctx)
+namespace providers
 {
-    constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
-    constexpr auto dir_flags = QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
-    constexpr int media_len = 6; // length of `/media`
+	namespace media
+	{
 
-    const HashMap<QString, model::Game*> lookup_map = create_lookup_map(sctx.current_filepath_to_entry_map());
+		MediaProvider::MediaProvider(QObject* parent)
+				: Provider(QLatin1String("pegasus_media"), QStringLiteral("Media"), PROVIDER_FLAG_INTERNAL, parent)
+		{}
 
-    for (const QString& dir_base : sctx.pegasus_game_dirs()) {
-        const QString media_dir = dir_base + QLatin1String("/media");
+		Provider &MediaProvider::run(SearchContext &sctx)
+		{
+			constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
+			constexpr auto dir_flags = QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
+			constexpr int media_len = 6; // length of `/media`
 
-        QDirIterator dir_it(media_dir, dir_filters, dir_flags);
-        while (dir_it.hasNext()) {
-            dir_it.next();
-            const QFileInfo fileinfo = dir_it.fileInfo();
+			const HashMap<QString, model::Game*> lookup_map = create_lookup_map(sctx.current_filepath_to_entry_map());
 
-            const QString lookup_key = ::clean_abs_dir(fileinfo).remove(dir_base.length(), media_len);
-            const auto lookup_it = lookup_map.find(lookup_key);
-            if (lookup_it == lookup_map.cend())
-                continue;
+			for (const QString &dir_base: sctx.pegasus_game_dirs())
+			{
+				const QString media_dir = dir_base + QLatin1String("/media");
 
-            const AssetType asset_type = detect_asset_type(fileinfo.completeBaseName(), fileinfo.suffix());
-            if (asset_type == AssetType::UNKNOWN)
-                continue;
+				QDirIterator dir_it(media_dir, dir_filters, dir_flags);
+				while (dir_it.hasNext())
+				{
+					dir_it.next();
+					const QFileInfo fileinfo = dir_it.fileInfo();
 
-            lookup_it->second->assetsMut().add_file(asset_type, dir_it.filePath());
-        }
-    }
+					const QString lookup_key = ::clean_abs_dir(fileinfo).remove(dir_base.length(), media_len);
+					const auto lookup_it = lookup_map.find(lookup_key);
+					if (lookup_it == lookup_map.cend())
+						continue;
 
-    return *this;
-}
+					const AssetType asset_type = detect_asset_type(fileinfo.completeBaseName(), fileinfo.suffix());
+					if (asset_type == AssetType::UNKNOWN)
+						continue;
 
-} // namespace media
+					lookup_it->second->assetsMut().add_file(asset_type, dir_it.filePath());
+				}
+			}
+
+			return *this;
+		}
+
+	} // namespace media
 } // namespace providers

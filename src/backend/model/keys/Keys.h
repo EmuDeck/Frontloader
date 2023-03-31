@@ -25,12 +25,14 @@
 #include <QVector>
 
 
-namespace model {
+namespace model
+{
 
-class Keys : public QObject {
-    Q_OBJECT
+	class Keys : public QObject
+	{
+	Q_OBJECT
 
-    #define KEYVEC_PROP(keytype, keylist, checkFn) \
+		#define KEYVEC_PROP(keytype, keylist, checkFn) \
         private: \
             Q_PROPERTY(QList<QObject*> keylist READ keylist NOTIFY keysChanged) \
             QList<QObject*> keylist() { \
@@ -40,37 +42,54 @@ class Keys : public QObject {
             Q_INVOKABLE bool checkFn(const QVariant& qmlEvent) const { \
                 return qmlkey_in_keylist(KeyEvent::keytype, qmlEvent); \
             }
-    KEYVEC_PROP(LEFT, left, isLeft)
-    KEYVEC_PROP(RIGHT, right, isRight)
-    KEYVEC_PROP(UP, up, isUp)
-    KEYVEC_PROP(DOWN, down, isDown)
-    KEYVEC_PROP(ACCEPT, accept, isAccept)
-    KEYVEC_PROP(CANCEL, cancel, isCancel)
-    KEYVEC_PROP(DETAILS, details, isDetails)
-    KEYVEC_PROP(FILTERS, filters, isFilters)
-    KEYVEC_PROP(NEXT_PAGE, nextPage, isNextPage)
-    KEYVEC_PROP(PREV_PAGE, prevPage, isPrevPage)
-    KEYVEC_PROP(PAGE_UP, pageUp, isPageUp)
-    KEYVEC_PROP(PAGE_DOWN, pageDown, isPageDown)
-    KEYVEC_PROP(MAIN_MENU, menu, isMenu)
-    KEYVEC_PROP(VOL_UP, volUp, isVolUp)
-    KEYVEC_PROP(VOL_DOWN, volDown, isVolDown)
-    #undef KEYVEC_PROP
+	KEYVEC_PROP(LEFT, left, isLeft)
 
-public:
-    explicit Keys(QObject* parent = nullptr);
+	KEYVEC_PROP(RIGHT, right, isRight)
 
-    void refresh_keys();
+	KEYVEC_PROP(UP, up, isUp)
 
-signals:
-    void keysChanged();
+	KEYVEC_PROP(DOWN, down, isDown)
 
-private:
-    HashMap<KeyEvent, QVector<QObject*>, EnumHash> m_keylists;
+	KEYVEC_PROP(ACCEPT, accept, isAccept)
 
-    bool qmlkey_in_keylist(KeyEvent, const QVariant&) const;
-    QList<QObject*> to_qmlkeys(KeyEvent);
-};
+	KEYVEC_PROP(CANCEL, cancel, isCancel)
+
+	KEYVEC_PROP(DETAILS, details, isDetails)
+
+	KEYVEC_PROP(FILTERS, filters, isFilters)
+
+	KEYVEC_PROP(NEXT_PAGE, nextPage, isNextPage)
+
+	KEYVEC_PROP(PREV_PAGE, prevPage, isPrevPage)
+
+	KEYVEC_PROP(PAGE_UP, pageUp, isPageUp)
+
+	KEYVEC_PROP(PAGE_DOWN, pageDown, isPageDown)
+
+	KEYVEC_PROP(MAIN_MENU, menu, isMenu)
+
+	KEYVEC_PROP(VOL_UP, volUp, isVolUp)
+
+	KEYVEC_PROP(VOL_DOWN, volDown, isVolDown)
+
+		#undef KEYVEC_PROP
+
+	public:
+		explicit Keys(QObject* parent = nullptr);
+
+		void refresh_keys();
+
+	signals:
+
+		void keysChanged();
+
+	private:
+		HashMap<KeyEvent, QVector<QObject*>, EnumHash> m_keylists;
+
+		bool qmlkey_in_keylist(KeyEvent, const QVariant &) const;
+
+		QList<QObject*> to_qmlkeys(KeyEvent);
+	};
 
 } // namespace model
 

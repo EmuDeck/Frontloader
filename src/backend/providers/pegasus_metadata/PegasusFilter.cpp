@@ -27,155 +27,168 @@
 #include <QDirIterator>
 
 
-namespace {
+namespace
+{
 // Find all dirs and subdirectories, but ignore 'media'
-std::vector<QString> all_valid_direct_subdirs(const QString& filter_dir)
-{
-    Q_ASSERT(!filter_dir.isEmpty());
+	std::vector<QString> all_valid_direct_subdirs(const QString &filter_dir)
+	{
+		Q_ASSERT(!filter_dir.isEmpty());
 
-    constexpr auto subdir_filters = QDir::Dirs | QDir::NoDotAndDotDot;
-    constexpr auto subdir_flags = QDirIterator::FollowSymlinks;
+		constexpr auto subdir_filters = QDir::Dirs | QDir::NoDotAndDotDot;
+		constexpr auto subdir_flags = QDirIterator::FollowSymlinks;
 
-    std::vector<QString> result;
+		std::vector<QString> result;
 
-    QDirIterator dirs_it(filter_dir, subdir_filters, subdir_flags);
-    while (dirs_it.hasNext())
-        result.emplace_back(dirs_it.next());
+		QDirIterator dirs_it(filter_dir, subdir_filters, subdir_flags);
+		while (dirs_it.hasNext())
+		{
+			result.emplace_back(dirs_it.next());
+		}
 
-    const QString media_dir = filter_dir + QStringLiteral("/media");
-    VEC_REMOVE_VALUE(result, media_dir);
+		const QString media_dir = filter_dir + QStringLiteral("/media");
+		VEC_REMOVE_VALUE(result, media_dir);
 
-    return result;
-}
+		return result;
+	}
 
-std::vector<QString> resolve_filelist(const std::vector<QString>& relpaths, const std::vector<QString>& dirs)
-{
-    std::vector<QString> found_paths;
-    found_paths.reserve(relpaths.size() * dirs.size());
+	std::vector<QString> resolve_filelist(const std::vector<QString> &relpaths, const std::vector<QString> &dirs)
+	{
+		std::vector<QString> found_paths;
+		found_paths.reserve(relpaths.size() * dirs.size());
 
-    for (const QString& dir_str : dirs) {
-        const QDir dir(dir_str);
-        for (const QString& relpath : relpaths) {
-            QString path = ::clean_abs_path(QFileInfo(dir, relpath));
-            if (!path.isEmpty())
-                found_paths.emplace_back(std::move(path));
-        }
-    }
+		for (const QString &dir_str: dirs)
+		{
+			const QDir dir(dir_str);
+			for (const QString &relpath: relpaths)
+			{
+				QString path = ::clean_abs_path(QFileInfo(dir, relpath));
+				if (!path.isEmpty())
+					found_paths.emplace_back(std::move(path));
+			}
+		}
 
-    VEC_REMOVE_DUPLICATES(found_paths);
-    found_paths.shrink_to_fit();
-    return found_paths;
-}
+		VEC_REMOVE_DUPLICATES(found_paths);
+		found_paths.shrink_to_fit();
+		return found_paths;
+	}
 
-bool rx_match(const QRegularExpression& rx, const QString& str) {
-    return !rx.pattern().isEmpty() && rx.match(str).hasMatch();
-}
+	bool rx_match(const QRegularExpression &rx, const QString &str)
+	{
+		return !rx.pattern().isEmpty() && rx.match(str).hasMatch();
+	}
 
-bool file_passes_filter(
-    const QFileInfo& finfo,
-    const providers::pegasus::FileFilter& filter,
-    const std::vector<QString>& exclude_files)
-{
-    const QString file_ext = finfo.suffix().toLower();
+	bool file_passes_filter(
+			const QFileInfo &finfo,
+			const providers::pegasus::FileFilter &filter,
+			const std::vector<QString> &exclude_files)
+	{
+		const QString file_ext = finfo.suffix().toLower();
 
-    const bool exclude = VEC_CONTAINS(filter.exclude.extensions, file_ext)
-        || VEC_CONTAINS(exclude_files, ::clean_abs_path(finfo))
-        || rx_match(filter.exclude.regex, finfo.filePath());
-    if (exclude)
-        return false;
+		const bool exclude = VEC_CONTAINS(filter.exclude.extensions, file_ext)
+		                     || VEC_CONTAINS(exclude_files, ::clean_abs_path(finfo))
+		                     || rx_match(filter.exclude.regex, finfo.filePath());
+		if (exclude)
+			return false;
 
-    const bool include = VEC_CONTAINS(filter.include.extensions, file_ext)
-        || rx_match(filter.include.regex, finfo.filePath());
-    if (!include)
-        return false;
+		const bool include = VEC_CONTAINS(filter.include.extensions, file_ext)
+		                     || rx_match(filter.include.regex, finfo.filePath());
+		if (!include)
+			return false;
 
-    return true;
-}
+		return true;
+	}
 
-void accept_filtered_file(
-    const QString& filepath,
-    model::Collection& collection,
-    providers::SearchContext& sctx)
-{
-    model::Game* game_ptr = sctx.game_by_filepath(filepath);
-    if (!game_ptr) {
-        game_ptr = sctx.create_game_for(collection);
-        sctx.game_add_filepath(*game_ptr, filepath);
-    }
+	void accept_filtered_file(
+			const QString &filepath,
+			model::Collection &collection,
+			providers::SearchContext &sctx)
+	{
+		model::Game* game_ptr = sctx.game_by_filepath(filepath);
+		if (!game_ptr)
+		{
+			game_ptr = sctx.create_game_for(collection);
+			sctx.game_add_filepath(*game_ptr, filepath);
+		}
 
-    model::Game& game = *game_ptr;
-    sctx.game_add_to(game, collection);
-}
+		model::Game &game = *game_ptr;
+		sctx.game_add_to(game, collection);
+	}
 } // namespace
 
 
-namespace providers {
-namespace pegasus {
-
-FileFilterGroup::FileFilterGroup() = default;
-
-FileFilter::FileFilter(model::Collection* const collection_ptr, QString base_dir)
-    : collection(collection_ptr)
-    , directories({ std::move(base_dir) })
+namespace providers
 {
-    Q_ASSERT(collection);
-    Q_ASSERT(!directories.front().isEmpty());
-}
+	namespace pegasus
+	{
 
-void apply_filter(FileFilter& filter, SearchContext& sctx)
-{
-    VEC_REMOVE_DUPLICATES(filter.directories);
-    VEC_REMOVE_DUPLICATES(filter.include.extensions);
-    VEC_REMOVE_DUPLICATES(filter.include.files);
-    VEC_REMOVE_DUPLICATES(filter.exclude.extensions);
-    VEC_REMOVE_DUPLICATES(filter.exclude.files);
+		FileFilterGroup::FileFilterGroup() = default;
 
-    Q_ASSERT(filter.collection);
-    model::Collection& collection = *filter.collection;
+		FileFilter::FileFilter(model::Collection* const collection_ptr, QString base_dir)
+				: collection(collection_ptr), directories({std::move(base_dir)})
+		{
+			Q_ASSERT(collection);
+			Q_ASSERT(!directories.front().isEmpty());
+		}
 
-    const std::vector<QString> include_files = resolve_filelist(filter.include.files, filter.directories);
-    const std::vector<QString> exclude_files = resolve_filelist(filter.exclude.files, filter.directories);
-    for (const QString& filepath: include_files) {
-        if (VEC_CONTAINS(exclude_files, filepath))
-            continue;
-        if (AppSettings::general.verify_files && !QFileInfo::exists(filepath))
-            continue;
-        accept_filtered_file(filepath, collection, sctx);
-    }
+		void apply_filter(FileFilter &filter, SearchContext &sctx)
+		{
+			VEC_REMOVE_DUPLICATES(filter.directories);
+			VEC_REMOVE_DUPLICATES(filter.include.extensions);
+			VEC_REMOVE_DUPLICATES(filter.include.files);
+			VEC_REMOVE_DUPLICATES(filter.exclude.extensions);
+			VEC_REMOVE_DUPLICATES(filter.exclude.files);
 
-    const bool has_valid_regex = !filter.include.regex.pattern().isEmpty() && filter.include.regex.isValid();
-    const bool needs_scan = !filter.include.extensions.empty() || has_valid_regex;
-    if (!needs_scan)
-        return;
+			Q_ASSERT(filter.collection);
+			model::Collection &collection = *filter.collection;
 
-    constexpr auto entry_filters_files = QDir::Files | QDir::NoDotAndDotDot;
-    constexpr auto entry_filters_all = QDir::Dirs | entry_filters_files;
-    constexpr auto entry_flags = QDirIterator::FollowSymlinks | QDirIterator::Subdirectories;
-    for (const QString& filter_dir : filter.directories) {
-        Q_ASSERT(!filter_dir.isEmpty());
+			const std::vector<QString> include_files = resolve_filelist(filter.include.files, filter.directories);
+			const std::vector<QString> exclude_files = resolve_filelist(filter.exclude.files, filter.directories);
+			for (const QString &filepath: include_files)
+			{
+				if (VEC_CONTAINS(exclude_files, filepath))
+					continue;
+				if (AppSettings::general.verify_files && !QFileInfo::exists(filepath))
+					continue;
+				accept_filtered_file(filepath, collection, sctx);
+			}
 
-        // directly contained files
-        QDirIterator file_it(filter_dir, entry_filters_files);
-        while (file_it.hasNext()) {
-            file_it.next();
-            const QString path = ::clean_abs_path(file_it.fileInfo());
-            if (file_passes_filter(file_it.fileInfo(), filter, exclude_files))
-                accept_filtered_file(path, collection, sctx);
-        }
+			const bool has_valid_regex = !filter.include.regex.pattern().isEmpty() && filter.include.regex.isValid();
+			const bool needs_scan = !filter.include.extensions.empty() || has_valid_regex;
+			if (!needs_scan)
+				return;
 
-        // directly contained directories, except media
-        const std::vector<QString> dirs_to_check = all_valid_direct_subdirs(filter_dir);
-        for (const QString& subdir : dirs_to_check) {
-            QDirIterator subdir_it(subdir, entry_filters_all, entry_flags);
-            while (subdir_it.hasNext()) {
-                subdir_it.next();
-                const QString path = ::clean_abs_path(subdir_it.fileInfo());
-                if (file_passes_filter(subdir_it.fileInfo(), filter, exclude_files))
-                    accept_filtered_file(path, collection, sctx);
-            }
-        }
-    }
-}
+			constexpr auto entry_filters_files = QDir::Files | QDir::NoDotAndDotDot;
+			constexpr auto entry_filters_all = QDir::Dirs | entry_filters_files;
+			constexpr auto entry_flags = QDirIterator::FollowSymlinks | QDirIterator::Subdirectories;
+			for (const QString &filter_dir: filter.directories)
+			{
+				Q_ASSERT(!filter_dir.isEmpty());
 
-} // namespace pegasus
+				// directly contained files
+				QDirIterator file_it(filter_dir, entry_filters_files);
+				while (file_it.hasNext())
+				{
+					file_it.next();
+					const QString path = ::clean_abs_path(file_it.fileInfo());
+					if (file_passes_filter(file_it.fileInfo(), filter, exclude_files))
+						accept_filtered_file(path, collection, sctx);
+				}
+
+				// directly contained directories, except media
+				const std::vector<QString> dirs_to_check = all_valid_direct_subdirs(filter_dir);
+				for (const QString &subdir: dirs_to_check)
+				{
+					QDirIterator subdir_it(subdir, entry_filters_all, entry_flags);
+					while (subdir_it.hasNext())
+					{
+						subdir_it.next();
+						const QString path = ::clean_abs_path(subdir_it.fileInfo());
+						if (file_passes_filter(subdir_it.fileInfo(), filter, exclude_files))
+							accept_filtered_file(path, collection, sctx);
+					}
+				}
+			}
+		}
+
+	} // namespace pegasus
 } // namespace providers

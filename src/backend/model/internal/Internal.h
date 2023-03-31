@@ -20,26 +20,33 @@
 #include "GamepadManager.h"
 #include "Meta.h"
 #include "ScannerState.h"
+#include "AutobootState.h"
 #include "System.h"
 #include "settings/Settings.h"
 #include "utils/QmlHelpers.h"
 
 #include <QObject>
 
-namespace backend { struct CliArgs; }
+namespace backend
+{
+	struct CliArgs;
+}
 
 
-namespace model {
-class Internal : public QObject {
-    Q_OBJECT
+namespace model
+{
+	class Internal : public QObject
+	{
+	Q_OBJECT
 
-    QML_CONST_PROPERTY(model::Meta, meta)
-    QML_CONST_PROPERTY(model::Settings, settings)
-    QML_CONST_PROPERTY(model::System, system)
-    QML_CONST_PROPERTY(model::GamepadManager, gamepad)
-    QML_CONST_PROPERTY(model::ScannerState, scanner)
+	QML_CONST_PROPERTY(model::Meta, meta)
+	QML_CONST_PROPERTY(model::Settings, settings)
+	QML_CONST_PROPERTY(model::System, system)
+	QML_CONST_PROPERTY(model::GamepadManager, gamepad)
+	QML_CONST_PROPERTY(model::ScannerState, scanner)
+	QML_CONST_PROPERTY(model::AutobootState, autoboot)
 
-public:
-    explicit Internal(const backend::CliArgs& args, QObject* parent = nullptr);
-};
+	public:
+		explicit Internal(const backend::CliArgs &args, QObject* parent = nullptr);
+	};
 } // namespace model

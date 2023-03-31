@@ -12,24 +12,26 @@ pegasus_require_qt(COMPONENTS
         )
 
 add_library(frontloader-backend
-    AppSettings.cpp
-    AppSettings.h
-    Backend.cpp
-    Backend.h
-    CliArgs.h
-    FrontendLayer.cpp
-    FrontendLayer.h
-    Log.cpp
-    Log.h
-    Paths.cpp
-    Paths.h
-    PegasusAssets.cpp
-    PegasusAssets.h
-    ProcessLauncher.cpp
-    ProcessLauncher.h
-    ScriptRunner.cpp
-    ScriptRunner.h
-)
+        AutobootManager.cpp
+        AutobootManager.h
+        AppSettings.cpp
+        AppSettings.h
+        Backend.cpp
+        Backend.h
+        CliArgs.h
+        FrontendLayer.cpp
+        FrontendLayer.h
+        Log.cpp
+        Log.h
+        Paths.cpp
+        Paths.h
+        PegasusAssets.cpp
+        PegasusAssets.h
+        ProcessLauncher.cpp
+        ProcessLauncher.h
+        ScriptRunner.cpp
+        ScriptRunner.h
+        )
 
 add_subdirectory(imggen)
 add_subdirectory(parsers)
@@ -40,19 +42,19 @@ add_subdirectory(types)
 add_subdirectory(utils)
 
 target_include_directories(frontloader-backend PUBLIC
-    "${PROJECT_SOURCE_DIR}/thirdparty"
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+        "${PROJECT_SOURCE_DIR}/thirdparty"
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        )
 
 
 target_link_libraries(frontloader-backend PUBLIC
-    Qt::Qml
-    Qt::Quick
-    Qt::Multimedia
-    Qt::Sql
-    Qt::Svg
-    SortFilterProxyModel
-)
+        Qt::Qml
+        Qt::Quick
+        Qt::Multimedia
+        Qt::Sql
+        Qt::Svg
+        SortFilterProxyModel
+        )
 
 include(PegasusCommonProps)
 pegasus_add_common_props_optimized(frontloader-backend)
@@ -60,20 +62,20 @@ pegasus_add_common_props_optimized(frontloader-backend)
 
 # Animated PNG
 
-if(PEGASUS_ENABLE_APNG)
+if (PEGASUS_ENABLE_APNG)
     target_link_libraries(frontloader-backend PUBLIC apng)
-endif()
+endif ()
 
 
 # SDL2
 
-if(USE_SDL2)
+if (USE_SDL2)
     find_package(SDL2 REQUIRED)
     target_include_directories(frontloader-backend PRIVATE ${SDL2_INCLUDE_DIRS})
     target_link_libraries(frontloader-backend PUBLIC ${SDL2_LIBRARIES})
     target_compile_definitions(frontloader-backend PUBLIC SDL_MAIN_HANDLED)
     message("-- Found SDL2: ${SDL2_INCLUDE_DIRS}")
-endif()
+endif ()
 
 
 # Print config
@@ -81,18 +83,18 @@ endif()
 include(PegasusPrettyPrint)
 
 set(BOX_LINES
-    "Power management: ${POWER_IMPL_NAME}"
-    "Battery info: ${BATTERY_IMPL_NAME}"
-    "Gamepad implementation: ${GAMEPAD_IMPL_NAME}"
-    "Animated PNG support: ${PEGASUS_ENABLE_APNG}"
-    "Third-party data sources:"
-)
+        "Power management: ${POWER_IMPL_NAME}"
+        "Battery info: ${BATTERY_IMPL_NAME}"
+        "Gamepad implementation: ${GAMEPAD_IMPL_NAME}"
+        "Animated PNG support: ${PEGASUS_ENABLE_APNG}"
+        "Third-party data sources:"
+        )
 list(SORT OPTIONAL_PROVIDERS)
-foreach(PROVIDER IN LISTS OPTIONAL_PROVIDERS)
+foreach (PROVIDER IN LISTS OPTIONAL_PROVIDERS)
     list(APPEND BOX_LINES "  - ${PROVIDER}")
-endforeach()
+endforeach ()
 
 pegasus_print_box(
-    TITLE "Backend Settings"
-    CONTENT "${BOX_LINES}"
+        TITLE "Backend Settings"
+        CONTENT "${BOX_LINES}"
 )

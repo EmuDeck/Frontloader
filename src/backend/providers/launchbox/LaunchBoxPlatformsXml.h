@@ -20,14 +20,18 @@
 #include <vector>
 
 class QDir;
+
 class QString;
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-struct Platform;
-std::vector<Platform> find_platforms(const QString&, const QDir&);
+		struct Platform;
 
-} // namespace launchbox
+		std::vector<Platform> find_platforms(const QString &, const QDir &);
+
+	} // namespace launchbox
 } // namespace providers

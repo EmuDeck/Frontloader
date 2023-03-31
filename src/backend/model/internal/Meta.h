@@ -22,43 +22,46 @@
 #include <QObject>
 
 
-namespace model {
+namespace model
+{
 
 /// Provides information about the program for the frontend layer
-class Meta : public QObject {
-    Q_OBJECT
+	class Meta : public QObject
+	{
+	Q_OBJECT
 
-    Q_PROPERTY(QString gitRevision MEMBER m_git_revision CONSTANT)
-    Q_PROPERTY(QString gitDate MEMBER m_git_date CONSTANT)
-    Q_PROPERTY(QString logFilePath MEMBER m_log_path CONSTANT)
+		Q_PROPERTY(QString gitRevision MEMBER m_git_revision CONSTANT)
+		Q_PROPERTY(QString gitDate MEMBER m_git_date CONSTANT)
+		Q_PROPERTY(QString logFilePath MEMBER m_log_path CONSTANT)
 
-    Q_PROPERTY(bool allowReboot MEMBER m_enable_menu_reboot CONSTANT)
-    Q_PROPERTY(bool allowShutdown MEMBER m_enable_menu_shutdown CONSTANT)
-    Q_PROPERTY(bool allowSuspend MEMBER m_enable_menu_suspend CONSTANT)
-    Q_PROPERTY(bool allowAppClose MEMBER m_enable_menu_appclose CONSTANT)
-    Q_PROPERTY(bool allowSettings MEMBER m_enable_menu_settings CONSTANT)
+		Q_PROPERTY(bool allowReboot MEMBER m_enable_menu_reboot CONSTANT)
+		Q_PROPERTY(bool allowShutdown MEMBER m_enable_menu_shutdown CONSTANT)
+		Q_PROPERTY(bool allowSuspend MEMBER m_enable_menu_suspend CONSTANT)
+		Q_PROPERTY(bool allowAppClose MEMBER m_enable_menu_appclose CONSTANT)
+		Q_PROPERTY(bool allowSettings MEMBER m_enable_menu_settings CONSTANT)
 
-public:
-    explicit Meta(const backend::CliArgs& args, QObject* parent = nullptr);
+	public:
+		explicit Meta(const backend::CliArgs &args, QObject* parent = nullptr);
 
-    void onUiReady();
+		void onUiReady();
 
-public:
-    Q_INVOKABLE void clearQMLCache();
+	public:
+		Q_INVOKABLE void clearQMLCache();
 
-signals:
-    void qmlClearCacheRequested();
+	signals:
 
-private:
-    static const QString m_git_revision;
-    static const QString m_git_date;
-    const QString m_log_path;
+		void qmlClearCacheRequested();
 
-    const bool m_enable_menu_reboot;
-    const bool m_enable_menu_shutdown;
-    const bool m_enable_menu_suspend;
-    const bool m_enable_menu_appclose;
-    const bool m_enable_menu_settings;
-};
+	private:
+		static const QString m_git_revision;
+		static const QString m_git_date;
+		const QString m_log_path;
+
+		const bool m_enable_menu_reboot;
+		const bool m_enable_menu_shutdown;
+		const bool m_enable_menu_suspend;
+		const bool m_enable_menu_appclose;
+		const bool m_enable_menu_settings;
+	};
 
 } // namespace model

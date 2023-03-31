@@ -20,44 +20,60 @@
 #include <QObject>
 #include <QProcess>
 
-namespace model { class GameFile; }
+namespace model
+{
+	class GameFile;
+}
 
 
-namespace helpers {
-QString abs_launchcmd(const QString& cmd, const QString& base_dir);
-QString abs_workdir(const QString& workdir, const QString& base_dir, const QString& fallback_workdir);
+namespace helpers
+{
+	QString abs_launchcmd(const QString &cmd, const QString &base_dir);
+
+	QString abs_workdir(const QString &workdir, const QString &base_dir, const QString &fallback_workdir);
 } // namespace helpers
 
 
 /// Launches and manages external processes
 ///
 /// Launches external processes and detects their success or failure.
-class ProcessLauncher : public QObject {
-    Q_OBJECT
+class ProcessLauncher : public QObject
+{
+Q_OBJECT
 
 public:
-    explicit ProcessLauncher(QObject* parent = nullptr);
+	explicit ProcessLauncher(QObject* parent = nullptr);
 
 signals:
-    void processLaunchOk();
-    void processLaunchError(QString);
-    void processRuntimeError(QString);
-    void processFinished();
+
+	void processLaunchOk();
+
+	void processLaunchError(QString);
+
+	void processRuntimeError(QString);
+
+	void processFinished();
 
 public slots:
-    void onLaunchRequested(const model::GameFile*);
-    void onTeardownComplete();
+
+	void onLaunchRequested(const model::GameFile*);
+
+	void onTeardownComplete();
 
 private slots:
-    void onProcessStarted();
-    void onProcessError(QProcess::ProcessError);
-    void onProcessFinished(int, QProcess::ExitStatus);
+
+	void onProcessStarted();
+
+	void onProcessError(QProcess::ProcessError);
+
+	void onProcessFinished(int, QProcess::ExitStatus);
 
 private:
-    QProcess* m_process;
+	QProcess* m_process;
 
-    void runProcess(const QString&, const QStringList&, const QString&);
+	void runProcess(const QString &, const QStringList &, const QString &);
 
-    void beforeRun(const QString&);
-    void afterRun();
+	void beforeRun(const QString &);
+
+	void afterRun();
 };

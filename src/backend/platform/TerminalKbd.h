@@ -18,8 +18,11 @@
 #pragma once
 
 
-namespace TerminalKbd {
-void on_startup();
-void enable();
-void disable();
+namespace TerminalKbd
+{
+	void on_startup();
+
+	void enable();
+
+	void disable();
 } // namespace TerminalKbd

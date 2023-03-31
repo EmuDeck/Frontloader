@@ -20,45 +20,47 @@
 
 class QVariant;
 
-namespace providers {
-namespace playnite {
-JsonObjectHelper::JsonObjectHelper(const QJsonObject& json_object)
-    : m_json_map(json_object.toVariantHash())
-{}
-
-QString JsonObjectHelper::get_string(const QString& key) const
+namespace providers
 {
-    return m_json_map.value(key).toString();
-}
+	namespace playnite
+	{
+		JsonObjectHelper::JsonObjectHelper(const QJsonObject &json_object)
+				: m_json_map(json_object.toVariantHash())
+		{}
 
-QStringList JsonObjectHelper::get_string_list(const QString& key) const
-{
-    return m_json_map.value(key).toStringList();
-}
+		QString JsonObjectHelper::get_string(const QString &key) const
+		{
+			return m_json_map.value(key).toString();
+		}
 
-QJsonArray JsonObjectHelper::get_json_array(const QString& key) const
-{
-    return m_json_map.value(key).toJsonArray();
-}
+		QStringList JsonObjectHelper::get_string_list(const QString &key) const
+		{
+			return m_json_map.value(key).toStringList();
+		}
 
-JsonObjectHelper JsonObjectHelper::get_json_object_helper(const QString& key) const
-{
-    return JsonObjectHelper(m_json_map.value(key).toJsonObject());
-}
+		QJsonArray JsonObjectHelper::get_json_array(const QString &key) const
+		{
+			return m_json_map.value(key).toJsonArray();
+		}
 
-bool JsonObjectHelper::get_bool(const QString& key) const
-{
-    return m_json_map.value(key, false).toBool();
-}
+		JsonObjectHelper JsonObjectHelper::get_json_object_helper(const QString &key) const
+		{
+			return JsonObjectHelper(m_json_map.value(key).toJsonObject());
+		}
 
-float JsonObjectHelper::get_float(const QString& key) const
-{
-    return m_json_map.value(key).toFloat();
-}
+		bool JsonObjectHelper::get_bool(const QString &key) const
+		{
+			return m_json_map.value(key, false).toBool();
+		}
 
-int JsonObjectHelper::get_int(const QString& key) const
-{
-    return m_json_map.value(key).toInt();
-}
-} // namespace playnite
+		float JsonObjectHelper::get_float(const QString &key) const
+		{
+			return m_json_map.value(key).toFloat();
+		}
+
+		int JsonObjectHelper::get_int(const QString &key) const
+		{
+			return m_json_map.value(key).toInt();
+		}
+	} // namespace playnite
 } // namespace providers

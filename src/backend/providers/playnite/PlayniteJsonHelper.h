@@ -20,23 +20,33 @@
 
 class QVariant;
 
-namespace providers {
-namespace playnite {
+namespace providers
+{
+	namespace playnite
+	{
 
-class JsonObjectHelper {
-public:
-    explicit JsonObjectHelper(const QJsonObject& json_object);
-    QString get_string(const QString& key) const;
-    QStringList get_string_list(const QString& key) const;
-    QJsonArray get_json_array(const QString& key) const;
-    JsonObjectHelper get_json_object_helper(const QString& key) const;
-    bool get_bool(const QString& key) const;
-    float get_float(const QString& key) const;
-    int get_int(const QString& key) const;
+		class JsonObjectHelper
+		{
+		public:
+			explicit JsonObjectHelper(const QJsonObject &json_object);
 
-private:
-    const QHash<QString, QVariant> m_json_map;
-};
+			QString get_string(const QString &key) const;
 
-} // namespace playnite
+			QStringList get_string_list(const QString &key) const;
+
+			QJsonArray get_json_array(const QString &key) const;
+
+			JsonObjectHelper get_json_object_helper(const QString &key) const;
+
+			bool get_bool(const QString &key) const;
+
+			float get_float(const QString &key) const;
+
+			int get_int(const QString &key) const;
+
+		private:
+			const QHash<QString, QVariant> m_json_map;
+		};
+
+	} // namespace playnite
 } // namespace providers

@@ -21,20 +21,23 @@
 #include <vector>
 
 
-namespace providers {
-namespace es2 {
+namespace providers
+{
+	namespace es2
+	{
 
-struct SystemEntry {
-    QString name;
-    QString shortname;
-    QString path;
-    QString extensions;
-    QString platforms;
-    QString launch_cmd;
-};
+		struct SystemEntry
+		{
+			QString name;
+			QString shortname;
+			QString path;
+			QString extensions;
+			QString platforms;
+			QString launch_cmd;
+		};
 
 
-std::vector<SystemEntry> find_systems(const QString&, const std::vector<QString>&);
+		std::vector<SystemEntry> find_systems(const QString &, const std::vector<QString> &);
 
-} // namespace es2
+	} // namespace es2
 } // namespace providers

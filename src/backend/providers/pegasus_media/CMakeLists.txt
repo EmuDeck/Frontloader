@@ -1,8 +1,8 @@
 pegasus_add_provider(
-    INTERNAL
-    SOURCES
+        INTERNAL
+        SOURCES
         MediaProvider.cpp
         MediaProvider.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

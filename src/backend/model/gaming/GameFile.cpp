@@ -20,49 +20,49 @@
 #include "model/gaming/Game.h"
 
 
-namespace model {
-QString pretty_filename(const QFileInfo& fi)
+namespace model
 {
-    return fi.completeBaseName()
-        .replace(QLatin1Char('_'), QLatin1Char(' '))
-        .replace(QLatin1Char('.'), QLatin1Char(' '));
-}
+	QString pretty_filename(const QFileInfo &fi)
+	{
+		return fi.completeBaseName()
+				.replace(QLatin1Char('_'), QLatin1Char(' '))
+				.replace(QLatin1Char('.'), QLatin1Char(' '));
+	}
 
 
-GameFileData::GameFileData(QString path)
-    : path(path)
-    , fileinfo(path)
-    , name(pretty_filename(fileinfo))
-{}
+	GameFileData::GameFileData(QString path)
+			: path(path), fileinfo(path), name(pretty_filename(fileinfo))
+	{}
 
-bool GameFileData::operator==(const GameFileData& other) const {
-    return fileinfo == other.fileinfo;
-}
+	bool GameFileData::operator==(const GameFileData &other) const
+	{
+		return fileinfo == other.fileinfo;
+	}
 
-GameFile::GameFile(QString path, model::Game &parent)
-    : QObject(&parent)
-    , m_data(path)
-{}
+	GameFile::GameFile(QString path, model::Game &parent)
+			: QObject(&parent), m_data(path)
+	{}
 
-model::Game* GameFile::parentGame() const
-{
-    return static_cast<model::Game*>(parent());
-}
+	model::Game* GameFile::parentGame() const
+	{
+		return static_cast<model::Game*>(parent());
+	}
 
-void GameFile::launch()
-{
-    emit launchRequested();
-}
+	void GameFile::launch()
+	{
+		emit launchRequested();
+	}
 
-void GameFile::update_playstats(int playcount, qint64 playtime, QDateTime last_played)
-{
-    m_data.playstats.last_played = std::max(m_data.playstats.last_played, std::move(last_played));
-    m_data.playstats.play_time += playtime;
-    m_data.playstats.play_count += playcount;
-    emit playStatsChanged();
-}
+	void GameFile::update_playstats(int playcount, qint64 playtime, QDateTime last_played)
+	{
+		m_data.playstats.last_played = std::max(m_data.playstats.last_played, std::move(last_played));
+		m_data.playstats.play_time += playtime;
+		m_data.playstats.play_count += playcount;
+		emit playStatsChanged();
+	}
 
-bool sort_gamefiles(const model::GameFile* const a, const model::GameFile* const b) {
-    return QString::localeAwareCompare(a->name(), b->name()) < 0;
-}
+	bool sort_gamefiles(const model::GameFile* const a, const model::GameFile* const b)
+	{
+		return QString::localeAwareCompare(a->name(), b->name()) < 0;
+	}
 } // namespace model

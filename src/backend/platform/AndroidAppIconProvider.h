@@ -20,9 +20,10 @@
 #include <QQuickImageProvider>
 
 
-class AndroidAppIconProvider : public QQuickImageProvider {
+class AndroidAppIconProvider : public QQuickImageProvider
+{
 public:
-    AndroidAppIconProvider();
+	AndroidAppIconProvider();
 
-    QPixmap requestPixmap(const QString&, QSize*, const QSize&) override;
+	QPixmap requestPixmap(const QString &, QSize*, const QSize &) override;
 };

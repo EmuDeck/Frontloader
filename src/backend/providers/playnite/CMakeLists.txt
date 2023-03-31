@@ -1,7 +1,7 @@
 pegasus_add_provider(
-    NAME "Playnite"
-    CXXID PLAYNITE
-    SOURCES
+        NAME "Playnite"
+        CXXID PLAYNITE
+        SOURCES
         PlayniteComponents.h
         PlayniteEmulator.h
         PlayniteGame.h
@@ -14,6 +14,6 @@ pegasus_add_provider(
         PlayniteMetadataParser.h
         PlayniteProvider.cpp
         PlayniteProvider.h
-    PLATFORMS
+        PLATFORMS
         WINDOWS
 )

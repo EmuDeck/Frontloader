@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace gog {
+namespace providers
+{
+	namespace gog
+	{
 
-class GogProvider : public Provider {
-    Q_OBJECT
+		class GogProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit GogProvider(QObject* parent = nullptr);
+		public:
+			explicit GogProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace gog
+	} // namespace gog
 } // namespace providers

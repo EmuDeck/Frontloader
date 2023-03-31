@@ -11,10 +11,10 @@ file="Frontloader-$tag-SteamDeck-Release.tar.xz"
 
 download="https://github.com/EmuDeck/Frontloader/releases/download/$tag/$file"
 
-curl -OL $download
+curl -OL "$download"
 
-tar xf $file
-rm $file
+tar xf "$file"
+rm "$file"
 mkdir -p ~/devkit-game
 cat << EOF > ~/devkit-game/devkit-steam
 #!/bin/bash

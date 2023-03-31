@@ -21,6 +21,7 @@
 #include <QVariant>
 
 
-namespace utils {
-QKeySequence qmlevent_to_keyseq(const QVariant&);
+namespace utils
+{
+	QKeySequence qmlevent_to_keyseq(const QVariant &);
 } // namespace utils

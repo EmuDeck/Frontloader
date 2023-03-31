@@ -26,53 +26,61 @@
 #include <QXmlStreamReader>
 
 
-namespace providers {
-namespace launchbox {
-
-std::vector<Platform> find_platforms(const QString& log_tag, const QDir& lb_dir)
+namespace providers
 {
-    const QString xml_path = lb_dir.filePath(QStringLiteral("Data/Platforms.xml"));
-    QFile xml_file(xml_path);
-    if (!xml_file.open(QIODevice::ReadOnly)) {
-        Log::error(log_tag, LOGMSG("Could not open `%1`").arg(::pretty_path(xml_path)));
-        return {};
-    }
+	namespace launchbox
+	{
 
-    std::vector<Platform> out;
-    QXmlStreamReader xml(&xml_file);
-    verify_root_node(xml);
+		std::vector<Platform> find_platforms(const QString &log_tag, const QDir &lb_dir)
+		{
+			const QString xml_path = lb_dir.filePath(QStringLiteral("Data/Platforms.xml"));
+			QFile xml_file(xml_path);
+			if (!xml_file.open(QIODevice::ReadOnly))
+			{
+				Log::error(log_tag, LOGMSG("Could not open `%1`").arg(::pretty_path(xml_path)));
+				return {};
+			}
 
-    while (xml.readNextStartElement() && !xml.hasError()) {
-        if (xml.name() != QLatin1String("Platform")) {
-            xml.skipCurrentElement();
-            continue;
-        }
+			std::vector<Platform> out;
+			QXmlStreamReader xml(&xml_file);
+			verify_root_node(xml);
 
-        Platform platform;
-        while (xml.readNextStartElement()) {
-            if (xml.name() == QLatin1String("Name")) {
-                platform.name = xml.readElementText().trimmed();
-                continue;
-            }
-            if (xml.name() == QLatin1String("SortTitle")) {
-                platform.sort_by = xml.readElementText().trimmed();
-                continue;
-            }
-            xml.skipCurrentElement();
-        }
-        if (platform.name.isEmpty())
-            continue;
+			while (xml.readNextStartElement() && !xml.hasError())
+			{
+				if (xml.name() != QLatin1String("Platform"))
+				{
+					xml.skipCurrentElement();
+					continue;
+				}
 
-        if (platform.sort_by.isEmpty())
-            platform.sort_by = platform.name;
+				Platform platform;
+				while (xml.readNextStartElement())
+				{
+					if (xml.name() == QLatin1String("Name"))
+					{
+						platform.name = xml.readElementText().trimmed();
+						continue;
+					}
+					if (xml.name() == QLatin1String("SortTitle"))
+					{
+						platform.sort_by = xml.readElementText().trimmed();
+						continue;
+					}
+					xml.skipCurrentElement();
+				}
+				if (platform.name.isEmpty())
+					continue;
 
-        out.emplace_back(std::move(platform));
-    }
-    if (xml.error())
-        Log::error(log_tag, LOGMSG("In `%1`: %2").arg(xml_path, xml.errorString()));
+				if (platform.sort_by.isEmpty())
+					platform.sort_by = platform.name;
 
-    return out;
-}
+				out.emplace_back(std::move(platform));
+			}
+			if (xml.error())
+				Log::error(log_tag, LOGMSG("In `%1`: %2").arg(xml_path, xml.errorString()));
 
-} // namespace launchbox
+			return out;
+		}
+
+	} // namespace launchbox
 } // namespace providers

@@ -23,47 +23,55 @@
 #include <QMutex>
 
 
-namespace providers {
-namespace playtime {
+namespace providers
+{
+	namespace playtime
+	{
 
-class PlaytimeStats : public Provider {
-    Q_OBJECT
+		class PlaytimeStats : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit PlaytimeStats(QString db_path, QObject* parent = nullptr);
-    explicit PlaytimeStats(QObject* parent = nullptr);
+		public:
+			explicit PlaytimeStats(QString db_path, QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
+			explicit PlaytimeStats(QObject* parent = nullptr);
 
-    void onGameLaunched(model::GameFile* const) final;
-    void onGameFinished(model::GameFile* const) final;
+			Provider &run(SearchContext &) final;
 
-signals:
-    void startedWriting();
-    void finishedWriting();
+			void onGameLaunched(model::GameFile* const) final;
 
-private:
-    const QString m_db_path;
+			void onGameFinished(model::GameFile* const) final;
 
-    QDateTime m_last_launch_time;
+		signals:
 
-    struct QueueEntry {
-        model::GameFile* const gamefile;
-        const QDateTime launch_time;
-        const qint64 duration;
+			void startedWriting();
 
-        QueueEntry(model::GameFile* const gamefile, QDateTime launch_time, qint64 duration)
-            : gamefile(std::move(gamefile))
-            , launch_time(std::move(launch_time))
-            , duration(std::move(duration))
-        {}
-    };
-    std::vector<QueueEntry> m_pending_tasks;
-    std::vector<QueueEntry> m_active_tasks;
-    QMutex m_queue_guard;
+			void finishedWriting();
 
-    void start_processing();
-};
+		private:
+			const QString m_db_path;
 
-} // namespace playtime
+			QDateTime m_last_launch_time;
+
+			struct QueueEntry
+			{
+				model::GameFile* const gamefile;
+				const QDateTime launch_time;
+				const qint64 duration;
+
+				QueueEntry(model::GameFile* const gamefile, QDateTime launch_time, qint64 duration)
+						: gamefile(std::move(gamefile)), launch_time(std::move(launch_time)),
+						  duration(std::move(duration))
+				{}
+			};
+
+			std::vector<QueueEntry> m_pending_tasks;
+			std::vector<QueueEntry> m_active_tasks;
+			QMutex m_queue_guard;
+
+			void start_processing();
+		};
+
+	} // namespace playtime
 } // namespace providers

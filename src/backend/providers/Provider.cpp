@@ -21,41 +21,39 @@
 #include "model/gaming/Collection.h"
 
 
-namespace providers {
-Provider::Provider(QLatin1String codename, QString display_name, uint8_t flags, QObject* parent)
-    : QObject(parent)
-    , m_codename(std::move(codename))
-    , m_display_name(std::move(display_name))
-    , m_flags(flags)
-    , m_enabled(true)
-{}
-
-Provider::Provider(QLatin1String codename, QString display_name, QObject* parent)
-    : Provider(std::move(codename), std::move(display_name), PROVIDER_FLAG_NONE, parent)
-{}
-
-Provider::~Provider() = default;
-
-Provider& Provider::setEnabled(bool val)
+namespace providers
 {
-    m_enabled = val;
-    return *this;
-}
+	Provider::Provider(QLatin1String codename, QString display_name, uint8_t flags, QObject* parent)
+			: QObject(parent), m_codename(std::move(codename)), m_display_name(std::move(display_name)), m_flags(flags),
+			  m_enabled(true)
+	{}
 
-Provider& Provider::setOption(const QString& key, QString val)
-{
-    Q_ASSERT(!key.isEmpty());
-    Q_ASSERT(!val.isEmpty());
-    setOption(key, std::vector<QString>{ std::move(val) });
-    return *this;
-}
+	Provider::Provider(QLatin1String codename, QString display_name, QObject* parent)
+			: Provider(std::move(codename), std::move(display_name), PROVIDER_FLAG_NONE, parent)
+	{}
 
-Provider& Provider::setOption(const QString& key, std::vector<QString> vals)
-{
-    Q_ASSERT(!key.isEmpty());
-    Q_ASSERT(!vals.empty());
-    m_options[key] = std::move(vals);
-    return *this;
-}
+	Provider::~Provider() = default;
+
+	Provider &Provider::setEnabled(bool val)
+	{
+		m_enabled = val;
+		return *this;
+	}
+
+	Provider &Provider::setOption(const QString &key, QString val)
+	{
+		Q_ASSERT(!key.isEmpty());
+		Q_ASSERT(!val.isEmpty());
+		setOption(key, std::vector<QString>{std::move(val)});
+		return *this;
+	}
+
+	Provider &Provider::setOption(const QString &key, std::vector<QString> vals)
+	{
+		Q_ASSERT(!key.isEmpty());
+		Q_ASSERT(!vals.empty());
+		m_options[key] = std::move(vals);
+		return *this;
+	}
 
 } // namespace providers

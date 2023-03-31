@@ -19,15 +19,21 @@
 
 #include "model/ObjectListModel.h"
 
-namespace model { class Collection; }
+namespace model
+{
+	class Collection;
+}
 
 
-namespace model {
-class CollectionListModel : public TypeListModel<model::Collection> {
-public:
-    explicit CollectionListModel(QObject* parent = nullptr);
+namespace model
+{
+	class CollectionListModel : public TypeListModel<model::Collection>
+	{
+	public:
+		explicit CollectionListModel(QObject* parent = nullptr);
 
-    QHash<int, QByteArray> roleNames() const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-};
+		QHash<int, QByteArray> roleNames() const override;
+
+		QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	};
 } // namespace model

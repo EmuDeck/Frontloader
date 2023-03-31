@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace media {
+namespace providers
+{
+	namespace media
+	{
 
-class MediaProvider : public Provider {
-    Q_OBJECT
+		class MediaProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit MediaProvider(QObject* parent = nullptr);
+		public:
+			explicit MediaProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace media
+	} // namespace media
 } // namespace providers

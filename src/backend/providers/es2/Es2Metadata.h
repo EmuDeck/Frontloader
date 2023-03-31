@@ -23,36 +23,49 @@
 #include <QString>
 #include <QRegularExpression>
 
-namespace providers { class SearchContext; }
-namespace model { class GameFile; }
+namespace providers
+{
+	class SearchContext;
+}
+namespace model
+{
+	class GameFile;
+}
 class QDir;
+
 class QXmlStreamReader;
 
 
-namespace providers {
-namespace es2 {
+namespace providers
+{
+	namespace es2
+	{
 
-struct SystemEntry;
-enum class MetaType : unsigned char;
+		struct SystemEntry;
+		enum class MetaType : unsigned char;
 
-class Metadata {
+		class Metadata
+		{
 
-public:
-    explicit Metadata(QString, std::vector<QString>);
-    void find_metadata_for(const SystemEntry&, const SearchContext&) const;
+		public:
+			explicit Metadata(QString, std::vector<QString>);
 
-private:
-    const QString m_log_tag;
-    const std::vector<QString> m_config_dirs;
-    const HashMap<QString, MetaType> m_key_types;
-    const QString m_date_format;
-    const QRegularExpression m_players_regex;
-    const std::vector<std::pair<MetaType, AssetType>> m_asset_type_map;
+			void find_metadata_for(const SystemEntry &, const SearchContext &) const;
 
-    void process_gamelist_xml(const QDir&, QXmlStreamReader&, const SearchContext&) const;
-    HashMap<MetaType, QString, EnumHash> parse_gamelist_game_node(QXmlStreamReader&) const;
-    void apply_metadata(model::GameFile&, const QDir&, HashMap<MetaType, QString, EnumHash>&) const;
-};
+		private:
+			const QString m_log_tag;
+			const std::vector<QString> m_config_dirs;
+			const HashMap<QString, MetaType> m_key_types;
+			const QString m_date_format;
+			const QRegularExpression m_players_regex;
+			const std::vector<std::pair<MetaType, AssetType>> m_asset_type_map;
 
-} // namespace es2
+			void process_gamelist_xml(const QDir &, QXmlStreamReader &, const SearchContext &) const;
+
+			HashMap<MetaType, QString, EnumHash> parse_gamelist_game_node(QXmlStreamReader &) const;
+
+			void apply_metadata(model::GameFile &, const QDir &, HashMap<MetaType, QString, EnumHash> &) const;
+		};
+
+	} // namespace es2
 } // namespace providers

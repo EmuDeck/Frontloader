@@ -29,56 +29,75 @@
 #include <map>
 #include <memory>
 
-namespace providers { class Provider; }
+namespace providers
+{
+	class Provider;
+}
 
 
-namespace appsettings {
+namespace appsettings
+{
 
-struct General {
-    const QString DEFAULT_LOCALE;
-    const QString DEFAULT_THEME;
+	struct General
+	{
+		const QString DEFAULT_LOCALE;
+		const QString DEFAULT_AUTOBOOT_GAME;
+		const QString DEFAULT_THEME;
 
-    bool portable;
-    bool fullscreen;
-    bool mouse_support;
-    bool verify_files;
-    QString locale;
-    QString theme;
+		bool portable;
+		bool fullscreen;
+		bool autoboot;
+		QString autobootGame;
+		int autobootGameIndex;
+		bool mouse_support;
+		bool verify_files;
+		QString locale;
+		QString theme;
 
-    General();
-    NO_COPY_NO_MOVE(General)
-};
+		General();
+		NO_COPY_NO_MOVE(General)
+	};
 
 
-class Keys {
-public:
-    Keys();
-    NO_COPY_NO_MOVE(Keys)
+	class Keys
+	{
+	public:
+		Keys();
+		NO_COPY_NO_MOVE(Keys)
 
-    void add_key(KeyEvent, QKeySequence);
-    void del_key(KeyEvent, const QKeySequence&);
-    void clear(KeyEvent);
-    void resetAll();
+		void add_key(KeyEvent, QKeySequence);
 
-    const QVector<QKeySequence>& at(KeyEvent) const;
-    const QVector<QKeySequence>& operator[](KeyEvent) const;
+		void del_key(KeyEvent, const QKeySequence &);
 
-private:
-    HashMap<KeyEvent, QVector<QKeySequence>, EnumHash> m_event_keymap;
-};
+		void clear(KeyEvent);
+
+		void resetAll();
+
+		const QVector<QKeySequence> &at(KeyEvent) const;
+
+		const QVector<QKeySequence> &operator[](KeyEvent) const;
+
+	private:
+		HashMap<KeyEvent, QVector<QKeySequence>, EnumHash> m_event_keymap;
+	};
 
 } // namespace appsettings
 
 
-struct AppSettings {
-    static appsettings::General general;
-    static appsettings::Keys keys;
+struct AppSettings
+{
+	static appsettings::General general;
+	static appsettings::Keys keys;
 
-    static void load_config();
-    static void save_config();
-    static void load_providers();
-    static void parse_gamedirs(const std::function<void(const QString&)>&);
+	static void load_config();
 
-    static const std::vector<std::unique_ptr<providers::Provider>>& providers();
-    static const std::map<QKeySequence, QString> gamepadButtonNames;
+	static void save_config();
+
+	static void load_providers();
+
+	static void parse_gamedirs(const std::function<void(const QString &)> &);
+
+	static const std::vector<std::unique_ptr<providers::Provider>> &providers();
+
+	static const std::map<QKeySequence, QString> gamepadButtonNames;
 };

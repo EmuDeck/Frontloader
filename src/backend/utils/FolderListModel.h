@@ -23,57 +23,73 @@
 #include <QDir>
 
 
-struct FolderListEntry {
-    QString name;
-    bool is_dir;
+struct FolderListEntry
+{
+	QString name;
+	bool is_dir;
 
-    FolderListEntry(QString name, bool is_dir);
-    MOVE_ONLY(FolderListEntry)
+	FolderListEntry(QString name, bool is_dir);
+	MOVE_ONLY(FolderListEntry)
 };
 
 
-class FolderListModel : public QAbstractListModel {
-    Q_OBJECT
-    Q_PROPERTY(QString folder READ folder NOTIFY folderChanged)
-    Q_PROPERTY(QStringList files
-               READ filenames WRITE setFilenames
-               NOTIFY filenamesChanged)
-    Q_PROPERTY(QStringList extensions
-               READ extensions WRITE setExtensions
-               NOTIFY extensionsChanged)
+class FolderListModel : public QAbstractListModel
+{
+Q_OBJECT
+	Q_PROPERTY(QString folder READ folder NOTIFY folderChanged)
+	Q_PROPERTY(QStringList files
+			           READ filenames WRITE setFilenames
+			           NOTIFY filenamesChanged)
+	Q_PROPERTY(QStringList extensions
+			           READ extensions WRITE setExtensions
+			           NOTIFY extensionsChanged)
 
 public:
-    explicit FolderListModel(QObject* parent = nullptr);
+	explicit FolderListModel(QObject* parent = nullptr);
 
-    enum Roles {
-        EntryName = Qt::UserRole + 1,
-        EntryIsDir,
-    };
+	enum Roles
+	{
+		EntryName = Qt::UserRole + 1,
+		EntryIsDir,
+	};
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role) const override;
-    QHash<int, QByteArray> roleNames() const override { return m_role_names; }
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    Q_INVOKABLE void cd(const QString&);
+	QVariant data(const QModelIndex &index, int role) const override;
 
-    QString folder() const { return m_dir_path; }
-    const QStringList& filenames() const { return m_filenames; }
-    const QStringList& extensions() const { return m_extensions; }
-    void setFilenames(QStringList);
-    void setExtensions(QStringList);
+	QHash<int, QByteArray> roleNames() const override
+	{ return m_role_names; }
+
+	Q_INVOKABLE void cd(const QString &);
+
+	QString folder() const
+	{ return m_dir_path; }
+
+	const QStringList &filenames() const
+	{ return m_filenames; }
+
+	const QStringList &extensions() const
+	{ return m_extensions; }
+
+	void setFilenames(QStringList);
+
+	void setExtensions(QStringList);
 
 signals:
-    void folderChanged();
-    void filenamesChanged();
-    void extensionsChanged();
+
+	void folderChanged();
+
+	void filenamesChanged();
+
+	void extensionsChanged();
 
 private:
-    QDir m_dir;
-    QString m_dir_path;
-    std::vector<FolderListEntry> m_files;
-    QStringList m_filenames;
-    QStringList m_extensions;
+	QDir m_dir;
+	QString m_dir_path;
+	std::vector<FolderListEntry> m_files;
+	QStringList m_filenames;
+	QStringList m_extensions;
 
-    const QStringList m_drives_cache;
-    const QHash<int, QByteArray> m_role_names;
+	const QStringList m_drives_cache;
+	const QHash<int, QByteArray> m_role_names;
 };

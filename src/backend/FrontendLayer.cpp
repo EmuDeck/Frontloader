@@ -36,31 +36,30 @@
 #include <X11/Xatom.h>
 
 
-namespace {
-
-class DiskCachedNAMFactory : public QQmlNetworkAccessManagerFactory {
-public:
-    QNetworkAccessManager* create(QObject* parent) override;
-};
-
-QNetworkAccessManager* DiskCachedNAMFactory::create(QObject* parent)
+namespace
 {
-    return utils::create_disc_cached_nam(parent);
-}
+
+	class DiskCachedNAMFactory : public QQmlNetworkAccessManagerFactory
+	{
+	public:
+		QNetworkAccessManager* create(QObject* parent) override;
+	};
+
+	QNetworkAccessManager* DiskCachedNAMFactory::create(QObject* parent)
+	{
+		return utils::create_disc_cached_nam(parent);
+	}
 
 } // namespace
 
 
 FrontendLayer::FrontendLayer(QObject* const api_public, QObject* const api_private, QObject* parent)
-    : QObject(parent)
-    , m_api_public(api_public)
-    , m_api_private(api_private)
-    , m_engine(nullptr)
+		: QObject(parent), m_api_public(api_public), m_api_private(api_private), m_engine(nullptr)
 {
-    // Note: the pointer to the Api is non-owning and constant during the runtime
+	// Note: the pointer to the Api is non-owning and constant during the runtime
 }
 
-void set_property(Atom& atom, uint32_t data, Display* display, Window window)
+void set_property(Atom &atom, uint32_t data, Display* display, Window window)
 {
 	XChangeProperty(display, window, atom, XA_CARDINAL, 32, 1, reinterpret_cast<const unsigned char*>(&data), 1);
 	XFlush(display);
@@ -68,48 +67,48 @@ void set_property(Atom& atom, uint32_t data, Display* display, Window window)
 
 void FrontendLayer::rebuild()
 {
-    Q_ASSERT(!m_engine);
+	Q_ASSERT(!m_engine);
 
-    m_engine = new QQmlApplicationEngine(this);
-    m_engine->addImportPath(QStringLiteral("lib/qml"));
-    m_engine->addImportPath(QStringLiteral("qml"));
-    m_engine->setNetworkAccessManagerFactory(new DiskCachedNAMFactory);
+	m_engine = new QQmlApplicationEngine(this);
+	m_engine->addImportPath(QStringLiteral("lib/qml"));
+	m_engine->addImportPath(QStringLiteral("qml"));
+	m_engine->setNetworkAccessManagerFactory(new DiskCachedNAMFactory);
 
-    m_engine->addImageProvider(QStringLiteral("blurhash"), new BlurhashProvider);
+	m_engine->addImageProvider(QStringLiteral("blurhash"), new BlurhashProvider);
 #ifdef Q_OS_ANDROID
-    m_engine->addImageProvider(QStringLiteral("androidicons"), new AndroidAppIconProvider);
+	m_engine->addImageProvider(QStringLiteral("androidicons"), new AndroidAppIconProvider);
 #endif
-    m_engine->rootContext()->setContextProperty(QStringLiteral("api"), m_api_public);
-    m_engine->rootContext()->setContextProperty(QStringLiteral("Api"), m_api_public);
-    m_engine->rootContext()->setContextProperty(QStringLiteral("Internal"), m_api_private);
-    m_engine->load(QUrl(QStringLiteral("qrc:/frontend/main.qml")));
+	m_engine->rootContext()->setContextProperty(QStringLiteral("api"), m_api_public);
+	m_engine->rootContext()->setContextProperty(QStringLiteral("Api"), m_api_public);
+	m_engine->rootContext()->setContextProperty(QStringLiteral("Internal"), m_api_private);
+	m_engine->load(QUrl(QStringLiteral("qrc:/frontend/main.qml")));
 
-	Display* display  = QX11Info::display();
+	Display* display = QX11Info::display();
 	Atom steamAtom = XInternAtom(display, "STEAM_BIGPICTURE", False);
-	QWindow* qWindow = ((QWindow*)m_engine->rootObjects().first());
+	QWindow* qWindow = ((QWindow*) m_engine->rootObjects().first());
 	if (qWindow->isWindowType())
 	{
 		Window window = qWindow->winId();
 		set_property(steamAtom, 1, display, window);
 	}
 
-    emit rebuildComplete();
+	emit rebuildComplete();
 }
 
 void FrontendLayer::teardown()
 {
-    Q_ASSERT(m_engine);
+	Q_ASSERT(m_engine);
 
-    // signal forwarding
-    connect(m_engine, &QQmlApplicationEngine::destroyed,
-            this, &FrontendLayer::teardownComplete);
+	// signal forwarding
+	connect(m_engine, &QQmlApplicationEngine::destroyed,
+	        this, &FrontendLayer::teardownComplete);
 
-    m_engine->deleteLater();
-    m_engine = nullptr;
+	m_engine->deleteLater();
+	m_engine = nullptr;
 }
 
 void FrontendLayer::clearCache()
 {
-    Q_ASSERT(m_engine);
-    m_engine->clearComponentCache();
+	Q_ASSERT(m_engine);
+	m_engine->clearComponentCache();
 }

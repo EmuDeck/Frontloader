@@ -33,72 +33,93 @@
 ///
 /// Provides an API for the frontend layer, to allow accessing every public
 /// property of the backend from QML.
-namespace model {
-class ApiObject : public QObject {
-    Q_OBJECT
+namespace model
+{
+	class ApiObject : public QObject
+	{
+	Q_OBJECT
 
-    QML_CONST_PROPERTY(model::DeviceInfo, device)
-    QML_CONST_PROPERTY(model::Keys, keys)
-    QML_READONLY_PROPERTY(model::Memory, memory)
-    Q_PROPERTY(ObjectListModel* collections READ collections CONSTANT)
-    Q_PROPERTY(ObjectListModel* allGames READ allGames CONSTANT)
+	QML_CONST_PROPERTY(model::DeviceInfo, device)
+	QML_CONST_PROPERTY(model::Keys, keys)
+	QML_READONLY_PROPERTY(model::Memory, memory)
+		Q_PROPERTY(ObjectListModel* collections READ collections CONSTANT)
+		Q_PROPERTY(ObjectListModel* allGames READ allGames CONSTANT)
 
-    // retranslate on locale change
-    Q_PROPERTY(QString tr READ emptyString NOTIFY retranslationRequested)
+		// retranslate on locale change
+		Q_PROPERTY(QString tr READ emptyString NOTIFY retranslationRequested)
 
-public:
-    explicit ApiObject(const backend::CliArgs& args, QObject* parent = nullptr);
+	public:
+		explicit ApiObject(const backend::CliArgs &args, QObject* parent = nullptr);
 
-    // scanning
-    void clearGameData();
-    void setGameData(std::vector<model::Collection*>&&, std::vector<model::Game*>&&);
+		// scanning
+		void clearGameData();
 
-    CollectionListModel* collections() const { return m_collections; }
-    GameListModel* allGames() const { return m_all_games; }
+		void setGameData(std::vector<model::Collection*> &&, std::vector<model::Game*> &&);
 
-signals:
-    // loading
-    void gamedataReady();
+		CollectionListModel* collections() const
+		{ return m_collections; }
 
-    // user actions
-    void launchGameFile(const model::GameFile*);
-    void launchFailed(QString);
-    void gameFileFinished(model::GameFile* const);
-    void gameFileLaunched(model::GameFile* const);
-    void favoritesChanged();
-    void memoryChanged();
+		GameListModel* allGames() const
+		{ return m_all_games; }
 
-    // triggers translation update
-    void retranslationRequested();
+	signals:
 
-    // Api events for QML -- no const here
-    void eventSelectGameFile(model::Game* game);
-    void eventLaunchError(QString msg);
+		// loading
+		void gamedataReady();
 
-public slots:
-    // game launch communication
-    void onGameLaunchOk();
-    void onGameLaunchError(QString);
-    void onGameProcessFinished();
+		// user actions
+		void launchGameFile(const model::GameFile*);
 
-    // setting changes
-    void onLocaleChanged();
-    void onThemeChanged(QString);
+		void launchFailed(QString);
 
-private slots:
-    // internal communication
-    void onGameFavoriteChanged();
-    void onGameFileSelectorRequested();
-    void onGameFileLaunchRequested();
+		void gameFileFinished(model::GameFile* const);
 
-private:
-    // game launching
-    model::GameFile* m_launch_game_file;
+		void gameFileLaunched(model::GameFile* const);
 
-    // used to trigger re-rendering of texts on locale change
-    QString emptyString() const { return QString(); }
+		void favoritesChanged();
 
-    CollectionListModel* m_collections = nullptr;
-    GameListModel* m_all_games = nullptr;
-};
+		void memoryChanged();
+
+		// triggers translation update
+		void retranslationRequested();
+
+		// Api events for QML -- no const here
+		void eventSelectGameFile(model::Game* game);
+
+		void eventLaunchError(QString msg);
+
+	public slots:
+
+		// game launch communication
+		void onGameLaunchOk();
+
+		void onGameLaunchError(QString);
+
+		void onGameProcessFinished();
+
+		// setting changes
+		void onLocaleChanged();
+
+		void onThemeChanged(QString);
+
+	private slots:
+
+		// internal communication
+		void onGameFavoriteChanged();
+
+		void onGameFileSelectorRequested();
+
+		void onGameFileLaunchRequested();
+
+	private:
+		// game launching
+		model::GameFile* m_launch_game_file;
+
+		// used to trigger re-rendering of texts on locale change
+		QString emptyString() const
+		{ return QString(); }
+
+		CollectionListModel* m_collections = nullptr;
+		GameListModel* m_all_games = nullptr;
+	};
 } // namespace model

@@ -25,143 +25,146 @@
 #include <QLocale>
 
 
-namespace {
-std::vector<model::LocaleEntry> find_available_locales()
+namespace
 {
-    constexpr int QM_PREFIX_LEN = 8; // length of "pegasus_"
-    constexpr int QM_SUFFIX_LEN = 3; // length of ".qm"
+	std::vector<model::LocaleEntry> find_available_locales()
+	{
+		constexpr int QM_PREFIX_LEN = 8; // length of "pegasus_"
+		constexpr int QM_SUFFIX_LEN = 3; // length of ".qm"
 
-    QStringList qm_files = QDir(QStringLiteral(":/i18n")).entryList(QStringList(QStringLiteral("*.qm")));
-    qm_files.append(QStringLiteral("pegasus_en.qm"));
-    qm_files.sort();
+		QStringList qm_files = QDir(QStringLiteral(":/i18n")).entryList(QStringList(QStringLiteral("*.qm")));
+		qm_files.append(QStringLiteral("pegasus_en.qm"));
+		qm_files.sort();
 
-    std::vector<model::LocaleEntry> locales;
-    locales.reserve(static_cast<size_t>(qm_files.count()));
+		std::vector<model::LocaleEntry> locales;
+		locales.reserve(static_cast<size_t>(qm_files.count()));
 
-    for (const QString& filename : qAsConst(qm_files)) {
-        const int locale_tag_len = filename.length() - QM_PREFIX_LEN - QM_SUFFIX_LEN;
-        Q_ASSERT(locale_tag_len > 0);
+		for (const QString &filename: qAsConst(qm_files))
+		{
+			const int locale_tag_len = filename.length() - QM_PREFIX_LEN - QM_SUFFIX_LEN;
+			Q_ASSERT(locale_tag_len > 0);
 
-        QString locale_tag = filename.mid(QM_PREFIX_LEN, locale_tag_len);
-        locales.emplace_back(std::move(locale_tag));
+			QString locale_tag = filename.mid(QM_PREFIX_LEN, locale_tag_len);
+			locales.emplace_back(std::move(locale_tag));
 
-        Log::info(LOGMSG("Found locale `%1`").arg(locales.back().bcp47tag));
-    }
+			Log::info(LOGMSG("Found locale `%1`").arg(locales.back().bcp47tag));
+		}
 
-    return locales;
-}
+		return locales;
+	}
 } // namespace
 
 
-namespace model {
-
-LocaleEntry::LocaleEntry(QString tag)
-    : bcp47tag(std::move(tag))
-    , name(QLocale(bcp47tag).nativeLanguageName())
-{}
-
-Locales::Locales(QObject* parent)
-    : QAbstractListModel(parent)
-    , m_role_names({
-        { Roles::Tag, QByteArrayLiteral("tag") },
-        { Roles::Name, QByteArrayLiteral("name") },
-    })
-    , m_locales(find_available_locales())
-    , m_current_idx(0)
+namespace model
 {
-    select_preferred_locale();
-    load_selected_locale();
 
-    qApp->installTranslator(&m_translator);
-}
+	LocaleEntry::LocaleEntry(QString tag)
+			: bcp47tag(std::move(tag)), name(QLocale(bcp47tag).nativeLanguageName())
+	{}
 
-void Locales::select_preferred_locale()
-{
-    // A. Try to use the saved config value
-    if (select_locale(AppSettings::general.locale))
-        return;
+	Locales::Locales(QObject* parent)
+			: QAbstractListModel(parent), m_role_names({
+					                                           {Roles::Tag,  QByteArrayLiteral("tag")},
+					                                           {Roles::Name, QByteArrayLiteral("name")},
+			                                           }), m_locales(find_available_locales()), m_current_idx(0)
+	{
+		select_preferred_locale();
+		load_selected_locale();
 
-    // B. Try to use the system default language
-    if (select_locale(QLocale().bcp47Name()))
-        return;
+		qApp->installTranslator(&m_translator);
+	}
 
-    // C. Fall back to the default
-    if (select_locale(AppSettings::general.DEFAULT_LOCALE))
-        return;
+	void Locales::select_preferred_locale()
+	{
+		// A. Try to use the saved config value
+		if (select_locale(AppSettings::general.locale))
+			return;
 
-    Q_UNREACHABLE();
-}
+		// B. Try to use the system default language
+		if (select_locale(QLocale().bcp47Name()))
+			return;
 
-bool Locales::select_locale(const QString& tag)
-{
-    if (tag.isEmpty())
-        return false;
+		// C. Fall back to the default
+		if (select_locale(AppSettings::general.DEFAULT_LOCALE))
+			return;
 
-    for (size_t idx = 0; idx < m_locales.size(); idx++) {
-        if (m_locales.at(idx).bcp47tag == tag) {
-            m_current_idx = idx;
-            return true;
-        }
-    }
+		Q_UNREACHABLE();
+	}
 
-    return false;
-}
+	bool Locales::select_locale(const QString &tag)
+	{
+		if (tag.isEmpty())
+			return false;
 
-void Locales::load_selected_locale()
-{
-    const auto& locale = m_locales.at(m_current_idx);
+		for (size_t idx = 0; idx < m_locales.size(); idx++)
+		{
+			if (m_locales.at(idx).bcp47tag == tag)
+			{
+				m_current_idx = idx;
+				return true;
+			}
+		}
 
-    m_translator.load(QStringLiteral("frontloader_") + locale.bcp47tag,
-                      QStringLiteral(":/i18n"),
-                      QStringLiteral("-"));
-    Log::info(LOGMSG("Locale set to `%2`").arg(locale.bcp47tag));
-}
+		return false;
+	}
 
-int Locales::rowCount(const QModelIndex& parent) const
-{
-    if (parent.isValid())
-        return 0;
+	void Locales::load_selected_locale()
+	{
+		const auto &locale = m_locales.at(m_current_idx);
 
-    return static_cast<int>(m_locales.size());
-}
+		m_translator.load(QStringLiteral("frontloader_") + locale.bcp47tag,
+		                  QStringLiteral(":/i18n"),
+		                  QStringLiteral("-"));
+		Log::info(LOGMSG("Locale set to `%2`").arg(locale.bcp47tag));
+	}
 
-QVariant Locales::data(const QModelIndex& index, int role) const
-{
-    if (!index.isValid() || rowCount() <= index.row())
-        return {};
+	int Locales::rowCount(const QModelIndex &parent) const
+	{
+		if (parent.isValid())
+			return 0;
 
-    const auto& locale = m_locales.at(static_cast<size_t>(index.row()));
-    switch (role) {
-        case Roles::Tag:
-            return locale.bcp47tag;
-        case Roles::Name:
-            return locale.name;
-        default:
-            return {};
-    }
-}
+		return static_cast<int>(m_locales.size());
+	}
 
-void Locales::setCurrentIndex(int idx_int)
-{
-    const auto idx = static_cast<size_t>(idx_int);
+	QVariant Locales::data(const QModelIndex &index, int role) const
+	{
+		if (!index.isValid() || rowCount() <= index.row())
+			return {};
 
-    // verify
-    if (idx == m_current_idx)
-        return;
+		const auto &locale = m_locales.at(static_cast<size_t>(index.row()));
+		switch (role)
+		{
+			case Roles::Tag:
+				return locale.bcp47tag;
+			case Roles::Name:
+				return locale.name;
+			default:
+				return {};
+		}
+	}
 
-    if (m_locales.size() <= idx) {
-        Log::warning(LOGMSG("Invalid locale index #%1").arg(idx));
-        return;
-    }
+	void Locales::setCurrentIndex(int idx_int)
+	{
+		const auto idx = static_cast<size_t>(idx_int);
 
-    // load
-    m_current_idx = idx;
-    load_selected_locale();
-    emit localeChanged();
+		// verify
+		if (idx == m_current_idx)
+			return;
 
-    // remember
-    AppSettings::general.locale = m_locales.at(idx).bcp47tag;
-    AppSettings::save_config();
-}
+		if (m_locales.size() <= idx)
+		{
+			Log::warning(LOGMSG("Invalid locale index #%1").arg(idx));
+			return;
+		}
+
+		// load
+		m_current_idx = idx;
+		load_selected_locale();
+		emit localeChanged();
+
+		// remember
+		AppSettings::general.locale = m_locales.at(idx).bcp47tag;
+		AppSettings::save_config();
+	}
 
 } // namespace model

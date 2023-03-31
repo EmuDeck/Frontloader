@@ -19,42 +19,63 @@
 
 #include <QObject>
 
-namespace model { class Collection; }
-namespace model { class Game; }
+namespace model
+{
+	class Collection;
+}
+namespace model
+{
+	class Game;
+}
 
 
-namespace model {
-class ScannerState : public QObject {
-    Q_OBJECT
+namespace model
+{
+	class ScannerState : public QObject
+	{
+	Q_OBJECT
 
-    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
-    Q_PROPERTY(QString stage READ stage NOTIFY stageChanged)
-    Q_PROPERTY(float progress READ progress NOTIFY progressChanged)
+		Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+		Q_PROPERTY(QString stage READ stage NOTIFY stageChanged)
+		Q_PROPERTY(float progress READ progress NOTIFY progressChanged)
 
-public:
-    explicit ScannerState(QObject* parent = nullptr);
+	public:
+		explicit ScannerState(QObject* parent = nullptr);
 
-    Q_INVOKABLE void reset();
+		Q_INVOKABLE void reset();
 
-    bool running() const { return m_running; }
-    QString stage() const { return m_stage; }
-    float progress() const { return m_progress; }
+		bool running() const
+		{ return m_running; }
 
-public slots:
-    void onScanStarted();
-    void onScanProgressChanged(float, QString);
-    void onScanFinished();
-    void onUiProcessing();
-    void onUiReady();
+		QString stage() const
+		{ return m_stage; }
 
-signals:
-    void runningChanged();
-    void stageChanged();
-    void progressChanged();
+		float progress() const
+		{ return m_progress; }
 
-private:
-    bool m_running;
-    QString m_stage;
-    float m_progress;
-};
+	public slots:
+
+		void onScanStarted();
+
+		void onScanProgressChanged(float, QString);
+
+		void onScanFinished();
+
+		void onUiProcessing();
+
+		void onUiReady();
+
+	signals:
+
+		void runningChanged();
+
+		void stageChanged();
+
+		void progressChanged();
+
+	private:
+		bool m_running;
+		QString m_stage;
+		float m_progress;
+	};
 } // namespace model

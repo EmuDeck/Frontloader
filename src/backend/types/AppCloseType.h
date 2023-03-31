@@ -17,9 +17,10 @@
 
 #pragma once
 
-enum AppCloseType : unsigned char {
-    QUIT,
-    REBOOT,
-    SHUTDOWN,
-    SUSPEND,
+enum AppCloseType : unsigned char
+{
+	QUIT,
+	REBOOT,
+	SHUTDOWN,
+	SUSPEND,
 };

@@ -28,95 +28,107 @@
 #include <QDirIterator>
 
 
-namespace {
-bool is_metadata_file(const QString& filename)
+namespace
 {
-    return filename == QLatin1String("metadata.pegasus.txt")
-        || filename == QLatin1String("metadata.txt")
-        || filename.endsWith(QLatin1String(".metadata.pegasus.txt"))
-        || filename.endsWith(QLatin1String(".metadata.txt"));
-}
+	bool is_metadata_file(const QString &filename)
+	{
+		return filename == QLatin1String("metadata.pegasus.txt")
+		       || filename == QLatin1String("metadata.txt")
+		       || filename.endsWith(QLatin1String(".metadata.pegasus.txt"))
+		       || filename.endsWith(QLatin1String(".metadata.txt"));
+	}
 
-std::vector<QString> find_metafiles_in(const QString& dir_path)
-{
-    constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
-    constexpr auto dir_flags = QDirIterator::FollowSymlinks;
+	std::vector<QString> find_metafiles_in(const QString &dir_path)
+	{
+		constexpr auto dir_filters = QDir::Files | QDir::NoDotAndDotDot;
+		constexpr auto dir_flags = QDirIterator::FollowSymlinks;
 
-    std::vector<QString> result;
+		std::vector<QString> result;
 
-    QDirIterator dir_it(dir_path, dir_filters, dir_flags);
-    while (dir_it.hasNext()) {
-        dir_it.next();
-        if (is_metadata_file(dir_it.fileName())) {
-            QString path = ::clean_abs_path(dir_it.fileInfo());
-            result.emplace_back(std::move(path));
-        }
-    }
+		QDirIterator dir_it(dir_path, dir_filters, dir_flags);
+		while (dir_it.hasNext())
+		{
+			dir_it.next();
+			if (is_metadata_file(dir_it.fileName()))
+			{
+				QString path = ::clean_abs_path(dir_it.fileInfo());
+				result.emplace_back(std::move(path));
+			}
+		}
 
-    return result;
-}
+		return result;
+	}
 
-std::vector<QString> find_all_metafiles(const QStringList& gamedirs)
-{
-    const QString global_metafile_dir = paths::writableConfigDir() + QLatin1String("/metafiles");
-    std::vector<QString> result = find_metafiles_in(global_metafile_dir);
+	std::vector<QString> find_all_metafiles(const QStringList &gamedirs)
+	{
+		const QString global_metafile_dir = paths::writableConfigDir() + QLatin1String("/metafiles");
+		std::vector<QString> result = find_metafiles_in(global_metafile_dir);
 
-    result.reserve(result.size() + gamedirs.size());
-    for (const QString& dir_path : gamedirs) {
-        std::vector<QString> local_metafiles = find_metafiles_in(dir_path);
-        result.insert(result.end(),
-            std::make_move_iterator(local_metafiles.begin()),
-            std::make_move_iterator(local_metafiles.end()));
-    }
+		result.reserve(result.size() + gamedirs.size());
+		for (const QString &dir_path: gamedirs)
+		{
+			std::vector<QString> local_metafiles = find_metafiles_in(dir_path);
+			result.insert(result.end(),
+			              std::make_move_iterator(local_metafiles.begin()),
+			              std::make_move_iterator(local_metafiles.end()));
+		}
 
-    VEC_REMOVE_DUPLICATES(result);
-    return result;
-}
+		VEC_REMOVE_DUPLICATES(result);
+		return result;
+	}
 } // namespace
 
 
-namespace providers {
-namespace pegasus {
-
-PegasusProvider::PegasusProvider(QObject* parent)
-    : Provider(QLatin1String("pegasus_metafiles"), QStringLiteral("Metafiles"), PROVIDER_FLAG_INTERNAL, parent)
-{}
-
-Provider& PegasusProvider::run(SearchContext& sctx)
+namespace providers
 {
-    const std::vector<QString> metafile_paths = find_all_metafiles(sctx.root_game_dirs());
-    if (metafile_paths.empty()) {
-        Log::info(display_name(), LOGMSG("No metadata files found"));
-        return *this;
-    }
+	namespace pegasus
+	{
 
-    const Metadata metahelper(display_name());
-    std::vector<FileFilter> all_filters;
+		PegasusProvider::PegasusProvider(QObject* parent)
+				: Provider(QLatin1String("pegasus_metafiles"), QStringLiteral("Metafiles"), PROVIDER_FLAG_INTERNAL,
+				           parent)
+		{}
 
-    const float progress_step = 1.f / metafile_paths.size();
-    float progress = 0.f;
+		Provider &PegasusProvider::run(SearchContext &sctx)
+		{
+			const std::vector<QString> metafile_paths = find_all_metafiles(sctx.root_game_dirs());
+			if (metafile_paths.empty())
+			{
+				Log::info(display_name(), LOGMSG("No metadata files found"));
+				return *this;
+			}
 
-    for (const QString& path : metafile_paths) {
-        Log::info(display_name(), LOGMSG("Found `%1`").arg(::pretty_path(path)));
+			const Metadata metahelper(display_name());
+			std::vector<FileFilter> all_filters;
 
-        std::vector<FileFilter> filters = metahelper.apply_metafile(path, sctx);
-        all_filters.insert(all_filters.end(),
-            std::make_move_iterator(filters.begin()),
-            std::make_move_iterator(filters.end()));
+			const float progress_step = 1.f / metafile_paths.size();
+			float progress = 0.f;
 
-        progress += progress_step;
-        emit progressChanged(progress);
-    }
+			for (const QString &path: metafile_paths)
+			{
+				Log::info(display_name(), LOGMSG("Found `%1`").arg(::pretty_path(path)));
 
-    for (FileFilter& filter : all_filters) {
-        apply_filter(filter, sctx);
+				std::vector<FileFilter> filters = metahelper.apply_metafile(path, sctx);
+				all_filters.insert(all_filters.end(),
+				                   std::make_move_iterator(filters.begin()),
+				                   std::make_move_iterator(filters.end()));
 
-        for (QString& dir_path : filter.directories)
-            sctx.pegasus_add_game_dir(dir_path);
-    }
+				progress += progress_step;
+				emit progressChanged(progress);
+			}
 
-    return *this;
-}
+			for (FileFilter &filter: all_filters)
+			{
+				apply_filter(filter, sctx);
 
-} // namespace pegasus
+				for (QString &dir_path: filter.directories)
+				{
+					sctx.pegasus_add_game_dir(dir_path);
+				}
+			}
+
+			return *this;
+		}
+
+	} // namespace pegasus
 } // namespace providers

@@ -21,22 +21,27 @@
 #include <QFileInfo>
 
 
-QString clean_abs_path(const QFileInfo& finfo) {
-    return QDir::cleanPath(finfo.absoluteFilePath());
+QString clean_abs_path(const QFileInfo &finfo)
+{
+	return QDir::cleanPath(finfo.absoluteFilePath());
 }
 
-QString clean_abs_dir(const QFileInfo& finfo) {
-    return QDir::cleanPath(finfo.absolutePath());
+QString clean_abs_dir(const QFileInfo &finfo)
+{
+	return QDir::cleanPath(finfo.absolutePath());
 }
 
-QString pretty_path(const QFileInfo& finfo) {
-    return pretty_path(finfo.absoluteFilePath());
+QString pretty_path(const QFileInfo &finfo)
+{
+	return pretty_path(finfo.absoluteFilePath());
 }
 
-QString pretty_dir(const QFileInfo& finfo) {
-    return pretty_path(finfo.absolutePath());
+QString pretty_dir(const QFileInfo &finfo)
+{
+	return pretty_path(finfo.absolutePath());
 }
 
-QString pretty_path(const QString& path) {
-    return QDir::toNativeSeparators(QDir::cleanPath(path));
+QString pretty_path(const QString &path)
+{
+	return QDir::toNativeSeparators(QDir::cleanPath(path));
 }

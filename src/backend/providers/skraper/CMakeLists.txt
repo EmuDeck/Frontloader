@@ -1,9 +1,9 @@
 pegasus_add_provider(
-    NAME "Skraper"
-    CXXID SKRAPER
-    SOURCES
+        NAME "Skraper"
+        CXXID SKRAPER
+        SOURCES
         SkraperAssetsProvider.cpp
         SkraperAssetsProvider.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

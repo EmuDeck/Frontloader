@@ -25,20 +25,29 @@ class QString;
 
 
 // Wrapper above Qt for auto-closing and freeing the connection
-class SqliteDb {
+class SqliteDb
+{
 public:
-    explicit SqliteDb(const QString& db_path);
-    ~SqliteDb();
+	explicit SqliteDb(const QString &db_path);
 
-    MOVE_ONLY(SqliteDb)
+	~SqliteDb();
 
-    bool open() { return m_db.open(); }
-    bool startTransaction() { return m_db.transaction(); }
-    bool rollback() { return m_db.rollback(); }
-    bool commit() { return m_db.commit(); }
+	MOVE_ONLY(SqliteDb)
 
-    bool hasTable(const QString& table_name);
+	bool open()
+	{ return m_db.open(); }
+
+	bool startTransaction()
+	{ return m_db.transaction(); }
+
+	bool rollback()
+	{ return m_db.rollback(); }
+
+	bool commit()
+	{ return m_db.commit(); }
+
+	bool hasTable(const QString &table_name);
 
 private:
-    QSqlDatabase m_db;
+	QSqlDatabase m_db;
 };

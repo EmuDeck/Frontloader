@@ -20,23 +20,25 @@
 #include "Log.h"
 
 
-namespace platform {
-namespace power {
-
-void reboot()
+namespace platform
 {
-    Log::error(LOGMSG("Reboot not implemented on this platform yet"));
-}
+	namespace power
+	{
 
-void shutdown()
-{
-    Log::error(LOGMSG("Shutdown not implemented on this platform yet"));
-}
+		void reboot()
+		{
+			Log::error(LOGMSG("Reboot not implemented on this platform yet"));
+		}
 
-void suspend()
-{
-    Log::error(LOGMSG("Suspend not implemented on this platform yet"));
-}
+		void shutdown()
+		{
+			Log::error(LOGMSG("Shutdown not implemented on this platform yet"));
+		}
 
-} // namespace power
+		void suspend()
+		{
+			Log::error(LOGMSG("Suspend not implemented on this platform yet"));
+		}
+
+	} // namespace power
 } // namespace platform

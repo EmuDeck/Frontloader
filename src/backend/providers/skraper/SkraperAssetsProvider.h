@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace skraper {
+namespace providers
+{
+	namespace skraper
+	{
 
-class SkraperAssetsProvider : public Provider {
-    Q_OBJECT
+		class SkraperAssetsProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit SkraperAssetsProvider(QObject* parent = nullptr);
+		public:
+			explicit SkraperAssetsProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace skraper
+	} // namespace skraper
 } // namespace providers

@@ -22,69 +22,75 @@
 #include "utils/KeySequenceTools.h"
 
 
-namespace {
-void free_keylist(QVector<QObject*>& keylist)
+namespace
 {
-    for (QObject* keyptr : keylist)
-        keyptr->deleteLater();
+	void free_keylist(QVector<QObject*> &keylist)
+	{
+		for (QObject* keyptr: keylist)
+		{
+			keyptr->deleteLater();
+		}
 
-    keylist.clear();
-}
+		keylist.clear();
+	}
 } // namespace
 
 
-namespace model {
-
-Keys::Keys(QObject* parent)
-    : QObject(parent)
-    , m_keylists {
-        { KeyEvent::LEFT, {} },
-        { KeyEvent::RIGHT, {} },
-        { KeyEvent::UP, {} },
-        { KeyEvent::DOWN, {} },
-        { KeyEvent::ACCEPT, {} },
-        { KeyEvent::CANCEL, {} },
-        { KeyEvent::DETAILS, {} },
-        { KeyEvent::FILTERS, {} },
-        { KeyEvent::NEXT_PAGE, {} },
-        { KeyEvent::PREV_PAGE, {} },
-        { KeyEvent::PAGE_UP, {} },
-        { KeyEvent::PAGE_DOWN, {} },
-        { KeyEvent::MAIN_MENU, {} },
-        { KeyEvent::VOL_UP, {} },
-        { KeyEvent::VOL_DOWN, {} },
-    }
+namespace model
 {
-    refresh_keys();
-}
 
-void Keys::refresh_keys()
-{
-    for (auto& entry : m_keylists) {
-        auto& keylist = entry.second;
-        free_keylist(keylist);
+	Keys::Keys(QObject* parent)
+			: QObject(parent), m_keylists{
+			{KeyEvent::LEFT,      {}},
+			{KeyEvent::RIGHT,     {}},
+			{KeyEvent::UP,        {}},
+			{KeyEvent::DOWN,      {}},
+			{KeyEvent::ACCEPT,    {}},
+			{KeyEvent::CANCEL,    {}},
+			{KeyEvent::DETAILS,   {}},
+			{KeyEvent::FILTERS,   {}},
+			{KeyEvent::NEXT_PAGE, {}},
+			{KeyEvent::PREV_PAGE, {}},
+			{KeyEvent::PAGE_UP,   {}},
+			{KeyEvent::PAGE_DOWN, {}},
+			{KeyEvent::MAIN_MENU, {}},
+			{KeyEvent::VOL_UP,    {}},
+			{KeyEvent::VOL_DOWN,  {}},
+	}
+	{
+		refresh_keys();
+	}
 
-        const auto& keyseq_list = AppSettings::keys.at(entry.first);
-        keylist.reserve(keyseq_list.size());
+	void Keys::refresh_keys()
+	{
+		for (auto &entry: m_keylists)
+		{
+			auto &keylist = entry.second;
+			free_keylist(keylist);
 
-        for (const QKeySequence& keyseq : keyseq_list)
-            keylist.append(new model::Key(keyseq, this));
+			const auto &keyseq_list = AppSettings::keys.at(entry.first);
+			keylist.reserve(keyseq_list.size());
 
-        keylist.squeeze();
-    }
+			for (const QKeySequence &keyseq: keyseq_list)
+			{
+				keylist.append(new model::Key(keyseq, this));
+			}
 
-    emit keysChanged();
-}
+			keylist.squeeze();
+		}
 
-bool Keys::qmlkey_in_keylist(KeyEvent keytype, const QVariant& qmlevent) const
-{
-    const QKeySequence keyseq = utils::qmlevent_to_keyseq(qmlevent);
-    return AppSettings::keys.at(keytype).count(keyseq);
-}
+		emit keysChanged();
+	}
 
-QList<QObject*> Keys::to_qmlkeys(KeyEvent keytype)
-{
-    return QList<QObject*>::fromVector(m_keylists.at(keytype));
-}
+	bool Keys::qmlkey_in_keylist(KeyEvent keytype, const QVariant &qmlevent) const
+	{
+		const QKeySequence keyseq = utils::qmlevent_to_keyseq(qmlevent);
+		return AppSettings::keys.at(keytype).count(keyseq);
+	}
+
+	QList<QObject*> Keys::to_qmlkeys(KeyEvent keytype)
+	{
+		return QList<QObject*>::fromVector(m_keylists.at(keytype));
+	}
 
 } // namespace model

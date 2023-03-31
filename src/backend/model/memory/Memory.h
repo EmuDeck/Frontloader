@@ -21,32 +21,39 @@
 #include <QVariantMap>
 
 
-namespace model {
-class Memory : public QObject {
-    Q_OBJECT
+namespace model
+{
+	class Memory : public QObject
+	{
+	Q_OBJECT
 
-public:
-    explicit Memory(QObject* parent = nullptr);
-    explicit Memory(QString settings_dir, QObject* parent = nullptr);
+	public:
+		explicit Memory(QObject* parent = nullptr);
 
-    Q_INVOKABLE QVariant get(const QString&) const;
-    Q_INVOKABLE bool has(const QString&) const;
-    Q_INVOKABLE void set(const QString&, QVariant);
-    Q_INVOKABLE void unset(const QString&);
+		explicit Memory(QString settings_dir, QObject* parent = nullptr);
 
-    void changeTheme(const QString&);
+		Q_INVOKABLE QVariant get(const QString &) const;
 
-signals:
-    // NOTE: because QVariantMap cannot be changed on the QML side (QTBUG-59474),
-    // get/set functions were introduced. Because of this however, sending a
-    // notify signal to the QML engine is required when a change happens.
-    void dataChanged();
+		Q_INVOKABLE bool has(const QString &) const;
 
-private:
-    const QString m_settings_dir;
-    QString m_current_theme;
-    QVariantMap m_data;
+		Q_INVOKABLE void set(const QString &, QVariant);
 
-    void flush() const;
-};
+		Q_INVOKABLE void unset(const QString &);
+
+		void changeTheme(const QString &);
+
+	signals:
+
+		// NOTE: because QVariantMap cannot be changed on the QML side (QTBUG-59474),
+		// get/set functions were introduced. Because of this however, sending a
+		// notify signal to the QML engine is required when a change happens.
+		void dataChanged();
+
+	private:
+		const QString m_settings_dir;
+		QString m_current_theme;
+		QVariantMap m_data;
+
+		void flush() const;
+	};
 } // namespace model

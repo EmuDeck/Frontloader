@@ -19,19 +19,27 @@
 
 #include "model/ObjectListModel.h"
 
-namespace model { class Gamepad; }
+namespace model
+{
+	class Gamepad;
+}
 
 
-namespace model {
-class GamepadListModel : public TypeListModel<model::Gamepad> {
-public:
-    explicit GamepadListModel(QObject* parent = nullptr);
+namespace model
+{
+	class GamepadListModel : public TypeListModel<model::Gamepad>
+	{
+	public:
+		explicit GamepadListModel(QObject* parent = nullptr);
 
-    QHash<int, QByteArray> roleNames() const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+		QHash<int, QByteArray> roleNames() const override;
 
-    Gamepad* findById(int device_id) const;
-    void append(model::Gamepad* item);
-    void remove(model::Gamepad* item);
-};
+		QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+		Gamepad* findById(int device_id) const;
+
+		void append(model::Gamepad* item);
+
+		void remove(model::Gamepad* item);
+	};
 } // namespace model

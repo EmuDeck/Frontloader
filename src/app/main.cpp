@@ -41,156 +41,157 @@ Q_IMPORT_PLUGIN(ApngImagePlugin)
 #endif
 
 
-backend::CliArgs handle_cli_args(QGuiApplication&);
+backend::CliArgs handle_cli_args(QGuiApplication &);
+
 bool request_runtime_permissions();
+
 bool portable_txt_present();
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    Q_INIT_RESOURCE(frontend);
-    Q_INIT_RESOURCE(themes);
-    Q_INIT_RESOURCE(qmlutils);
+	Q_INIT_RESOURCE(frontend);
+	Q_INIT_RESOURCE(themes);
+	Q_INIT_RESOURCE(qmlutils);
 #ifdef PEGASUS_USING_CMAKE  // TODO: Unify the build system
-    Q_INIT_RESOURCE(assets);
-    Q_INIT_RESOURCE(locales);
-    Q_INIT_RESOURCE(qmlutils_qmlcache);
-    Q_INIT_RESOURCE(frontend_qmlcache);
-    Q_INIT_RESOURCE(themes_qmlcache);
+	Q_INIT_RESOURCE(assets);
+	Q_INIT_RESOURCE(locales);
+	Q_INIT_RESOURCE(qmlutils_qmlcache);
+	Q_INIT_RESOURCE(frontend_qmlcache);
+	Q_INIT_RESOURCE(themes_qmlcache);
 #endif
 
-    TerminalKbd::on_startup();
+	TerminalKbd::on_startup();
 
-    QCoreApplication::addLibraryPath(QStringLiteral("lib/plugins"));
-    QCoreApplication::addLibraryPath(QStringLiteral("lib"));
-    QSettings::setDefaultFormat(QSettings::IniFormat);
+	QCoreApplication::addLibraryPath(QStringLiteral("lib/plugins"));
+	QCoreApplication::addLibraryPath(QStringLiteral("lib"));
+	QSettings::setDefaultFormat(QSettings::IniFormat);
 
-    QGuiApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("frontloader"));
-    app.setApplicationVersion(QStringLiteral(GIT_REVISION));
-    app.setOrganizationName(QStringLiteral("EmuDeck"));
-    app.setOrganizationDomain(QStringLiteral("emudeck.com"));
-    app.setWindowIcon(QIcon(QStringLiteral(":/icon.png")));
+	QGuiApplication app(argc, argv);
+	app.setApplicationName(QStringLiteral("frontloader"));
+	app.setApplicationVersion(QStringLiteral(GIT_REVISION));
+	app.setOrganizationName(QStringLiteral("EmuDeck"));
+	app.setOrganizationDomain(QStringLiteral("emudeck.com"));
+	app.setWindowIcon(QIcon(QStringLiteral(":/icon.png")));
 
-    if (!request_runtime_permissions())
-        return 1;
+	if (!request_runtime_permissions())
+		return 1;
 
-    backend::CliArgs cli_args = handle_cli_args(app);
+	backend::CliArgs cli_args = handle_cli_args(app);
 //    cli_args.portable |= portable_txt_present();
 
-    backend::Backend backend(cli_args);
-    backend.start();
+	backend::Backend backend(cli_args);
+	backend.start();
 
 	return app.exec();
 }
 
 
-
 bool request_runtime_permissions()
 {
 #ifdef Q_OS_ANDROID
-    return android::has_external_storage_access();
+	return android::has_external_storage_access();
 #endif
 
-    return true;
+	return true;
 }
 
 
 bool portable_txt_present()
 {
 #ifdef Q_OS_ANDROID
-    // NOTE: On Android, the executable location is not generally accessible
-    return false;
+	// NOTE: On Android, the executable location is not generally accessible
+	return false;
 #else
-    const QString path = paths::app_dir_path() + QStringLiteral("/portable.txt");
-    return QFileInfo::exists(path);
+	const QString path = paths::app_dir_path() + QStringLiteral("/portable.txt");
+	return QFileInfo::exists(path);
 #endif
 }
 
 
-QCommandLineOption add_cli_option(QCommandLineParser& parser, const QString& name, const QString& desc)
+QCommandLineOption add_cli_option(QCommandLineParser &parser, const QString &name, const QString &desc)
 {
-    QCommandLineOption arg(name, desc);
-    parser.addOption(arg);
-    return arg;
+	QCommandLineOption arg(name, desc);
+	parser.addOption(arg);
+	return arg;
 }
 
-backend::CliArgs handle_cli_args(QGuiApplication& app)
+backend::CliArgs handle_cli_args(QGuiApplication &app)
 {
 #define CMDMSG QStringLiteral
 
-    QCommandLineParser argparser;
-    argparser.setApplicationDescription(CMDMSG(
-        "\nFrontloader is a fork of Pegasus Frontend designed to be ran instead of steam \n"
-        "on the Valve Steam Deck, and then be able to chainload to actual steam, \n"
-        "to desktop mode, or even EmulationStation!"));
+	QCommandLineParser argparser;
+	argparser.setApplicationDescription(CMDMSG(
+			"\nFrontloader is a fork of Pegasus Frontend designed to be ran instead of steam \n"
+			"on the Valve Steam Deck, and then be able to chainload to actual steam, \n"
+			"to desktop mode, or even EmulationStation!"));
 
 //    const QCommandLineOption arg_portable = add_cli_option(argparser,
 //        QStringLiteral("portable"),
 //        CMDMSG("Do not read or write config files outside the program's directory"));
 
-    const QCommandLineOption arg_silent = add_cli_option(argparser,
-        QStringLiteral("silent"),
-        CMDMSG("Do not print log messages to the terminal"));
+	const QCommandLineOption arg_silent = add_cli_option(argparser,
+	                                                     QStringLiteral("silent"),
+	                                                     CMDMSG("Do not print log messages to the terminal"));
 
-    const QCommandLineOption arg_menu_reboot = add_cli_option(argparser,
-        QStringLiteral("disable-menu-reboot"),
-        CMDMSG("Hides the system reboot entry in the main menu"));
+	const QCommandLineOption arg_menu_reboot = add_cli_option(argparser,
+	                                                          QStringLiteral("disable-menu-reboot"),
+	                                                          CMDMSG("Hides the system reboot entry in the main menu"));
 
-    const QCommandLineOption arg_menu_shutdown = add_cli_option(argparser,
-        QStringLiteral("disable-menu-shutdown"),
-        CMDMSG("Hides the system shutdown entry in the main menu"));
+	const QCommandLineOption arg_menu_shutdown = add_cli_option(argparser,
+	                                                            QStringLiteral("disable-menu-shutdown"),
+	                                                            CMDMSG("Hides the system shutdown entry in the main menu"));
 
-    const QCommandLineOption arg_menu_suspend = add_cli_option(argparser,
-        QStringLiteral("disable-menu-suspend"),
-        CMDMSG("Hides the system suspend entry in the main menu"));
+	const QCommandLineOption arg_menu_suspend = add_cli_option(argparser,
+	                                                           QStringLiteral("disable-menu-suspend"),
+	                                                           CMDMSG("Hides the system suspend entry in the main menu"));
 
-    const QCommandLineOption arg_menu_appclose = add_cli_option(argparser,
-        QStringLiteral("disable-menu-appclose"),
-        CMDMSG("Hides the closing Pegasus entry in the main menu"));
+	const QCommandLineOption arg_menu_appclose = add_cli_option(argparser,
+	                                                            QStringLiteral("disable-menu-appclose"),
+	                                                            CMDMSG("Hides the closing Pegasus entry in the main menu"));
 
-    const QCommandLineOption arg_menu_settings = add_cli_option(argparser,
-        QStringLiteral("disable-menu-settings"),
-        CMDMSG("Hides the settings menu entry in the main menu"));
+	const QCommandLineOption arg_menu_settings = add_cli_option(argparser,
+	                                                            QStringLiteral("disable-menu-settings"),
+	                                                            CMDMSG("Hides the settings menu entry in the main menu"));
 
-    const QCommandLineOption arg_menu_kiosk = add_cli_option(argparser,
-        QStringLiteral("kiosk"),
-        CMDMSG("Alias for:\n"
-               "--disable-menu-reboot\n"
-               "--disable-menu-shutdown\n"
-               "--disable-menu-appclose\n"
-               "--disable-menu-settings"));
+	const QCommandLineOption arg_menu_kiosk = add_cli_option(argparser,
+	                                                         QStringLiteral("kiosk"),
+	                                                         CMDMSG("Alias for:\n"
+	                                                                "--disable-menu-reboot\n"
+	                                                                "--disable-menu-shutdown\n"
+	                                                                "--disable-menu-appclose\n"
+	                                                                "--disable-menu-settings"));
 
-    const QCommandLineOption arg_gamepad_autoconfig = add_cli_option(argparser,
-        QStringLiteral("disable-gamepad-autoconfig"),
-        CMDMSG("Disables the automatic layout detection for connected gamepads.\n"
-               "When you connect a gamepad, Pegasus tries to guess its button and axis layout "
-               "automatically based on a list of known devices. Unfortunately this doesn't seem "
-               "to work perfectly with some platforms and devices (eg. arcades), in which case "
-               "you can disable this feature here."));
+	const QCommandLineOption arg_gamepad_autoconfig = add_cli_option(argparser,
+	                                                                 QStringLiteral("disable-gamepad-autoconfig"),
+	                                                                 CMDMSG("Disables the automatic layout detection for connected gamepads.\n"
+	                                                                        "When you connect a gamepad, Pegasus tries to guess its button and axis layout "
+	                                                                        "automatically based on a list of known devices. Unfortunately this doesn't seem "
+	                                                                        "to work perfectly with some platforms and devices (eg. arcades), in which case "
+	                                                                        "you can disable this feature here."));
 
-    argparser.addHelpOption();
-    argparser.addVersionOption();
-    argparser.process(app); // may quit!
+	argparser.addHelpOption();
+	argparser.addVersionOption();
+	argparser.process(app); // may quit!
 
-    backend::CliArgs args;
+	backend::CliArgs args;
 //    args.portable = argparser.isSet(arg_portable);
-    args.silent = argparser.isSet(arg_silent);
-    args.enable_menu_appclose = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_appclose));
-    args.enable_menu_settings = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_settings));
-    args.enable_gamepad_autoconfig = !argparser.isSet(arg_gamepad_autoconfig);
+	args.silent = argparser.isSet(arg_silent);
+	args.enable_menu_appclose = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_appclose));
+	args.enable_menu_settings = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_settings));
+	args.enable_gamepad_autoconfig = !argparser.isSet(arg_gamepad_autoconfig);
 #ifdef Q_OS_ANDROID
-    args.enable_menu_shutdown = false;
-    args.enable_menu_reboot = false;
+	args.enable_menu_shutdown = false;
+	args.enable_menu_reboot = false;
 #else
-    args.enable_menu_shutdown = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_shutdown));
-    args.enable_menu_reboot = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_reboot));
+	args.enable_menu_shutdown = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_shutdown));
+	args.enable_menu_reboot = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_reboot));
 #endif
 #if defined(Q_OS_ANDROID) || defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
-    args.enable_menu_suspend = false;
+	args.enable_menu_suspend = false;
 #else
-    args.enable_menu_suspend = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_suspend));
+	args.enable_menu_suspend = !(argparser.isSet(arg_menu_kiosk) || argparser.isSet(arg_menu_suspend));
 #endif
-    return args;
+	return args;
 
 #undef CMDMSG
 }

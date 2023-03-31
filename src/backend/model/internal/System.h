@@ -23,25 +23,34 @@
 #include <QObject>
 
 
-namespace model {
+namespace model
+{
 
 /// Provides a set of system calls for the frontend
-class System : public QObject {
-    Q_OBJECT
+	class System : public QObject
+	{
+	Q_OBJECT
 
-public:
-    explicit System(QObject* parent = nullptr);
+	public:
+		explicit System(QObject* parent = nullptr);
 
-    Q_INVOKABLE void quit();
-    Q_INVOKABLE void reboot();
-    Q_INVOKABLE void shutdown();
-    Q_INVOKABLE void suspend();
-    Q_INVOKABLE void volumeUp();
-    Q_INVOKABLE void volumeDown();
+		Q_INVOKABLE void quit();
 
-signals:
-    void appCloseRequested(AppCloseType);
-	void volumeChangeRequested(VolumeChangeType);
-};
+		Q_INVOKABLE void reboot();
+
+		Q_INVOKABLE void shutdown();
+
+		Q_INVOKABLE void suspend();
+
+		Q_INVOKABLE void volumeUp();
+
+		Q_INVOKABLE void volumeDown();
+
+	signals:
+
+		void appCloseRequested(AppCloseType);
+
+		void volumeChangeRequested(VolumeChangeType);
+	};
 
 } // namespace model

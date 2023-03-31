@@ -22,8 +22,9 @@
 class QString;
 
 
-namespace utils {
-std::string trimmed(const char* const str);
+namespace utils
+{
+	std::string trimmed(const char* const str);
 
-bool as_bool(const QString& str, bool& success);
+	bool as_bool(const QString &str, bool &success);
 } // namespace utils

@@ -25,19 +25,22 @@
 class QTimer;
 
 
-class GamepadButtonNavigation : public QObject {
-    Q_OBJECT
+class GamepadButtonNavigation : public QObject
+{
+Q_OBJECT
 
 public:
-    explicit GamepadButtonNavigation(QObject* parent = nullptr);
+	explicit GamepadButtonNavigation(QObject* parent = nullptr);
 
 public slots:
-    void onButtonChanged(int deviceId, GamepadButton button, bool pressed);
+
+	void onButtonChanged(int deviceId, GamepadButton button, bool pressed);
 
 private:
-    const HashMap<GamepadButton, QTimer* const, EnumHash> m_timers;
-    const HashMap<GamepadButton, Qt::Key, EnumHash> m_keys;
+	const HashMap<GamepadButton, QTimer* const, EnumHash> m_timers;
+	const HashMap<GamepadButton, Qt::Key, EnumHash> m_keys;
 
 private slots:
-    void onTimerTimeout();
+
+	void onTimerTimeout();
 };

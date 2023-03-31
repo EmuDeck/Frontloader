@@ -21,5 +21,5 @@
 
 
 FakeQKeyEvent::FakeQKeyEvent()
-    : event(QEvent::None, 0, Qt::NoModifier)
+		: event(QEvent::None, 0, Qt::NoModifier)
 {}

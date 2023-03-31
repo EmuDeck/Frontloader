@@ -21,20 +21,23 @@
 #include "providers/android_apps/AndroidAppsMetadata.h"
 
 
-namespace providers {
-namespace android {
+namespace providers
+{
+	namespace android
+	{
 
-class AndroidAppsProvider : public Provider {
-    Q_OBJECT
+		class AndroidAppsProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    AndroidAppsProvider(QObject* parent = nullptr);
+		public:
+			AndroidAppsProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
+			Provider &run(SearchContext &) final;
 
-private:
-    const MetadataHelper m_metahelper;
-};
+		private:
+			const MetadataHelper m_metahelper;
+		};
 
-} // namespace android
+	} // namespace android
 } // namespace providers

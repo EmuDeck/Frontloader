@@ -17,21 +17,22 @@
 
 #pragma once
 
-enum class KeyEvent : unsigned char {
-    ACCEPT,
-    CANCEL,
-    DETAILS,
-    FILTERS,
-    NEXT_PAGE,
-    PREV_PAGE,
-    PAGE_UP,
-    PAGE_DOWN,
-    MAIN_MENU,
-    VOL_UP,
-    VOL_DOWN,
-    // internal only:
-    LEFT = 64,
-    RIGHT,
-    UP,
-    DOWN,
+enum class KeyEvent : unsigned char
+{
+	ACCEPT,
+	CANCEL,
+	DETAILS,
+	FILTERS,
+	NEXT_PAGE,
+	PREV_PAGE,
+	PAGE_UP,
+	PAGE_DOWN,
+	MAIN_MENU,
+	VOL_UP,
+	VOL_DOWN,
+	// internal only:
+	LEFT = 64,
+	RIGHT,
+	UP,
+	DOWN,
 };

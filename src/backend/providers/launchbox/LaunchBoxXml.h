@@ -23,28 +23,33 @@
 class QXmlStreamReader;
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-struct Platform {
-    QString name;
-    QString sort_by;
-};
+		struct Platform
+		{
+			QString name;
+			QString sort_by;
+		};
 
-struct EmulatorPlatform {
-    QString name;
-    QString cmd_params;
-};
+		struct EmulatorPlatform
+		{
+			QString name;
+			QString cmd_params;
+		};
 
-struct Emulator {
-    QString name;
-    QString app_path;
-    QString default_cmd_params;
-    std::vector<EmulatorPlatform> platforms;
-};
+		struct Emulator
+		{
+			QString name;
+			QString app_path;
+			QString default_cmd_params;
+			std::vector<EmulatorPlatform> platforms;
+		};
 
 
-void verify_root_node(QXmlStreamReader&);
+		void verify_root_node(QXmlStreamReader &);
 
-} // namespace launchbox
+	} // namespace launchbox
 } // namespace providers

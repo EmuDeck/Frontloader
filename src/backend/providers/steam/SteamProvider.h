@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace steam {
+namespace providers
+{
+	namespace steam
+	{
 
-class SteamProvider : public Provider {
-    Q_OBJECT
+		class SteamProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit SteamProvider(QObject* parent = nullptr);
+		public:
+			explicit SteamProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace steam
+	} // namespace steam
 } // namespace providers

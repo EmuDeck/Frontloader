@@ -31,123 +31,142 @@
 #include <QtConcurrent/QtConcurrent>
 
 
-namespace {
-QString default_db_path()
+namespace
 {
-    return paths::writableConfigDir() + QStringLiteral("/favorites.txt");
-}
+	QString default_db_path()
+	{
+		return paths::writableConfigDir() + QStringLiteral("/favorites.txt");
+	}
 } // namespace
 
 
-namespace providers {
-namespace favorites {
-
-Favorites::Favorites(QObject* parent)
-    : Favorites(default_db_path(), parent)
-{}
-
-Favorites::Favorites(QString db_path, QObject* parent)
-    : Provider(QLatin1String("pegasus_favorites"), QStringLiteral("Favorites"), PROVIDER_FLAG_INTERNAL | PROVIDER_FLAG_HIDE_PROGRESS, parent)
-    , m_db_path(std::move(db_path))
-{}
-
-Provider& Favorites::run(SearchContext& sctx)
+namespace providers
 {
-    if (!QFileInfo::exists(m_db_path))
-        return *this;
+	namespace favorites
+	{
 
-    QFile db_file(m_db_path);
-    if (!db_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        Log::error(display_name(), LOGMSG("Could not open `%1` for reading, favorites not loaded").arg(m_db_path));
-        return *this;
-    }
+		Favorites::Favorites(QObject* parent)
+				: Favorites(default_db_path(), parent)
+		{}
 
-    const QDir base_dir = QFileInfo(m_db_path).dir();
+		Favorites::Favorites(QString db_path, QObject* parent)
+				: Provider(QLatin1String("pegasus_favorites"), QStringLiteral("Favorites"),
+				           PROVIDER_FLAG_INTERNAL | PROVIDER_FLAG_HIDE_PROGRESS, parent), m_db_path(std::move(db_path))
+		{}
 
-    QTextStream db_stream(&db_file);
-    db_stream.setCodec("UTF-8");
+		Provider &Favorites::run(SearchContext &sctx)
+		{
+			if (!QFileInfo::exists(m_db_path))
+				return *this;
 
-    QString line;
-    while (db_stream.readLineInto(&line)) {
-        if (line.startsWith('#'))
-            continue;
+			QFile db_file(m_db_path);
+			if (!db_file.open(QIODevice::ReadOnly | QIODevice::Text))
+			{
+				Log::error(display_name(),
+				           LOGMSG("Could not open `%1` for reading, favorites not loaded").arg(m_db_path));
+				return *this;
+			}
 
-        model::Game* game_ptr = sctx.game_by_uri(line);
-        if (!game_ptr) {
-            const QString path = ::clean_abs_path(QFileInfo(base_dir, line));
-            game_ptr = sctx.game_by_filepath(path);
-        }
+			const QDir base_dir = QFileInfo(m_db_path).dir();
 
-        if (game_ptr)
-            game_ptr->setFavorite(true);
-    }
+			QTextStream db_stream(&db_file);
+			db_stream.setCodec("UTF-8");
 
-    return *this;
-}
+			QString line;
+			while (db_stream.readLineInto(&line))
+			{
+				if (line.startsWith('#'))
+					continue;
 
-void Favorites::onGameFavoriteChanged(const std::vector<model::Game*>& game_list, const bool test)
-{
-    const QMutexLocker lock(&m_task_guard);
-    const QDir config_dir(paths::writableConfigDir());
+				model::Game* game_ptr = sctx.game_by_uri(line);
+				if (!game_ptr)
+				{
+					const QString path = ::clean_abs_path(QFileInfo(base_dir, line));
+					game_ptr = sctx.game_by_filepath(path);
+				}
 
-    m_pending_task.clear();
-    m_pending_task << QStringLiteral("# List of favorites, one path per line");
-    for (const model::Game* const game : game_list) {
-        if (game->isFavorite()) {
-            for (const model::GameFile* const file : game->filesModel()->entries()) {
-                QString written_path;
-                if (!file->fileinfo().exists()) {
-                    written_path = file->path();
-                } else {
-                    const QString full_path = ::clean_abs_path(file->fileinfo());
-                    written_path = AppSettings::general.portable && !test
-                         ? config_dir.relativeFilePath(full_path)
-                         : full_path;
-                }
-                if (Q_LIKELY(!written_path.isEmpty()))
-                    m_pending_task << written_path;
-            }
-        }
-    }
+				if (game_ptr)
+					game_ptr->setFavorite(true);
+			}
 
-    if (m_active_task.isEmpty())
-        start_processing();
-}
+			return *this;
+		}
 
-void Favorites::start_processing()
-{
-    m_active_task = m_pending_task;
-    m_pending_task.clear();
+		void Favorites::onGameFavoriteChanged(const std::vector<model::Game*> &game_list, const bool test)
+		{
+			const QMutexLocker lock(&m_task_guard);
+			const QDir config_dir(paths::writableConfigDir());
 
-    QtConcurrent::run([this]{
-        emit startedWriting();
+			m_pending_task.clear();
+			m_pending_task << QStringLiteral("# List of favorites, one path per line");
+			for (const model::Game* const game: game_list)
+			{
+				if (game->isFavorite())
+				{
+					for (const model::GameFile* const file: game->filesModel()->entries())
+					{
+						QString written_path;
+						if (!file->fileinfo().exists())
+						{
+							written_path = file->path();
+						}
+						else
+						{
+							const QString full_path = ::clean_abs_path(file->fileinfo());
+							written_path = AppSettings::general.portable && !test
+							               ? config_dir.relativeFilePath(full_path)
+							               : full_path;
+						}
+						if (Q_LIKELY(!written_path.isEmpty()))
+							m_pending_task << written_path;
+					}
+				}
+			}
 
-        while (true) {
-            QFile db_file(m_db_path);
-            if (!db_file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                Log::error(display_name(), LOGMSG("Could not open `%1` for writing, favorites are not saved")
-                    .arg(m_db_path));
-                break;
-            }
+			if (m_active_task.isEmpty())
+				start_processing();
+		}
 
-            QTextStream db_stream(&db_file);
-            db_stream.setCodec("UTF-8");
+		void Favorites::start_processing()
+		{
+			m_active_task = m_pending_task;
+			m_pending_task.clear();
 
-            for (const QString& fav : qAsConst(m_active_task))
-                db_stream << fav << Qt::endl;
+			QtConcurrent::run([this]
+			                  {
+				                  emit startedWriting();
 
-            QMutexLocker lock(&m_task_guard);
-            m_active_task.clear();
-            if (m_pending_task.isEmpty())
-                break;
+				                  while (true)
+				                  {
+					                  QFile db_file(m_db_path);
+					                  if (!db_file.open(QIODevice::WriteOnly | QIODevice::Text))
+					                  {
+						                  Log::error(display_name(),
+						                             LOGMSG("Could not open `%1` for writing, favorites are not saved")
+								                             .arg(m_db_path));
+						                  break;
+					                  }
 
-            m_active_task = m_pending_task;
-            m_pending_task.clear();
-        }
+					                  QTextStream db_stream(&db_file);
+					                  db_stream.setCodec("UTF-8");
 
-        emit finishedWriting();
-    });
-}
+					                  for (const QString &fav: qAsConst(m_active_task))
+					                  {
+						                  db_stream << fav << Qt::endl;
+					                  }
 
-} // namespace favorites
+					                  QMutexLocker lock(&m_task_guard);
+					                  m_active_task.clear();
+					                  if (m_pending_task.isEmpty())
+						                  break;
+
+					                  m_active_task = m_pending_task;
+					                  m_pending_task.clear();
+				                  }
+
+				                  emit finishedWriting();
+			                  });
+		}
+
+	} // namespace favorites
 } // namespace providers

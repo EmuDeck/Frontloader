@@ -23,39 +23,58 @@
 #include <QRegularExpression>
 #include <QString>
 
-namespace model { class Collection; }
-namespace model { class Game; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Collection;
+}
+namespace model
+{
+	class Game;
+}
+namespace providers
+{
+	class SearchContext;
+}
 class QXmlStreamReader;
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-enum class GameField : unsigned char;
-enum class AppField : unsigned char;
-struct Emulator;
-struct Platform;
+		enum class GameField : unsigned char;
+		enum class AppField : unsigned char;
+		struct Emulator;
+		struct Platform;
 
-class GamelistXml {
-public:
-    explicit GamelistXml(QString, QDir);
+		class GamelistXml
+		{
+		public:
+			explicit GamelistXml(QString, QDir);
 
-    std::vector<model::Game*> find_games_for(const Platform&, const HashMap<QString, Emulator>&, const QString&, SearchContext&) const;
+			std::vector<model::Game*>
+			find_games_for(const Platform &, const HashMap<QString, Emulator> &, const QString &,
+			               SearchContext &) const;
 
-private:
-    const QString m_log_tag;
-    const QDir m_lb_root;
-    const HashMap<QString, GameField> m_game_keys;
-    const HashMap<QString, AppField> m_app_keys;
-    const QRegularExpression m_rx_steam_uri;
+		private:
+			const QString m_log_tag;
+			const QDir m_lb_root;
+			const HashMap<QString, GameField> m_game_keys;
+			const HashMap<QString, AppField> m_app_keys;
+			const QRegularExpression m_rx_steam_uri;
 
-    void log_xml_warning(const QString&, const size_t, const QString&) const;
-    HashMap<GameField, QString> read_game_node(QXmlStreamReader&) const;
-    HashMap<AppField, QString> read_app_node(QXmlStreamReader&) const;
-    bool game_fields_valid(const QString&, const size_t, const HashMap<GameField, QString>&, const HashMap<QString, Emulator>&) const;
-    bool app_fields_valid(const QString&, const size_t, const HashMap<AppField, QString>&) const;
-};
+			void log_xml_warning(const QString &, const size_t, const QString &) const;
 
-} // namespace launchbox
+			HashMap<GameField, QString> read_game_node(QXmlStreamReader &) const;
+
+			HashMap<AppField, QString> read_app_node(QXmlStreamReader &) const;
+
+			bool game_fields_valid(const QString &, const size_t, const HashMap<GameField, QString> &,
+			                       const HashMap<QString, Emulator> &) const;
+
+			bool app_fields_valid(const QString &, const size_t, const HashMap<AppField, QString> &) const;
+		};
+
+	} // namespace launchbox
 } // namespace providers

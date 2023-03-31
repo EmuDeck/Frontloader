@@ -1,8 +1,8 @@
 pegasus_add_provider(
-    INTERNAL
-    SOURCES
+        INTERNAL
+        SOURCES
         PlaytimeStats.cpp
         PlaytimeStats.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

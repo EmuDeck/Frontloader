@@ -20,11 +20,11 @@
 #include "CliArgs.h"
 
 
-namespace model {
+namespace model
+{
 
-Internal::Internal(const backend::CliArgs& args, QObject* parent)
-    : QObject(parent)
-    , m_meta(args)
-{}
+	Internal::Internal(const backend::CliArgs &args, QObject* parent)
+			: QObject(parent), m_meta(args)
+	{}
 
 } // namespace model

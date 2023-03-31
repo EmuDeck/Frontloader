@@ -24,40 +24,45 @@
 #include <functional>
 
 class QFile;
+
 class QTextStream;
 
 
-namespace metafile {
+namespace metafile
+{
 
-struct Entry {
-    size_t line;
-    QString key;
-    std::vector<QString> values;
+	struct Entry
+	{
+		size_t line;
+		QString key;
+		std::vector<QString> values;
 
-    void reset();
-    MOVE_ONLY(Entry)
-};
-struct Error {
-    size_t line;
-    QString message;
+		void reset();
+		MOVE_ONLY(Entry)
+	};
 
-    MOVE_ONLY(Error)
-};
+	struct Error
+	{
+		size_t line;
+		QString message;
 
-
-void read_stream(QTextStream& stream,
-                 const std::function<void(const Entry&)>& onAttributeFound,
-                 const std::function<void(const Error&)>& onError);
-
-bool read_file(const QString& path,
-               const std::function<void(const Entry&)>& onAttributeFound,
-               const std::function<void(const Error&)>& onError);
-
-void read_file(QFile& file,
-               const std::function<void(const Entry&)>& onAttributeFound,
-               const std::function<void(const Error&)>& onError);
+		MOVE_ONLY(Error)
+	};
 
 
-QString merge_lines(const std::vector<QString>&);
+	void read_stream(QTextStream &stream,
+	                 const std::function<void(const Entry &)> &onAttributeFound,
+	                 const std::function<void(const Error &)> &onError);
+
+	bool read_file(const QString &path,
+	               const std::function<void(const Entry &)> &onAttributeFound,
+	               const std::function<void(const Error &)> &onError);
+
+	void read_file(QFile &file,
+	               const std::function<void(const Entry &)> &onAttributeFound,
+	               const std::function<void(const Error &)> &onError);
+
+
+	QString merge_lines(const std::vector<QString> &);
 
 } // namespace metafile

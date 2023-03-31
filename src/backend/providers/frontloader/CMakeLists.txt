@@ -1,8 +1,8 @@
 pegasus_add_provider(
-    INTERNAL
-    SOURCES
+        INTERNAL
+        SOURCES
         FrontloaderProvider.cpp
         FrontloaderProvider.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

@@ -25,62 +25,84 @@
 #include <QObject>
 
 
-namespace model {
-class Assets : public QObject {
-    Q_OBJECT
+namespace model
+{
+	class Assets : public QObject
+	{
+	Q_OBJECT
 
-public:
-    // NOTE: by manually listing the properties (instead of eg. a Map),
-    //       it is also possible to refer the same data by a different name
-    // TODO: these could be optimized, see
-    //       https://doc.qt.io/qt-5/qtqml-cppintegration-data.html (Sequence Type to JavaScript Array)
+	public:
+		// NOTE: by manually listing the properties (instead of eg. a Map),
+		//       it is also possible to refer the same data by a different name
+		// TODO: these could be optimized, see
+		//       https://doc.qt.io/qt-5/qtqml-cppintegration-data.html (Sequence Type to JavaScript Array)
 #define GEN(qmlname, enumname) \
     const QString& qmlname() const { return getFirst(AssetType::enumname); } \
     const QStringList& qmlname##List() const { return get(AssetType::enumname); } \
     Q_PROPERTY(QString qmlname READ qmlname CONSTANT) \
     Q_PROPERTY(QStringList qmlname##List READ qmlname##List CONSTANT) \
 
-    GEN(boxFront, BOX_FRONT)
-    GEN(boxBack, BOX_BACK)
-    GEN(boxSpine, BOX_SPINE)
-    GEN(boxFull, BOX_FULL)
-    GEN(cartridge, CARTRIDGE)
-    GEN(logo, LOGO)
-    GEN(poster, POSTER)
 
-    GEN(marquee, ARCADE_MARQUEE)
-    GEN(bezel, ARCADE_BEZEL)
-    GEN(panel, ARCADE_PANEL)
-    GEN(cabinetLeft, ARCADE_CABINET_L)
-    GEN(cabinetRight, ARCADE_CABINET_R)
+		GEN(boxFront, BOX_FRONT)
 
-    GEN(tile, UI_TILE)
-    GEN(banner, UI_BANNER)
-    GEN(steam, UI_STEAMGRID)
-    GEN(background, BACKGROUND)
-    GEN(music, MUSIC)
+		GEN(boxBack, BOX_BACK)
 
-    GEN(screenshot, SCREENSHOT)
-    GEN(titlescreen, TITLESCREEN)
-    GEN(video, VIDEO)
+		GEN(boxSpine, BOX_SPINE)
+
+		GEN(boxFull, BOX_FULL)
+
+		GEN(cartridge, CARTRIDGE)
+
+		GEN(logo, LOGO)
+
+		GEN(poster, POSTER)
+
+		GEN(marquee, ARCADE_MARQUEE)
+
+		GEN(bezel, ARCADE_BEZEL)
+
+		GEN(panel, ARCADE_PANEL)
+
+		GEN(cabinetLeft, ARCADE_CABINET_L)
+
+		GEN(cabinetRight, ARCADE_CABINET_R)
+
+		GEN(tile, UI_TILE)
+
+		GEN(banner, UI_BANNER)
+
+		GEN(steam, UI_STEAMGRID)
+
+		GEN(background, BACKGROUND)
+
+		GEN(music, MUSIC)
+
+		GEN(screenshot, SCREENSHOT)
+
+		GEN(titlescreen, TITLESCREEN)
+
+		GEN(video, VIDEO)
+
 #undef GEN
 
-    // deprecated fallacks
-    // TODO: remove
-    Q_PROPERTY(QStringList screenshots READ screenshotList CONSTANT)
-    Q_PROPERTY(QStringList videos READ videoList CONSTANT)
+		// deprecated fallacks
+		// TODO: remove
+		Q_PROPERTY(QStringList screenshots READ screenshotList CONSTANT)
+		Q_PROPERTY(QStringList videos READ videoList CONSTANT)
 
-public:
-    explicit Assets(QObject* parent);
+	public:
+		explicit Assets(QObject* parent);
 
-    Assets& add_file(AssetType, QString);
-    Assets& add_uri(AssetType, QString);
+		Assets &add_file(AssetType, QString);
 
-private:
-    const QStringList& get(AssetType) const;
-    const QString& getFirst(AssetType) const;
+		Assets &add_uri(AssetType, QString);
 
-    HashMap<AssetType, QStringList, EnumHash> m_asset_lists;
-};
+	private:
+		const QStringList &get(AssetType) const;
+
+		const QString &getFirst(AssetType) const;
+
+		HashMap<AssetType, QStringList, EnumHash> m_asset_lists;
+	};
 
 } // namespace model

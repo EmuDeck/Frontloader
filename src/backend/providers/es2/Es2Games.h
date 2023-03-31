@@ -20,16 +20,31 @@
 #include <QString>
 #include <vector>
 
-namespace model { class Game; }
-namespace providers { class SearchContext; }
-namespace providers { namespace es2 { struct SystemEntry; } }
+namespace model
+{
+	class Game;
+}
+namespace providers
+{
+	class SearchContext;
+}
+namespace providers
+{
+	namespace es2
+	{
+		struct SystemEntry;
+	}
+}
 
 
-namespace providers {
-namespace es2 {
+namespace providers
+{
+	namespace es2
+	{
 
-std::vector<QString> read_mame_blacklists(const QString&, const std::vector<QString>&);
-size_t find_games_for(const SystemEntry&, SearchContext&, const std::vector<QString>&);
+		std::vector<QString> read_mame_blacklists(const QString &, const std::vector<QString> &);
 
-} // namespace es2
+		size_t find_games_for(const SystemEntry &, SearchContext &, const std::vector<QString> &);
+
+	} // namespace es2
 } // namespace providers

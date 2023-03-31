@@ -19,19 +19,26 @@
 
 #include "model/ObjectListModel.h"
 
-namespace model { class GameFile; }
+namespace model
+{
+	class GameFile;
+}
 
 
-namespace model {
-class GameFileListModel : public TypeListModel<model::GameFile> {
-public:
-    explicit GameFileListModel(QObject* parent = nullptr);
+namespace model
+{
+	class GameFileListModel : public TypeListModel<model::GameFile>
+	{
+	public:
+		explicit GameFileListModel(QObject* parent = nullptr);
 
-    QHash<int, QByteArray> roleNames() const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+		QHash<int, QByteArray> roleNames() const override;
 
-private:
-    void connectEntry(model::GameFile* const) override;
-    void onEntryPropertyChanged(const QVector<int>& roles);
-};
+		QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+	private:
+		void connectEntry(model::GameFile* const) override;
+
+		void onEntryPropertyChanged(const QVector<int> &roles);
+	};
 } // namespace model

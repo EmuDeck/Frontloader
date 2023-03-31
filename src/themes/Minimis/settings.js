@@ -2,7 +2,7 @@ function createCollectionMetadata(category, parent, collectionType, defaults) {
     const metadata = {};
 
     if (parent) {
-        metadata[parent.key] = { name: parent.name, defaultValue: false, type: 'header' };
+        metadata[parent.key] = {name: parent.name, defaultValue: false, type: 'header'};
     }
 
     const parentKey = parent && parent.key ? parent.key : undefined;
@@ -15,7 +15,7 @@ function createCollectionMetadata(category, parent, collectionType, defaults) {
         metadata[`${prefix}type`] = {
             name: 'Type',
             defaultValue: defaults[`type`] ?? 0,
-            values: [ 'None', 'Recently Played', 'Favorites', /*'Bookmarks',*/ 'Random Games' ],
+            values: ['None', 'Recently Played', 'Favorites', /*'Bookmarks',*/ 'Random Games'],
             type: 'array',
             parent: parentKey, inset: inset
         };
@@ -29,18 +29,18 @@ function createCollectionMetadata(category, parent, collectionType, defaults) {
         };
     }
 
-    const boxArt = { art: 1, aspectRatioNative: true, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false };
-    const wide = { art: 13, aspectRatioNative: false, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false };
-    const tall = { art: 14, aspectRatioNative: false, aspectRatioWidth: 2, aspectRatioHeight: 3, logoVisible: false };
-    const square = { art: 11, aspectRatioNative: false, aspectRatioWidth: 1, aspectRatioHeight: 1, logoVisible: false };
+    const boxArt = {art: 1, aspectRatioNative: true, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false};
+    const wide = {art: 13, aspectRatioNative: false, aspectRatioWidth: 9.2, aspectRatioHeight: 4.3, logoVisible: false};
+    const tall = {art: 14, aspectRatioNative: false, aspectRatioWidth: 2, aspectRatioHeight: 3, logoVisible: false};
+    const square = {art: 11, aspectRatioNative: false, aspectRatioWidth: 1, aspectRatioHeight: 1, logoVisible: false};
     const custom = wide;
 
-    const presets = [ boxArt, wide, tall, square, custom ];
+    const presets = [boxArt, wide, tall, square, custom];
 
     metadata[`${prefix}preset`] = {
         name: 'Preset',
         defaultValue: defaults[`preset`] ?? 1,
-        values: [ 'Box Art', 'Wide', 'Tall', 'Square', 'Custom' ],
+        values: ['Box Art', 'Wide', 'Tall', 'Square', 'Custom'],
         type: 'array',
         parent: parentKey, inset: inset,
         isEnabled: () => api.memory.get(`${fullPrefix}type`) !== 0,
@@ -108,7 +108,7 @@ function createHeader(header, obj) {
     }
 
     return Object.assign(
-        { [`${header.key}`]: { name: header.name, defaultValue: false, type: 'header' } },
+        {[`${header.key}`]: {name: header.name, defaultValue: false, type: 'header'}},
         obj
     );
 }
@@ -116,100 +116,278 @@ function createHeader(header, obj) {
 function createMetadata() {
     const metadata = {
         library: Object.assign(
-            createCollectionMetadata('library', null, 'library', { columns: 4, preset: 2 }),
+            createCollectionMetadata('library', null, 'library', {columns: 4, preset: 2}),
         ),
         collections: Object.assign(
-            createCollectionMetadata('collections', { key: 'collection1', name: 'Collection 1' }, 'collection', { type: 0, preset: 0 }),
-            createCollectionMetadata('collections', { key: 'collection2', name: 'Collection 2' }, 'collection', { type: 0, preset: 0 }),
-            createCollectionMetadata('collections', { key: 'collection3', name: 'Collection 3' }, 'collection', { type: 0, preset: 0 }),
-            createCollectionMetadata('collections', { key: 'collection4', name: 'Collection 4' }, 'collection', { type: 0, preset: 0 }),
-            createCollectionMetadata('collections', { key: 'collection5', name: 'Collection 5' }, 'collection', { type: 0, preset: 0 }),
+            createCollectionMetadata('collections', {key: 'collection1', name: 'Collection 1'}, 'collection', {
+                type: 0,
+                preset: 0
+            }),
+            createCollectionMetadata('collections', {key: 'collection2', name: 'Collection 2'}, 'collection', {
+                type: 0,
+                preset: 0
+            }),
+            createCollectionMetadata('collections', {key: 'collection3', name: 'Collection 3'}, 'collection', {
+                type: 0,
+                preset: 0
+            }),
+            createCollectionMetadata('collections', {key: 'collection4', name: 'Collection 4'}, 'collection', {
+                type: 0,
+                preset: 0
+            }),
+            createCollectionMetadata('collections', {key: 'collection5', name: 'Collection 5'}, 'collection', {
+                type: 0,
+                preset: 0
+            }),
         ),
         general: Object.assign(
             {
-                uiScale: { name: 'UI Scale', defaultValue: 1, min: 0.5, type: 'real', delta: 0.01 },
-                backgroundOpacity: { name: 'Background Opacity', defaultValue: 0.8, type: 'real', min: 0, max: 1, delta: 0.01 },
-                backgroundBlurEnabled: { name: 'Background Blur', defaultValue: true, type: 'bool' },
-                backgroundBlurAmount: { name: 'Background Blur Amount', defaultValue: 64, min: 0, max: 64, inset: 1, type: 'int', isEnabled: () => api.memory.get('settings.general.backgroundBlurEnabled') },
-                backgroundColor: { name: 'Background Color', defaultValue: '#343434', type: 'string', hidden: true },
-                accentColor: { name: 'Accent Color', defaultValue: '#FFC85C', type: 'string', hidden: true },
-                textColor: { name: 'Text Color', defaultValue: '#ECECEC', type: 'string', hidden: true },
+                uiScale: {name: 'UI Scale', defaultValue: 1, min: 0.5, type: 'real', delta: 0.01},
+                backgroundOpacity: {
+                    name: 'Background Opacity',
+                    defaultValue: 0.8,
+                    type: 'real',
+                    min: 0,
+                    max: 1,
+                    delta: 0.01
+                },
+                backgroundBlurEnabled: {name: 'Background Blur', defaultValue: true, type: 'bool'},
+                backgroundBlurAmount: {
+                    name: 'Background Blur Amount',
+                    defaultValue: 64,
+                    min: 0,
+                    max: 64,
+                    inset: 1,
+                    type: 'int',
+                    isEnabled: () => api.memory.get('settings.general.backgroundBlurEnabled')
+                },
+                backgroundColor: {name: 'Background Color', defaultValue: '#343434', type: 'string', hidden: true},
+                accentColor: {name: 'Accent Color', defaultValue: '#FFC85C', type: 'string', hidden: true},
+                textColor: {name: 'Text Color', defaultValue: '#ECECEC', type: 'string', hidden: true},
 
-                leftMargin: { name: 'Screen Padding - Left', defaultValue: 60, min: 0, type: 'int' },
-                rightMargin: { name: 'Screen Padding - Right', defaultValue: 60, min: 0, type: 'int' },
+                leftMargin: {name: 'Screen Padding - Left', defaultValue: 60, min: 0, type: 'int'},
+                rightMargin: {name: 'Screen Padding - Right', defaultValue: 60, min: 0, type: 'int'},
             }
         ),
         cardTheme: Object.assign(
             createHeader(
-                { key: 'animation', name: 'Animation' },
+                {key: 'animation', name: 'Animation'},
                 {
-                    animationEnabled: { name: 'Enabled', defaultValue: true, type: 'bool', },
-                    animationArtScaleSpeed: { name: 'Card Scaling - Duration (Milliseconds)', defaultValue: 250, min: 0, delta: 50, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled') },
-                    animationArtFadeSpeed: { name: 'Card Fading - Duration (Milliseconds)', defaultValue: 250, min: 0, delta: 50, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled') },
-                    logoScaleSpeed: { name: 'Logo Scaling - Duration (Milliseconds)', defaultValue: 250, min: 0, delta: 50, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled'), },
-                    logoFadeSpeed: { name: 'Logo Fading - Duration (Milliseconds)', defaultValue: 250, min: 0, delta: 50, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled') },
+                    animationEnabled: {name: 'Enabled', defaultValue: true, type: 'bool',},
+                    animationArtScaleSpeed: {
+                        name: 'Card Scaling - Duration (Milliseconds)',
+                        defaultValue: 250,
+                        min: 0,
+                        delta: 50,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled')
+                    },
+                    animationArtFadeSpeed: {
+                        name: 'Card Fading - Duration (Milliseconds)',
+                        defaultValue: 250,
+                        min: 0,
+                        delta: 50,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled')
+                    },
+                    logoScaleSpeed: {
+                        name: 'Logo Scaling - Duration (Milliseconds)',
+                        defaultValue: 250,
+                        min: 0,
+                        delta: 50,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled'),
+                    },
+                    logoFadeSpeed: {
+                        name: 'Logo Fading - Duration (Milliseconds)',
+                        defaultValue: 250,
+                        min: 0,
+                        delta: 50,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.animationEnabled')
+                    },
                 }
             ),
-            
+
             createHeader(
-                { key: 'border', name: 'Border' },
+                {key: 'border', name: 'Border'},
                 {
-                    borderEnabled: { name: 'Enabled', defaultValue: true, type: 'bool', },
-                    borderAnimated: { name: 'Animated', defaultValue: true, type: 'bool', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled') },
-                    borderWidth: { name: 'Width', defaultValue: 3, min: 0, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled') },
-                    cornerRadius: { name: 'Corner Radius', defaultValue: 5, min: 0, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled') },
-                    borderColor1: { name: 'Color 1', defaultValue: '#FFC85C', type: 'string', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled') },
-                    borderColor2: { name: 'Color 2', defaultValue: '#ECECEC', type: 'string', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled') },
+                    borderEnabled: {name: 'Enabled', defaultValue: true, type: 'bool',},
+                    borderAnimated: {
+                        name: 'Animated',
+                        defaultValue: true,
+                        type: 'bool',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled')
+                    },
+                    borderWidth: {
+                        name: 'Width',
+                        defaultValue: 3,
+                        min: 0,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled')
+                    },
+                    cornerRadius: {
+                        name: 'Corner Radius',
+                        defaultValue: 5,
+                        min: 0,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled')
+                    },
+                    borderColor1: {
+                        name: 'Color 1',
+                        defaultValue: '#FFC85C',
+                        type: 'string',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled')
+                    },
+                    borderColor2: {
+                        name: 'Color 2',
+                        defaultValue: '#ECECEC',
+                        type: 'string',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.borderEnabled')
+                    },
                 }
             ),
             createHeader(
-                { key: 'title', name: 'Card Title' },
+                {key: 'title', name: 'Card Title'},
                 {
-                    titleEnabled: { name: 'Enabled', defaultValue: true, type: 'bool', },
-                    titleAlwaysVisible: { name: 'Always Visible', defaultValue: true, type: 'bool', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.titleEnabled') },
-                    titleFontSize: { name: 'Font Size', defaultValue: 20, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.titleEnabled') }
+                    titleEnabled: {name: 'Enabled', defaultValue: true, type: 'bool',},
+                    titleAlwaysVisible: {
+                        name: 'Always Visible',
+                        defaultValue: true,
+                        type: 'bool',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.titleEnabled')
+                    },
+                    titleFontSize: {
+                        name: 'Font Size',
+                        defaultValue: 20,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.titleEnabled')
+                    }
                 }
             ),
             createHeader(
-                { key: 'logo', name: 'Logo' },
-                { logoFontSize: { name: 'Font Size', defaultValue: 20, min: 1, type: 'int' } }
+                {key: 'logo', name: 'Logo'},
+                {logoFontSize: {name: 'Font Size', defaultValue: 20, min: 1, type: 'int'}}
             ),
             createHeader(
-                { key: 'overlay', name: 'Overlay' },
-                { darkenAmount: { name: 'Darken', defaultValue: 0.33, delta: 0.01, min: 0.0, max: 1.0, type: 'real', } }
+                {key: 'overlay', name: 'Overlay'},
+                {darkenAmount: {name: 'Darken', defaultValue: 0.33, delta: 0.01, min: 0.0, max: 1.0, type: 'real',}}
             ),
             createHeader(
-                { key: 'scaling', name: 'Scaling' },
+                {key: 'scaling', name: 'Scaling'},
                 {
-                    scaleEnabled: { name: 'Card Scaling - Enabled', defaultValue: true, type: 'bool', },
-                    scale: { name: 'Card Scaling - Default', defaultValue: 0.95, delta: 0.01, min: 0, max: 1.0, type: 'real', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.scaleEnabled') },
-                    scaleSelected: { name: 'Card Scaling - Selected', defaultValue: 1.0, delta: 0.01, min: 0, type: 'real', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.scaleEnabled') },
-                    logoScaleEnabled: { name: 'Logo Scaling - Enabled', defaultValue: true, type: 'bool', },
-                    logoScale: { name: 'Logo Scaling - Default', defaultValue: 0.75, delta: 0.01, min: 0.01, type: 'real', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.logoScaleEnabled') },
-                    logoScaleSelected: { name: 'Logo Scaling - Selected', defaultValue: 0.85, delta: 0.01, min: 0, type: 'real', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.logoScaleEnabled') },
+                    scaleEnabled: {name: 'Card Scaling - Enabled', defaultValue: true, type: 'bool',},
+                    scale: {
+                        name: 'Card Scaling - Default',
+                        defaultValue: 0.95,
+                        delta: 0.01,
+                        min: 0,
+                        max: 1.0,
+                        type: 'real',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.scaleEnabled')
+                    },
+                    scaleSelected: {
+                        name: 'Card Scaling - Selected',
+                        defaultValue: 1.0,
+                        delta: 0.01,
+                        min: 0,
+                        type: 'real',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.scaleEnabled')
+                    },
+                    logoScaleEnabled: {name: 'Logo Scaling - Enabled', defaultValue: true, type: 'bool',},
+                    logoScale: {
+                        name: 'Logo Scaling - Default',
+                        defaultValue: 0.75,
+                        delta: 0.01,
+                        min: 0.01,
+                        type: 'real',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.logoScaleEnabled')
+                    },
+                    logoScaleSelected: {
+                        name: 'Logo Scaling - Selected',
+                        defaultValue: 0.85,
+                        delta: 0.01,
+                        min: 0,
+                        type: 'real',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.logoScaleEnabled')
+                    },
                 }
             ),
             createHeader(
-                { key: 'videoPreview', name: 'Video Preview' },
+                {key: 'videoPreview', name: 'Video Preview'},
                 {
-                    previewEnabled: { name: 'Enabled', defaultValue: true, type: 'bool' },
-                    previewVolume: { name: 'Volume', defaultValue: 0.0, delta: 0.1, min: 0.0, max: 1.0, type: 'real', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled') },
-                    videoPreviewDelay: { name: 'Delay', defaultValue: 1000, min: 0, delta: 50, type: 'int', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled') },
-                    previewLogoVisible: { name: 'Logo - Visible', defaultValue: false, type: 'bool', inset: 1, isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled') },
+                    previewEnabled: {name: 'Enabled', defaultValue: true, type: 'bool'},
+                    previewVolume: {
+                        name: 'Volume',
+                        defaultValue: 0.0,
+                        delta: 0.1,
+                        min: 0.0,
+                        max: 1.0,
+                        type: 'real',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled')
+                    },
+                    videoPreviewDelay: {
+                        name: 'Delay',
+                        defaultValue: 1000,
+                        min: 0,
+                        delta: 50,
+                        type: 'int',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled')
+                    },
+                    previewLogoVisible: {
+                        name: 'Logo - Visible',
+                        defaultValue: false,
+                        type: 'bool',
+                        inset: 1,
+                        isEnabled: () => api.memory.get('settings.cardTheme.previewEnabled')
+                    },
                 }
             ),
         ),
         performance: Object.assign({
-            assetDebounceDuration: { name: 'Asset Debounce Duration', defaultValue: 500, min: 0, delta: 50, type: 'real' },
+            assetDebounceDuration: {
+                name: 'Asset Debounce Duration',
+                defaultValue: 500,
+                min: 0,
+                delta: 50,
+                type: 'real'
+            },
 
-            artImageResolution: { name: 'Art - Image Resolution', defaultValue: 0, values: ['Native', 'Scaled'], type: 'array' },
-            artImageCaching: { name: 'Art - Image Caching', defaultValue: false, type: 'bool' },
-            artImageSmoothing: { name: 'Art - Image Smoothing', defaultValue: false, type: 'bool' },
+            artImageResolution: {
+                name: 'Art - Image Resolution',
+                defaultValue: 0,
+                values: ['Native', 'Scaled'],
+                type: 'array'
+            },
+            artImageCaching: {name: 'Art - Image Caching', defaultValue: false, type: 'bool'},
+            artImageSmoothing: {name: 'Art - Image Smoothing', defaultValue: false, type: 'bool'},
             // artDropShadow: { name: 'Art - Drop Shadow', defaultValue: true, type: 'bool' },
 
-            logoImageResolution: { name: 'Logo - Image Resolution', defaultValue: 1, values: ['Native', 'Scaled'], type: 'array' },
-            logoImageCaching: { name: 'Logo - Image Caching', defaultValue: false, type: 'bool' },
-            logoImageSmoothing: { name: 'Logo - Image Smoothing', defaultValue: true, type: 'bool' },
+            logoImageResolution: {
+                name: 'Logo - Image Resolution',
+                defaultValue: 1,
+                values: ['Native', 'Scaled'],
+                type: 'array'
+            },
+            logoImageCaching: {name: 'Logo - Image Caching', defaultValue: false, type: 'bool'},
+            logoImageSmoothing: {name: 'Logo - Image Smoothing', defaultValue: true, type: 'bool'},
             // logoDropShadow: { name: 'Logo - Drop Shadow', defaultValue: false, type: 'bool' }
         })
     };

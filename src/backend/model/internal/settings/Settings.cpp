@@ -38,190 +38,227 @@
 #endif
 
 
-namespace {
-
-void rewrite_gamedircfg(const std::function<void(QTextStream&)>& callback)
+namespace
 {
-    const QString config_file_path = paths::writableConfigDir() + QStringLiteral("/game_dirs.txt");
 
-    QFile config_file(config_file_path);
-    if (!config_file.open(QFile::WriteOnly | QFile::Text)) {
-        Log::warning(LOGMSG("Failed to save game directory settings to `%1`").arg(config_file_path));
-        return;
-    }
+	void rewrite_gamedircfg(const std::function<void(QTextStream &)> &callback)
+	{
+		const QString config_file_path = paths::writableConfigDir() + QStringLiteral("/game_dirs.txt");
 
-    QTextStream stream(&config_file);
-    stream.setCodec("UTF-8");
-    callback(stream);
-    Log::info(LOGMSG("Game directory list saved"));
-}
+		QFile config_file(config_file_path);
+		if (!config_file.open(QFile::WriteOnly | QFile::Text))
+		{
+			Log::warning(LOGMSG("Failed to save game directory settings to `%1`").arg(config_file_path));
+			return;
+		}
 
-void change_mouse_support(bool enabled)
-{
-    if (enabled)
-        QGuiApplication::restoreOverrideCursor();
-    else
-        QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
-}
+		QTextStream stream(&config_file);
+		stream.setCodec("UTF-8");
+		callback(stream);
+		Log::info(LOGMSG("Game directory list saved"));
+	}
+
+	void change_mouse_support(bool enabled)
+	{
+		if (enabled)
+			QGuiApplication::restoreOverrideCursor();
+		else
+			QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
+	}
 
 } // namespace
 
 
-namespace model {
-
-Settings::Settings(QObject* parent)
-    : QObject(parent)
-{}
-
-void Settings::postInit()
+namespace model
 {
-    change_mouse_support(AppSettings::general.mouse_support);
 
-    m_themes.postInit();
-}
+	Settings::Settings(QObject* parent)
+			: QObject(parent)
+	{}
 
-void Settings::setFullscreen(bool new_val)
-{
-    if (new_val == AppSettings::general.fullscreen)
-        return;
+	void Settings::postInit()
+	{
+		change_mouse_support(AppSettings::general.mouse_support);
 
-    AppSettings::general.fullscreen = new_val;
-    AppSettings::save_config();
+		m_themes.postInit();
+	}
 
-    emit fullscreenChanged();
-}
+	void Settings::setFullscreen(bool new_val)
+	{
+		if (new_val == AppSettings::general.fullscreen)
+			return;
 
-void Settings::setMouseSupport(bool new_val)
-{
-    if (new_val == AppSettings::general.mouse_support)
-        return;
+		AppSettings::general.fullscreen = new_val;
+		AppSettings::save_config();
 
-    AppSettings::general.mouse_support = new_val;
-    AppSettings::save_config();
+		emit fullscreenChanged();
+	}
 
-    change_mouse_support(AppSettings::general.mouse_support);
+	void Settings::setAutoboot(bool new_val)
+	{
+		if (new_val == AppSettings::general.autoboot)
+			return;
 
-    emit mouseSupportChanged();
-}
+		AppSettings::general.autoboot = new_val;
+		AppSettings::save_config();
 
-void Settings::setVerifyFiles(bool new_val)
-{
-    if (new_val == AppSettings::general.verify_files)
-        return;
+		emit autobootChanged();
+	}
 
-    AppSettings::general.verify_files = new_val;
-    AppSettings::save_config();
+	void Settings::setAutobootGame(const QString& new_val)
+	{
+		if (new_val == AppSettings::general.autobootGame)
+			return;
 
-    emit verifyFilesChanged();
-}
+		AppSettings::general.autobootGame = new_val;
+		AppSettings::save_config();
 
-QStringList Settings::gameDirs() const
-{
-    QSet<QString> dirset;
-    AppSettings::parse_gamedirs([&dirset](const QString& line){
-        dirset.insert(::pretty_path(line));
-    });
+		emit autobootGameChanged();
+	}
 
-    QStringList dirlist;
-    for (const QString& dir : qAsConst(dirset))
-        dirlist.append(dir);
+	void Settings::setMouseSupport(bool new_val)
+	{
+		if (new_val == AppSettings::general.mouse_support)
+			return;
 
-    dirlist.sort();
-    return dirlist;
-}
+		AppSettings::general.mouse_support = new_val;
+		AppSettings::save_config();
 
-void Settings::addGameDir(const QString& path)
-{
-    const QFileInfo finfo(path);
-    if (!finfo.exists() || !finfo.isDir()) {
-        Log::warning(LOGMSG("Game directory `%1` not found, ignored").arg(path));
-        return;
-    }
+		change_mouse_support(AppSettings::general.mouse_support);
 
-    QSet<QString> dirset;
-    AppSettings::parse_gamedirs([&dirset](const QString& line){
-        dirset.insert(::pretty_path(line));
-    });
+		emit mouseSupportChanged();
+	}
 
+	void Settings::setVerifyFiles(bool new_val)
+	{
+		if (new_val == AppSettings::general.verify_files)
+			return;
 
-    const auto count_before = dirset.count();
-    dirset << ::pretty_path(finfo);
-    const auto count_after = dirset.count();
+		AppSettings::general.verify_files = new_val;
+		AppSettings::save_config();
 
-    if (count_before == count_after) {
-        Log::warning(LOGMSG("Game directory `%1` already known, ignored").arg(path));
-        return;
-    }
+		emit verifyFilesChanged();
+	}
 
+	QStringList Settings::gameDirs() const
+	{
+		QSet<QString> dirset;
+		AppSettings::parse_gamedirs([&dirset](const QString &line)
+		                            {
+			                            dirset.insert(::pretty_path(line));
+		                            });
 
-    rewrite_gamedircfg([&dirset](QTextStream& stream){
-        for (const QString& dir : qAsConst(dirset)) {
-            stream << dir << '\n';
-        }
-    });
+		QStringList dirlist;
+		for (const QString &dir: qAsConst(dirset))
+		{
+			dirlist.append(dir);
+		}
 
-    emit gameDirsChanged();
-}
+		dirlist.sort();
+		return dirlist;
+	}
 
-void Settings::removeGameDirs(const QVariantList& idx_var_list)
-{
-    bool changed = false;
+	void Settings::addGameDir(const QString &path)
+	{
+		const QFileInfo finfo(path);
+		if (!finfo.exists() || !finfo.isDir())
+		{
+			Log::warning(LOGMSG("Game directory `%1` not found, ignored").arg(path));
+			return;
+		}
 
-    std::vector<int> idx_list;
-    for (const QVariant& idx_var : idx_var_list) {
-        bool valid_int = false;
-        const int idx = idx_var.toInt(&valid_int);
-        if (valid_int)
-            idx_list.push_back(idx);
-    }
-
-    idx_list.erase(std::unique(idx_list.begin(), idx_list.end()), idx_list.end());
-    std::sort(idx_list.rbegin(), idx_list.rend()); // to remove the largest index first
-
-
-    auto dirlist = gameDirs();
-    for (const int idx : idx_list) {
-        if (idx < 0 || dirlist.count() <= idx)
-            continue;
-
-        dirlist.removeAt(idx);
-        changed = true;
-    }
-    if (!changed)
-        return;
+		QSet<QString> dirset;
+		AppSettings::parse_gamedirs([&dirset](const QString &line)
+		                            {
+			                            dirset.insert(::pretty_path(line));
+		                            });
 
 
-    rewrite_gamedircfg([&dirlist](QTextStream& stream){
-        for (const QString& dir : qAsConst(dirlist)) {
-            stream << dir << '\n';
-        }
-    });
+		const auto count_before = dirset.count();
+		dirset << ::pretty_path(finfo);
+		const auto count_after = dirset.count();
 
-    emit gameDirsChanged();
-}
+		if (count_before == count_after)
+		{
+			Log::warning(LOGMSG("Game directory `%1` already known, ignored").arg(path));
+			return;
+		}
 
-QStringList Settings::androidGrantedDirs() const
-{
+
+		rewrite_gamedircfg([&dirset](QTextStream &stream)
+		                   {
+			                   for (const QString &dir: qAsConst(dirset))
+			                   {
+				                   stream << dir << '\n';
+			                   }
+		                   });
+
+		emit gameDirsChanged();
+	}
+
+	void Settings::removeGameDirs(const QVariantList &idx_var_list)
+	{
+		bool changed = false;
+
+		std::vector<int> idx_list;
+		for (const QVariant &idx_var: idx_var_list)
+		{
+			bool valid_int = false;
+			const int idx = idx_var.toInt(&valid_int);
+			if (valid_int)
+				idx_list.push_back(idx);
+		}
+
+		idx_list.erase(std::unique(idx_list.begin(), idx_list.end()), idx_list.end());
+		std::sort(idx_list.rbegin(), idx_list.rend()); // to remove the largest index first
+
+
+		auto dirlist = gameDirs();
+		for (const int idx: idx_list)
+		{
+			if (idx < 0 || dirlist.count() <= idx)
+				continue;
+
+			dirlist.removeAt(idx);
+			changed = true;
+		}
+		if (!changed)
+			return;
+
+
+		rewrite_gamedircfg([&dirlist](QTextStream &stream)
+		                   {
+			                   for (const QString &dir: qAsConst(dirlist))
+			                   {
+				                   stream << dir << '\n';
+			                   }
+		                   });
+
+		emit gameDirsChanged();
+	}
+
+	QStringList Settings::androidGrantedDirs() const
+	{
 #ifdef Q_OS_ANDROID
-    return android::granted_paths();
+		return android::granted_paths();
 #else
-    return {};
+		return {};
 #endif
-}
+	}
 
-void Settings::requestAndroidDir()
-{
+	void Settings::requestAndroidDir()
+	{
 #ifdef Q_OS_ANDROID
-    android::request_saf_permission([this](){
-        emit androidDirsChanged();
-    });
+		android::request_saf_permission([this](){
+			emit androidDirsChanged();
+		});
 #endif
-}
+	}
 
-void Settings::reloadProviders()
-{
-    Log::info(LOGMSG("Reloading..."));
-    emit providerReloadingRequested();
-}
+	void Settings::reloadProviders()
+	{
+		Log::info(LOGMSG("Reloading..."));
+		emit providerReloadingRequested();
+	}
 
 } // namespace model

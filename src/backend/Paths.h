@@ -18,25 +18,27 @@
 #pragma once
 
 class QString;
+
 class QStringList;
 
 
-namespace paths {
+namespace paths
+{
 
 /// Returns $PEGASUS_HOME if defined, or $HOME if defined,
 /// otherwise QDir::homePath().
-QString homePath();
+	QString homePath();
 
 /// Returns the directory that contains the Pegasus executable/app bundle.
-QString app_dir_path();
+	QString app_dir_path();
 
 /// Returns the directory paths where config files may be located
-const QStringList& configDirs();
+	const QStringList &configDirs();
 
 /// Returns a directory path where persistent data could be stored
-QString writableConfigDir();
+	QString writableConfigDir();
 
 /// Returns a directory path where cache data could be stored
-QString writableCacheDir();
+	QString writableCacheDir();
 
 } // namespace paths

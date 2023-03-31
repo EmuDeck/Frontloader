@@ -23,18 +23,19 @@
 #include <QNetworkDiskCache>
 
 
-namespace utils {
-
-QNetworkAccessManager* create_disc_cached_nam(QObject* parent)
+namespace utils
 {
-    auto nam = new QNetworkAccessManager(parent);
-    auto cache = new QNetworkDiskCache(nam);
 
-    QString cache_path = paths::writableCacheDir() + QLatin1String("/netcache");
-    cache->setCacheDirectory(cache_path);
+	QNetworkAccessManager* create_disc_cached_nam(QObject* parent)
+	{
+		auto nam = new QNetworkAccessManager(parent);
+		auto cache = new QNetworkDiskCache(nam);
 
-    nam->setCache(cache);
-    return nam;
-}
+		QString cache_path = paths::writableCacheDir() + QLatin1String("/netcache");
+		cache->setCacheDirectory(cache_path);
+
+		nam->setCache(cache);
+		return nam;
+	}
 
 } // namespace utils

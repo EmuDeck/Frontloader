@@ -32,136 +32,151 @@
 #include <QTextStream>
 
 
-namespace {
-QVector<QStringRef> split_list(const QString& str)
+namespace
 {
-    // FIXME: don't leave statics around
-    static const QRegularExpression separator(QStringLiteral("[,\\s]"));
-    return str.splitRef(separator, Qt::SkipEmptyParts);
-}
+	QVector<QStringRef> split_list(const QString &str)
+	{
+		// FIXME: don't leave statics around
+		static const QRegularExpression separator(QStringLiteral("[,\\s]"));
+		return str.splitRef(separator, Qt::SkipEmptyParts);
+	}
 
 /// returns a list of unique, '*.'-prefixed lowercase file extensions
-QStringList parse_filters(const QString& filters_raw) {
-    const QString filters_lowercase = filters_raw.toLower();
-    const QVector<QStringRef> filter_refs = split_list(filters_lowercase);
+	QStringList parse_filters(const QString &filters_raw)
+	{
+		const QString filters_lowercase = filters_raw.toLower();
+		const QVector<QStringRef> filter_refs = split_list(filters_lowercase);
 
-    QStringList filter_list;
-    for (const QStringRef& filter_ref : filter_refs)
-        filter_list.append(QChar('*') + filter_ref.trimmed());
+		QStringList filter_list;
+		for (const QStringRef &filter_ref: filter_refs)
+		{
+			filter_list.append(QChar('*') + filter_ref.trimmed());
+		}
 
-    filter_list.removeDuplicates();
-    return filter_list;
-}
+		filter_list.removeDuplicates();
+		return filter_list;
+	}
 } // namespace
 
 
-namespace providers {
-namespace es2 {
-
-std::vector<QString> read_mame_blacklists(const QString& log_tag, const std::vector<QString>& possible_config_dirs)
+namespace providers
 {
-    using L1Str = QLatin1String;
+	namespace es2
+	{
 
-    const QString resources_path = possible_config_dirs.front() % L1Str("/resources/");
-    const std::vector<std::pair<L1Str, L1Str>> blacklists {
-        { L1Str("mamebioses.xml"), L1Str("bios") },
-        { L1Str("mamedevices.xml"), L1Str("device") },
-    };
+		std::vector<QString>
+		read_mame_blacklists(const QString &log_tag, const std::vector<QString> &possible_config_dirs)
+		{
+			using L1Str = QLatin1String;
 
-    std::vector<QString> out;
+			const QString resources_path = possible_config_dirs.front() % L1Str("/resources/");
+			const std::vector<std::pair<L1Str, L1Str>> blacklists{
+					{L1Str("mamebioses.xml"),  L1Str("bios")},
+					{L1Str("mamedevices.xml"), L1Str("device")},
+			};
 
-    // TODO: C++17
-    for (const auto& blacklist_entry : blacklists) {
-        const QString file_path = resources_path % blacklist_entry.first;
-        QFile file(file_path);
-        if (!file.open(QFile::ReadOnly | QFile::Text))
-            continue;
+			std::vector<QString> out;
 
-        const QString line_head = QStringLiteral("<%1>").arg(blacklist_entry.second);
-        const QString line_tail = QStringLiteral("</%1>").arg(blacklist_entry.second);
+			// TODO: C++17
+			for (const auto &blacklist_entry: blacklists)
+			{
+				const QString file_path = resources_path % blacklist_entry.first;
+				QFile file(file_path);
+				if (!file.open(QFile::ReadOnly | QFile::Text))
+					continue;
 
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
+				const QString line_head = QStringLiteral("<%1>").arg(blacklist_entry.second);
+				const QString line_tail = QStringLiteral("</%1>").arg(blacklist_entry.second);
 
-        QString line;
-        int hit_count = 0;
-        while (stream.readLineInto(&line, 128)) {
-            const bool is_valid = line.startsWith(line_head) && line.endsWith(line_tail);
-            if (!is_valid)
-                continue;
+				QTextStream stream(&file);
+				stream.setCodec("UTF-8");
 
-            const int len = line.length() - line_head.length() - line_tail.length();
-            out.emplace_back(line.mid(line_head.length(), len));
-            hit_count++;
-        }
+				QString line;
+				int hit_count = 0;
+				while (stream.readLineInto(&line, 128))
+				{
+					const bool is_valid = line.startsWith(line_head) && line.endsWith(line_tail);
+					if (!is_valid)
+						continue;
 
-        Log::info(log_tag, LOGMSG("Found `%1`, %2 entries loaded").arg(file_path, QString::number(hit_count)));
-    }
+					const int len = line.length() - line_head.length() - line_tail.length();
+					out.emplace_back(line.mid(line_head.length(), len));
+					hit_count++;
+				}
 
-    return out;
-}
+				Log::info(log_tag, LOGMSG("Found `%1`, %2 entries loaded").arg(file_path, QString::number(hit_count)));
+			}
 
-size_t find_games_for(
-    const SystemEntry& sysentry,
-    SearchContext& sctx,
-    const std::vector<QString>& filename_blacklist)
-{
-    model::Collection& collection = *sctx.get_or_create_collection(sysentry.name);
-    collection
-        .setShortName(sysentry.shortname)
-        .setCommonLaunchCmd(sysentry.launch_cmd);
+			return out;
+		}
 
-    // find all (sub-)directories, but ignore 'media'
-    const QStringList dirs = [&sysentry]{
-        QStringList result;
+		size_t find_games_for(
+				const SystemEntry &sysentry,
+				SearchContext &sctx,
+				const std::vector<QString> &filename_blacklist)
+		{
+			model::Collection &collection = *sctx.get_or_create_collection(sysentry.name);
+			collection
+					.setShortName(sysentry.shortname)
+					.setCommonLaunchCmd(sysentry.launch_cmd);
 
-        constexpr auto subdir_filters = QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot;
-        constexpr auto subdir_flags = QDirIterator::FollowSymlinks | QDirIterator::Subdirectories;
-        QDirIterator dirs_it(sysentry.path, subdir_filters, subdir_flags);
-        while (dirs_it.hasNext())
-            result.append(dirs_it.next());
+			// find all (sub-)directories, but ignore 'media'
+			const QStringList dirs = [&sysentry]
+			{
+				QStringList result;
 
-        result.removeOne(sysentry.path + QStringLiteral("/media"));
-        result.append(sysentry.path);
-        return result;
-    }();
+				constexpr auto subdir_filters = QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot;
+				constexpr auto subdir_flags = QDirIterator::FollowSymlinks | QDirIterator::Subdirectories;
+				QDirIterator dirs_it(sysentry.path, subdir_filters, subdir_flags);
+				while (dirs_it.hasNext())
+				{
+					result.append(dirs_it.next());
+				}
 
-    // use the blacklist maybe
-    const QVector<QStringRef> platforms = split_list(sysentry.platforms);
-    const bool use_blacklist = VEC_CONTAINS(platforms, QLatin1String("arcade"))
-                            || VEC_CONTAINS(platforms, QLatin1String("neogeo"));
+				result.removeOne(sysentry.path + QStringLiteral("/media"));
+				result.append(sysentry.path);
+				return result;
+			}();
+
+			// use the blacklist maybe
+			const QVector<QStringRef> platforms = split_list(sysentry.platforms);
+			const bool use_blacklist = VEC_CONTAINS(platforms, QLatin1String("arcade"))
+			                           || VEC_CONTAINS(platforms, QLatin1String("neogeo"));
 
 
-    // scan for game files
+			// scan for game files
 
-    constexpr auto entry_filters = QDir::Files | QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot;
-    constexpr auto entry_flags = QDirIterator::FollowSymlinks;
-    const QStringList name_filters = parse_filters(sysentry.extensions);
+			constexpr auto entry_filters = QDir::Files | QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot;
+			constexpr auto entry_flags = QDirIterator::FollowSymlinks;
+			const QStringList name_filters = parse_filters(sysentry.extensions);
 
-    size_t found_games = 0;
-    for (const QString& dir_path : dirs) {
-        QDirIterator files_it(dir_path, name_filters, entry_filters, entry_flags);
-        while (files_it.hasNext()) {
-            files_it.next();
-            QFileInfo fileinfo = files_it.fileInfo();
+			size_t found_games = 0;
+			for (const QString &dir_path: dirs)
+			{
+				QDirIterator files_it(dir_path, name_filters, entry_filters, entry_flags);
+				while (files_it.hasNext())
+				{
+					files_it.next();
+					QFileInfo fileinfo = files_it.fileInfo();
 
-            const QString filename = fileinfo.completeBaseName();
-            if (use_blacklist && VEC_CONTAINS(filename_blacklist, filename))
-                continue;
+					const QString filename = fileinfo.completeBaseName();
+					if (use_blacklist && VEC_CONTAINS(filename_blacklist, filename))
+						continue;
 
-            QString path = ::clean_abs_path(fileinfo);
-            model::Game* game_ptr = sctx.game_by_filepath(path);
-            if (!game_ptr) {
-                game_ptr = sctx.create_game_for(collection);
-                sctx.game_add_filepath(*game_ptr, std::move(path));
-            }
-            sctx.game_add_to(*game_ptr, collection);
-            found_games++;
-        }
-    }
+					QString path = ::clean_abs_path(fileinfo);
+					model::Game* game_ptr = sctx.game_by_filepath(path);
+					if (!game_ptr)
+					{
+						game_ptr = sctx.create_game_for(collection);
+						sctx.game_add_filepath(*game_ptr, std::move(path));
+					}
+					sctx.game_add_to(*game_ptr, collection);
+					found_games++;
+				}
+			}
 
-    return found_games;
-}
+			return found_games;
+		}
 
-} // namespace es2
+	} // namespace es2
 } // namespace providers

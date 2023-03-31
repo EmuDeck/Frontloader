@@ -1,8 +1,8 @@
 pegasus_add_provider(
-    INTERNAL
-    SOURCES
+        INTERNAL
+        SOURCES
         Favorites.cpp
         Favorites.h
-    PLATFORMS
+        PLATFORMS
         ALL
 )

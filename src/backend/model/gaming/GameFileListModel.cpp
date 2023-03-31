@@ -21,73 +21,85 @@
 #include "model/gaming/GameFile.h"
 
 
-namespace {
-enum Roles {
-    Self = Qt::UserRole,
-    Name,
-    Path,
-    PlayCount,
-    PlayTime,
-    LastPlayed,
-};
+namespace
+{
+	enum Roles
+	{
+		Self = Qt::UserRole,
+		Name,
+		Path,
+		PlayCount,
+		PlayTime,
+		LastPlayed,
+	};
 } // namespace
 
 
-namespace model {
-GameFileListModel::GameFileListModel(QObject* parent)
-    : TypeListModel(parent)
-{}
-
-
-QHash<int, QByteArray> GameFileListModel::roleNames() const
+namespace model
 {
-    static QHash<int, QByteArray> ROLE_NAMES {
-        { Roles::Self, QByteArrayLiteral("modelData") },
-        { Roles::Name, QByteArrayLiteral("name") },
-        { Roles::Path, QByteArrayLiteral("path") },
-        { Roles::PlayCount, QByteArrayLiteral("playCount") },
-        { Roles::PlayTime, QByteArrayLiteral("playTime") },
-        { Roles::LastPlayed, QByteArrayLiteral("lastPlayed") },
-    };
-    return ROLE_NAMES;
-}
+	GameFileListModel::GameFileListModel(QObject* parent)
+			: TypeListModel(parent)
+	{}
 
 
-QVariant GameFileListModel::data(const QModelIndex& index, int role) const
-{
-    if (!index.isValid())
-        return {};
-
-    model::GameFile* const gamefile_ptr = m_entries.at(index.row());
-    const model::GameFile& gamefile = *gamefile_ptr;
-    switch (role) {
-        case Roles::Self: return QVariant::fromValue(gamefile_ptr);
-        case Roles::Name: return gamefile.name();
-        case Roles::Path: return gamefile.path();
-        case Roles::PlayCount: return gamefile.playCount();
-        case Roles::PlayTime: return gamefile.playTime();
-        case Roles::LastPlayed: return gamefile.lastPlayed();
-        default: return {};
-    }
-}
+	QHash<int, QByteArray> GameFileListModel::roleNames() const
+	{
+		static QHash<int, QByteArray> ROLE_NAMES{
+				{Roles::Self,       QByteArrayLiteral("modelData")},
+				{Roles::Name,       QByteArrayLiteral("name")},
+				{Roles::Path,       QByteArrayLiteral("path")},
+				{Roles::PlayCount,  QByteArrayLiteral("playCount")},
+				{Roles::PlayTime,   QByteArrayLiteral("playTime")},
+				{Roles::LastPlayed, QByteArrayLiteral("lastPlayed")},
+		};
+		return ROLE_NAMES;
+	}
 
 
-void GameFileListModel::connectEntry(model::GameFile* const entry)
-{
-    connect(entry, &model::GameFile::playStatsChanged,
-            this, [this](){ onEntryPropertyChanged({Roles::PlayCount, Roles::PlayTime, Roles::LastPlayed}); });
-}
+	QVariant GameFileListModel::data(const QModelIndex &index, int role) const
+	{
+		if (!index.isValid())
+			return {};
+
+		model::GameFile* const gamefile_ptr = m_entries.at(index.row());
+		const model::GameFile &gamefile = *gamefile_ptr;
+		switch (role)
+		{
+			case Roles::Self:
+				return QVariant::fromValue(gamefile_ptr);
+			case Roles::Name:
+				return gamefile.name();
+			case Roles::Path:
+				return gamefile.path();
+			case Roles::PlayCount:
+				return gamefile.playCount();
+			case Roles::PlayTime:
+				return gamefile.playTime();
+			case Roles::LastPlayed:
+				return gamefile.lastPlayed();
+			default:
+				return {};
+		}
+	}
 
 
-void GameFileListModel::onEntryPropertyChanged(const QVector<int>& roles)
-{
-    QObject* const game_ptr = sender();
-    const auto it = std::find(m_entries.cbegin(), m_entries.cend(), game_ptr);
-    if (it == m_entries.cend())
-       return;
+	void GameFileListModel::connectEntry(model::GameFile* const entry)
+	{
+		connect(entry, &model::GameFile::playStatsChanged,
+		        this, [this]()
+		        { onEntryPropertyChanged({Roles::PlayCount, Roles::PlayTime, Roles::LastPlayed}); });
+	}
 
-    const size_t data_idx = std::distance(m_entries.cbegin(), it);
-    const QModelIndex model_idx = index(data_idx);
-    emit dataChanged(model_idx, model_idx, roles);
-}
+
+	void GameFileListModel::onEntryPropertyChanged(const QVector<int> &roles)
+	{
+		QObject* const game_ptr = sender();
+		const auto it = std::find(m_entries.cbegin(), m_entries.cend(), game_ptr);
+		if (it == m_entries.cend())
+			return;
+
+		const size_t data_idx = std::distance(m_entries.cbegin(), it);
+		const QModelIndex model_idx = index(data_idx);
+		emit dataChanged(model_idx, model_idx, roles);
+	}
 } // namespace model

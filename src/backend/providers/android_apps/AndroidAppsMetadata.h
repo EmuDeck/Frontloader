@@ -19,35 +19,46 @@
 
 #include <QRegularExpression>
 
-namespace model { class Game; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Game;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
-namespace providers {
-namespace android {
+namespace providers
+{
+	namespace android
+	{
 
-class MetadataHelper {
-public:
-    MetadataHelper(QString);
+		class MetadataHelper
+		{
+		public:
+			MetadataHelper(QString);
 
-    bool fill_from_cache(const QString&, model::Game&) const;
-    void fill_from_network(const QString&, model::Game&, SearchContext&) const;
+			bool fill_from_cache(const QString &, model::Game &) const;
 
-    const QString& log_tag() const { return m_log_tag; }
+			void fill_from_network(const QString &, model::Game &, SearchContext &) const;
 
-private:
-    const QString m_log_tag;
-    const QString m_json_cache_dir;
+			const QString &log_tag() const
+			{ return m_log_tag; }
 
-    const QRegularExpression rx_meta_itemprops;
-    const QRegularExpression rx_background;
-    const QRegularExpression rx_developer;
-    const QRegularExpression rx_category;
-    const QRegularExpression rx_screenshots;
-    const QRegularExpression rx_release;
-    const QRegularExpression rx_rating;
+		private:
+			const QString m_log_tag;
+			const QString m_json_cache_dir;
 
-    QJsonDocument parse_reply(const QByteArray&) const;
-};
+			const QRegularExpression rx_meta_itemprops;
+			const QRegularExpression rx_background;
+			const QRegularExpression rx_developer;
+			const QRegularExpression rx_category;
+			const QRegularExpression rx_screenshots;
+			const QRegularExpression rx_release;
+			const QRegularExpression rx_rating;
 
-} // namespace android
+			QJsonDocument parse_reply(const QByteArray &) const;
+		};
+
+	} // namespace android
 } // namespace providers

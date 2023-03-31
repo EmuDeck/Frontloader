@@ -24,56 +24,89 @@
 #include <QObject>
 #include <vector>
 
-namespace model { class Collection; }
-namespace model { class Game; }
-namespace model { class GameFile; }
-namespace providers { class SearchContext; }
+namespace model
+{
+	class Collection;
+}
+namespace model
+{
+	class Game;
+}
+namespace model
+{
+	class GameFile;
+}
+namespace providers
+{
+	class SearchContext;
+}
 
 
-namespace providers {
+namespace providers
+{
 
-constexpr uint8_t PROVIDER_FLAG_NONE = 0;
-constexpr uint8_t PROVIDER_FLAG_INTERNAL = (1 << 0);
-constexpr uint8_t PROVIDER_FLAG_HIDE_PROGRESS = (1 << 1);
+	constexpr uint8_t PROVIDER_FLAG_NONE = 0;
+	constexpr uint8_t PROVIDER_FLAG_INTERNAL = (1 << 0);
+	constexpr uint8_t PROVIDER_FLAG_HIDE_PROGRESS = (1 << 1);
 
 
-class Provider : public QObject {
-    Q_OBJECT
+	class Provider : public QObject
+	{
+	Q_OBJECT
 
-public:
-    explicit Provider(QLatin1String codename, QString display_name, uint8_t flags, QObject* parent = nullptr);
-    explicit Provider(QLatin1String codename, QString display_name, QObject* parent = nullptr);
-    virtual ~Provider();
+	public:
+		explicit Provider(QLatin1String codename, QString display_name, uint8_t flags, QObject* parent = nullptr);
 
-    bool enabled() const { return m_enabled; }
-    Provider& setEnabled(bool);
+		explicit Provider(QLatin1String codename, QString display_name, QObject* parent = nullptr);
 
-    virtual Provider& run(SearchContext&) { return *this; }
+		virtual ~Provider();
 
-    // events
-    virtual void onGameFavoriteChanged(const std::vector<model::Game*>&, const bool) {}
-    virtual void onGameLaunched(model::GameFile* const) {}
-    virtual void onGameFinished(model::GameFile* const) {}
+		bool enabled() const
+		{ return m_enabled; }
 
-    // common
-    const QLatin1String& codename() const { return m_codename; }
-    const QString& display_name() const { return m_display_name; }
-    uint8_t flags() const { return m_flags; }
+		Provider &setEnabled(bool);
 
-    Provider& setOption(const QString&, QString);
-    Provider& setOption(const QString&, std::vector<QString>);
-    const HashMap<QString, std::vector<QString>>& options() const { return m_options; }
+		virtual Provider &run(SearchContext &)
+		{ return *this; }
 
-signals:
-    void progressChanged(float);
+		// events
+		virtual void onGameFavoriteChanged(const std::vector<model::Game*> &, const bool)
+		{}
 
-private:
-    const QLatin1String m_codename;
-    const QString m_display_name;
-    const uint8_t m_flags;
+		virtual void onGameLaunched(model::GameFile* const)
+		{}
 
-    bool m_enabled;
-    HashMap<QString, std::vector<QString>> m_options;
-};
+		virtual void onGameFinished(model::GameFile* const)
+		{}
+
+		// common
+		const QLatin1String &codename() const
+		{ return m_codename; }
+
+		const QString &display_name() const
+		{ return m_display_name; }
+
+		uint8_t flags() const
+		{ return m_flags; }
+
+		Provider &setOption(const QString &, QString);
+
+		Provider &setOption(const QString &, std::vector<QString>);
+
+		const HashMap<QString, std::vector<QString>> &options() const
+		{ return m_options; }
+
+	signals:
+
+		void progressChanged(float);
+
+	private:
+		const QLatin1String m_codename;
+		const QString m_display_name;
+		const uint8_t m_flags;
+
+		bool m_enabled;
+		HashMap<QString, std::vector<QString>> m_options;
+	};
 
 } // namespace providers

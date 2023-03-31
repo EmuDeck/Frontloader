@@ -20,22 +20,26 @@
 
 #include <QString>
 
-namespace providers {
-namespace playnite {
+namespace providers
+{
+	namespace playnite
+	{
 
-struct PlayniteEmulator {
-    struct EmulatorProfile {
-        QString id;
-        QString name;
-        QString executable;
-        QString arguments;
-        QString working_dir;
-    };
+		struct PlayniteEmulator
+		{
+			struct EmulatorProfile
+			{
+				QString id;
+				QString name;
+				QString executable;
+				QString arguments;
+				QString working_dir;
+			};
 
-    QString id;
-    QString name;
-    HashMap<QString, EmulatorProfile> profiles;
-};
+			QString id;
+			QString name;
+			HashMap<QString, EmulatorProfile> profiles;
+		};
 
-} // namespace playnite
+	} // namespace playnite
 } // namespace providers

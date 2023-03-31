@@ -24,52 +24,55 @@
 #include <array>
 
 
-namespace {
-bool is_modifier(const int keycode)
+namespace
 {
-    return keycode == Qt::Key_Control
-        || keycode == Qt::Key_Shift
-        || keycode == Qt::Key_Meta
-        || keycode == Qt::Key_Alt;
-}
+	bool is_modifier(const int keycode)
+	{
+		return keycode == Qt::Key_Control
+		       || keycode == Qt::Key_Shift
+		       || keycode == Qt::Key_Meta
+		       || keycode == Qt::Key_Alt;
+	}
 
-int keymods_to_int(const Qt::KeyboardModifiers keymods)
-{
-    static constexpr std::array<Qt::KeyboardModifier, 4> possible_modifiers {
-        Qt::KeyboardModifier::AltModifier,
-        Qt::KeyboardModifier::ControlModifier,
-        Qt::KeyboardModifier::MetaModifier,
-        Qt::KeyboardModifier::ShiftModifier,
-    };
+	int keymods_to_int(const Qt::KeyboardModifiers keymods)
+	{
+		static constexpr std::array<Qt::KeyboardModifier, 4> possible_modifiers{
+				Qt::KeyboardModifier::AltModifier,
+				Qt::KeyboardModifier::ControlModifier,
+				Qt::KeyboardModifier::MetaModifier,
+				Qt::KeyboardModifier::ShiftModifier,
+		};
 
-    int result = 0;
-    for (const auto modifier : possible_modifiers) {
-        if (keymods & modifier)
-            result |= modifier;
-    }
-    return result;
-}
+		int result = 0;
+		for (const auto modifier: possible_modifiers)
+		{
+			if (keymods & modifier)
+				result |= modifier;
+		}
+		return result;
+	}
 } // namespace
 
 
-namespace utils {
-QKeySequence qmlevent_to_keyseq(const QVariant& event_variant)
+namespace utils
 {
-    static constexpr auto QML_KEYEVENT_CLASSNAME = "QQuickKeyEvent";
+	QKeySequence qmlevent_to_keyseq(const QVariant &event_variant)
+	{
+		static constexpr auto QML_KEYEVENT_CLASSNAME = "QQuickKeyEvent";
 
-    const QObject* const event_qobj = event_variant.value<QObject*>();
-    if (!event_qobj)
-        return {};
+		const QObject* const event_qobj = event_variant.value<QObject*>();
+		if (!event_qobj)
+			return {};
 
-    const char* const event_qobj_class = event_qobj->metaObject()->className();
-    if (::strcmp(event_qobj_class, QML_KEYEVENT_CLASSNAME) != 0)
-        return {};
+		const char* const event_qobj_class = event_qobj->metaObject()->className();
+		if (::strcmp(event_qobj_class, QML_KEYEVENT_CLASSNAME) != 0)
+			return {};
 
-    const QKeyEvent& event = static_cast<const FakeQKeyEvent*>(event_qobj)->event;
-    if (is_modifier(event.key()))
-        return {};
+		const QKeyEvent &event = static_cast<const FakeQKeyEvent*>(event_qobj)->event;
+		if (is_modifier(event.key()))
+			return {};
 
-    const int keyseq_key = event.key() | keymods_to_int(event.modifiers());
-    return {keyseq_key};
-}
+		const int keyseq_key = event.key() | keymods_to_int(event.modifiers());
+		return {keyseq_key};
+	}
 } // namespace utils

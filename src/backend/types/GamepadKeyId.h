@@ -18,29 +18,32 @@
 #pragma once
 
 // NOTE: This is a regular enum, for Qt::Key compatibility
-enum GamepadKeyId {
-    A = 0x100000,
-    B, X, Y,
-    L1, L2, L3,
-    R1, R2, R3,
-    SELECT,
-    START,
-    GUIDE,
+enum GamepadKeyId
+{
+	A = 0x100000,
+	B, X, Y,
+	L1, L2, L3,
+	R1, R2, R3,
+	SELECT,
+	START,
+	GUIDE,
 };
 
 
-enum class GamepadButton : unsigned char {
-    INVALID,
-    UP, DOWN, LEFT, RIGHT,
-    NORTH, SOUTH, EAST, WEST,
-    L1, L2, L3,
-    R1, R2, R3,
-    SELECT,
-    START,
-    GUIDE,
+enum class GamepadButton : unsigned char
+{
+	INVALID,
+	UP, DOWN, LEFT, RIGHT,
+	NORTH, SOUTH, EAST, WEST,
+	L1, L2, L3,
+	R1, R2, R3,
+	SELECT,
+	START,
+	GUIDE,
 };
-enum class GamepadAxis : unsigned char {
-    INVALID,
-    LEFTX, LEFTY,
-    RIGHTX, RIGHTY,
+enum class GamepadAxis : unsigned char
+{
+	INVALID,
+	LEFTX, LEFTY,
+	RIGHTX, RIGHTY,
 };

@@ -31,23 +31,27 @@ class QQmlApplicationEngine;
 ///
 /// Some funtions require a pointer to the API object, to connect and make
 /// it accessible to the frontend.
-class FrontendLayer : public QObject {
-    Q_OBJECT
+class FrontendLayer : public QObject
+{
+Q_OBJECT
 
 public:
-    explicit FrontendLayer(QObject* const api_public, QObject* const api_private, QObject* parent = nullptr);
+	explicit FrontendLayer(QObject* const api_public, QObject* const api_private, QObject* parent = nullptr);
 
-    void rebuild();
-    void teardown();
+	void rebuild();
 
-    void clearCache();
+	void teardown();
+
+	void clearCache();
 
 signals:
-    void rebuildComplete();
-    void teardownComplete();
+
+	void rebuildComplete();
+
+	void teardownComplete();
 
 private:
-    QObject* const m_api_public;
-    QObject* const m_api_private;
-    QQmlApplicationEngine* m_engine;
+	QObject* const m_api_public;
+	QObject* const m_api_private;
+	QQmlApplicationEngine* m_engine;
 };

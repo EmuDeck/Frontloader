@@ -23,62 +23,65 @@
 #include <CoreServices/CoreServices.h>
 
 
-namespace {
-
-bool send_apple_event(AEEventID apple_event_id)
+namespace
 {
-    const ProcessSerialNumber system_psn { 0, kSystemProcess };
-    OSStatus error = noErr;
 
-    AEAddressDesc target_desc;
-    error = AECreateDesc(typeProcessSerialNumber,
-                         &system_psn, sizeof(system_psn),
-                         &target_desc);
-    if (error != noErr)
-        return false;
+	bool send_apple_event(AEEventID apple_event_id)
+	{
+		const ProcessSerialNumber system_psn{0, kSystemProcess};
+		OSStatus error = noErr;
 
-    AppleEvent apple_event { typeNull, NULL };
-    error = AECreateAppleEvent(kCoreEventClass, apple_event_id,
-                               &target_desc,
-                               kAutoGenerateReturnID, kAnyTransactionID,
-                               &apple_event);
-    AEDisposeDesc(&target_desc);
-    if (error != noErr)
-        return false;
+		AEAddressDesc target_desc;
+		error = AECreateDesc(typeProcessSerialNumber,
+		                     &system_psn, sizeof(system_psn),
+		                     &target_desc);
+		if (error != noErr)
+			return false;
 
-    AppleEvent event_reply { typeNull, NULL };
-    error = AESendMessage(&apple_event, &event_reply,
-                          kAENoReply, kAEDefaultTimeout);
-    AEDisposeDesc(&apple_event);
-    if (error != noErr)
-        return false;
+		AppleEvent apple_event{typeNull, NULL};
+		error = AECreateAppleEvent(kCoreEventClass, apple_event_id,
+		                           &target_desc,
+		                           kAutoGenerateReturnID, kAnyTransactionID,
+		                           &apple_event);
+		AEDisposeDesc(&target_desc);
+		if (error != noErr)
+			return false;
 
-    AEDisposeDesc(&event_reply);
-    return true;
-}
+		AppleEvent event_reply{typeNull, NULL};
+		error = AESendMessage(&apple_event, &event_reply,
+		                      kAENoReply, kAEDefaultTimeout);
+		AEDisposeDesc(&apple_event);
+		if (error != noErr)
+			return false;
+
+		AEDisposeDesc(&event_reply);
+		return true;
+	}
 
 } // namespace
 
 
-namespace platform {
-namespace power {
-
-void reboot()
+namespace platform
 {
-    if (!send_apple_event(kAERestart))
-        Log::error(LOGMSG("Requesting reboot has failed."));
-}
+	namespace power
+	{
 
-void shutdown()
-{
-    if (!send_apple_event(kAEShutDown))
-        Log::error(LOGMSG("Requesting shutdown has failed."));
-}
+		void reboot()
+		{
+			if (!send_apple_event(kAERestart))
+				Log::error(LOGMSG("Requesting reboot has failed."));
+		}
 
-void suspend()
-{
-    Log::error(LOGMSG("Suspend not implemented on this platform yet"));
-}
+		void shutdown()
+		{
+			if (!send_apple_event(kAEShutDown))
+				Log::error(LOGMSG("Requesting shutdown has failed."));
+		}
 
-} // namespace power
+		void suspend()
+		{
+			Log::error(LOGMSG("Suspend not implemented on this platform yet"));
+		}
+
+	} // namespace power
 } // namespace platform

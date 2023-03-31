@@ -20,17 +20,20 @@
 #include "providers/Provider.h"
 
 
-namespace providers {
-namespace pegasus {
+namespace providers
+{
+	namespace pegasus
+	{
 
-class PegasusProvider : public Provider {
-    Q_OBJECT
+		class PegasusProvider : public Provider
+		{
+		Q_OBJECT
 
-public:
-    explicit PegasusProvider(QObject* parent = nullptr);
+		public:
+			explicit PegasusProvider(QObject* parent = nullptr);
 
-    Provider& run(SearchContext&) final;
-};
+			Provider &run(SearchContext &) final;
+		};
 
-} // namespace pegasus
+	} // namespace pegasus
 } // namespace providers

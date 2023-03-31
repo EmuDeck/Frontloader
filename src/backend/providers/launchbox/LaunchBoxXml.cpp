@@ -22,15 +22,17 @@
 #include <QXmlStreamReader>
 
 
-namespace providers {
-namespace launchbox {
-
-void verify_root_node(QXmlStreamReader& xml)
+namespace providers
 {
-    const bool valid = xml.readNextStartElement() && xml.name() == QLatin1String("LaunchBox");
-    if (!valid)
-        xml.raiseError(LOGMSG("The file does not start with a `<LaunchBox>` root node, file ignored"));
-}
+	namespace launchbox
+	{
 
-} // namespace launchbox
+		void verify_root_node(QXmlStreamReader &xml)
+		{
+			const bool valid = xml.readNextStartElement() && xml.name() == QLatin1String("LaunchBox");
+			if (!valid)
+				xml.raiseError(LOGMSG("The file does not start with a `<LaunchBox>` root node, file ignored"));
+		}
+
+	} // namespace launchbox
 } // namespace providers

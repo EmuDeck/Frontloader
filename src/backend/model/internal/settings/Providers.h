@@ -22,42 +22,52 @@
 #include <QAbstractListModel>
 
 
-namespace model {
-struct ProviderEntry {
-    ProviderEntry(size_t idx);
+namespace model
+{
+	struct ProviderEntry
+	{
+		ProviderEntry(size_t idx);
 
-    bool enabled() const;
-    void setEnabled(bool);
-    const QString& name() const;
+		bool enabled() const;
 
-private:
-    const size_t m_idx;
-};
+		void setEnabled(bool);
+
+		const QString &name() const;
+
+	private:
+		const size_t m_idx;
+	};
 
 
-class Providers : public QAbstractListModel {
-    Q_OBJECT
-    Q_PROPERTY(int count READ count CONSTANT)
+	class Providers : public QAbstractListModel
+	{
+	Q_OBJECT
+		Q_PROPERTY(int count READ count CONSTANT)
 
-public:
-    explicit Providers(QObject* parent = nullptr);
+	public:
+		explicit Providers(QObject* parent = nullptr);
 
-    enum Roles {
-        Name = Qt::UserRole + 1,
-        Enabled,
-    };
+		enum Roles
+		{
+			Name = Qt::UserRole + 1,
+			Enabled,
+		};
 
-    int count() const;
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+		int count() const;
 
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
-    QHash<int, QByteArray> roleNames() const override { return m_role_names; }
+		int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+		Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-private:
-    const QHash<int, QByteArray> m_role_names;
-    std::vector<ProviderEntry> m_providers;
-};
+		QHash<int, QByteArray> roleNames() const override
+		{ return m_role_names; }
+
+		QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+		bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+	private:
+		const QHash<int, QByteArray> m_role_names;
+		std::vector<ProviderEntry> m_providers;
+	};
 } // namespace model

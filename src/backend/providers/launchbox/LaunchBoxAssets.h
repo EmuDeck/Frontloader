@@ -23,29 +23,36 @@
 #include <QRegularExpression>
 #include <vector>
 
-namespace model { class Game; }
+namespace model
+{
+	class Game;
+}
 enum class AssetType : unsigned char;
+
 class QString;
 
 
-namespace providers {
-namespace launchbox {
+namespace providers
+{
+	namespace launchbox
+	{
 
-class Assets {
-public:
-    explicit Assets(QString, QString);
+		class Assets
+		{
+		public:
+			explicit Assets(QString, QString);
 
-    void find_assets_for(const QString&, const std::vector<model::Game*>&) const;
+			void find_assets_for(const QString &, const std::vector<model::Game*> &) const;
 
-private:
-    const QString m_log_tag;
-    const QString m_lb_root_path;
+		private:
+			const QString m_log_tag;
+			const QString m_lb_root_path;
 
-    const std::vector<std::pair<QString, AssetType>> m_dir_list;
-    const QRegularExpression rx_number_suffix;
+			const std::vector<std::pair<QString, AssetType>> m_dir_list;
+			const QRegularExpression rx_number_suffix;
 
-    void find_assets_in(const QString&, const AssetType, const HashMap<QString, model::Game*>&) const;
-};
+			void find_assets_in(const QString &, const AssetType, const HashMap<QString, model::Game*> &) const;
+		};
 
-} // namespace launchbox
+	} // namespace launchbox
 } // namespace providers

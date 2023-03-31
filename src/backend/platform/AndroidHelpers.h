@@ -20,19 +20,25 @@
 #include <QString>
 
 
-namespace android {
+namespace android
+{
 
-const char* jni_classname();
+	const char* jni_classname();
 
-QString primary_storage_path();
-QStringList storage_paths();
-bool has_external_storage_access();
+	QString primary_storage_path();
 
-QStringList granted_paths();
-void request_saf_permission(const std::function<void()>&);
+	QStringList storage_paths();
 
-QString run_am_call(const QStringList&);
-QString to_content_uri(const QString&);
-QString to_document_uri(const QString&);
+	bool has_external_storage_access();
+
+	QStringList granted_paths();
+
+	void request_saf_permission(const std::function<void()> &);
+
+	QString run_am_call(const QStringList &);
+
+	QString to_content_uri(const QString &);
+
+	QString to_document_uri(const QString &);
 
 } // namespace android

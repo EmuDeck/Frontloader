@@ -27,84 +27,106 @@
 #include <QString>
 
 #ifndef Q_OS_ANDROID
+
 #  include "GamepadAxisNavigation.h"
 #  include "GamepadButtonNavigation.h"
+
 #endif
 
 
-namespace model {
+namespace model
+{
 
-class GamepadManager : public QObject {
-    Q_OBJECT
-    Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	class GamepadManager : public QObject
+	{
+	Q_OBJECT
+		Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
 
-public:
-    explicit GamepadManager(QObject* parent = nullptr);
+	public:
+		explicit GamepadManager(QObject* parent = nullptr);
 
-    void start(const backend::CliArgs& args);
-    void stop();
+		void start(const backend::CliArgs &args);
 
-    enum class GMButton {
-        Invalid,
-        Up, Down, Left, Right,
-        North, South, East, West,
-        L1, L2, L3,
-        R1, R2, R3,
-        Select,
-        Start,
-        Guide,
-    };
-    Q_ENUM(GMButton)
+		void stop();
 
-    enum class GMAxis {
-        Invalid,
-        LeftX, LeftY,
-        RightX, RightY,
-    };
-    Q_ENUM(GMAxis)
+		enum class GMButton
+		{
+			Invalid,
+			Up, Down, Left, Right,
+			North, South, East, West,
+			L1, L2, L3,
+			R1, R2, R3,
+			Select,
+			Start,
+			Guide,
+		};
 
-    Q_PROPERTY(ObjectListModel* devices READ devices CONSTANT)
+		Q_ENUM(GMButton)
 
-    Q_INVOKABLE void configureButton(int deviceId, model::GamepadManager::GMButton button);
-    Q_INVOKABLE void configureAxis(int deviceId, model::GamepadManager::GMAxis axis);
-    Q_INVOKABLE void cancelConfiguration();
+		enum class GMAxis
+		{
+			Invalid,
+			LeftX, LeftY,
+			RightX, RightY,
+		};
 
-    Q_INVOKABLE QString mappingForAxis(int deviceId, model::GamepadManager::GMAxis axis) const;
-    Q_INVOKABLE QString mappingForButton(int deviceId, model::GamepadManager::GMButton button) const;
+		Q_ENUM(GMAxis)
 
-signals:
-    void connected(int deviceId);
-    void disconnected(QString deviceId);
+		Q_PROPERTY(ObjectListModel* devices READ devices CONSTANT)
 
-    void buttonConfigured(int deviceId, model::GamepadManager::GMButton button);
-    void axisConfigured(int deviceId, model::GamepadManager::GMAxis axis);
-    void configurationCanceled(int deviceId);
+		Q_INVOKABLE void configureButton(int deviceId, model::GamepadManager::GMButton button);
 
-private slots:
-    void bkOnConnected(int, QString);
-    void bkOnDisconnected(int);
-    void bkOnNameChanged(int, QString);
+		Q_INVOKABLE void configureAxis(int deviceId, model::GamepadManager::GMAxis axis);
 
-    void bkOnButtonCfg(int, GamepadButton);
-    void bkOnAxisCfg(int, GamepadAxis);
+		Q_INVOKABLE void cancelConfiguration();
 
-    void bkOnButtonChanged(int, GamepadButton, bool);
-    void bkOnAxisChanged(int, GamepadAxis, double);
+		Q_INVOKABLE QString mappingForAxis(int deviceId, model::GamepadManager::GMAxis axis) const;
 
-private:
-    GamepadListModel* devices() const { return m_devices; }
+		Q_INVOKABLE QString mappingForButton(int deviceId, model::GamepadManager::GMButton button) const;
 
-private:
-    const QString m_log_tag;
+	signals:
 
-    GamepadListModel* const m_devices;
-    GamepadManagerBackend* const m_backend;
+		void connected(int deviceId);
+
+		void disconnected(QString deviceId);
+
+		void buttonConfigured(int deviceId, model::GamepadManager::GMButton button);
+
+		void axisConfigured(int deviceId, model::GamepadManager::GMAxis axis);
+
+		void configurationCanceled(int deviceId);
+
+	private slots:
+
+		void bkOnConnected(int, QString);
+
+		void bkOnDisconnected(int);
+
+		void bkOnNameChanged(int, QString);
+
+		void bkOnButtonCfg(int, GamepadButton);
+
+		void bkOnAxisCfg(int, GamepadAxis);
+
+		void bkOnButtonChanged(int, GamepadButton, bool);
+
+		void bkOnAxisChanged(int, GamepadAxis, double);
+
+	private:
+		GamepadListModel* devices() const
+		{ return m_devices; }
+
+	private:
+		const QString m_log_tag;
+
+		GamepadListModel* const m_devices;
+		GamepadManagerBackend* const m_backend;
 
 #ifndef Q_OS_ANDROID
-    GamepadButtonNavigation padbuttonnav;
-    GamepadAxisNavigation padaxisnav;
+		GamepadButtonNavigation padbuttonnav;
+		GamepadAxisNavigation padaxisnav;
 #endif
-};
+	};
 
 } // namespace model
 

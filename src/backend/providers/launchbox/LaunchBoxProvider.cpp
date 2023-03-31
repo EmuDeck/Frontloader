@@ -28,65 +28,73 @@
 #include "utils/PathTools.h"
 
 
-namespace {
-QString default_installation()
+namespace
 {
-    return paths::homePath() + QStringLiteral("/LaunchBox/");
-}
+	QString default_installation()
+	{
+		return paths::homePath() + QStringLiteral("/LaunchBox/");
+	}
 } // namespace
 
 
-namespace providers {
-namespace launchbox {
-
-LaunchboxProvider::LaunchboxProvider(QObject* parent)
-    : Provider(QLatin1String("launchbox"), QStringLiteral("LaunchBox"), parent)
-{}
-
-Provider& LaunchboxProvider::run(providers::SearchContext& sctx)
+namespace providers
 {
-    const QString lb_dir_path = [this]{
-        const auto option_it = options().find(QStringLiteral("installdir"));
-        return (option_it != options().cend())
-            ? QDir::cleanPath(option_it->second.front()) + QLatin1Char('/')
-            : default_installation();
-    }();
-    if (lb_dir_path.isEmpty() || !QFileInfo::exists(lb_dir_path)) {
-        Log::info(display_name(), LOGMSG("No installation found"));
-        return *this;
-    }
+	namespace launchbox
+	{
 
-    Log::info(display_name(), LOGMSG("Looking for installation at `%1`").arg(::pretty_path(lb_dir_path)));
-    const QDir lb_dir(lb_dir_path);
+		LaunchboxProvider::LaunchboxProvider(QObject* parent)
+				: Provider(QLatin1String("launchbox"), QStringLiteral("LaunchBox"), parent)
+		{}
 
-    const std::vector<Platform> platforms = find_platforms(display_name(), lb_dir);
-    if (platforms.empty()) {
-        Log::warning(display_name(), LOGMSG("No platforms found"));
-        return *this;
-    }
+		Provider &LaunchboxProvider::run(providers::SearchContext &sctx)
+		{
+			const QString lb_dir_path = [this]
+			{
+				const auto option_it = options().find(QStringLiteral("installdir"));
+				return (option_it != options().cend())
+				       ? QDir::cleanPath(option_it->second.front()) + QLatin1Char('/')
+				       : default_installation();
+			}();
+			if (lb_dir_path.isEmpty() || !QFileInfo::exists(lb_dir_path))
+			{
+				Log::info(display_name(), LOGMSG("No installation found"));
+				return *this;
+			}
 
-    const QString steam_call = providers::find_steam_call();
+			Log::info(display_name(), LOGMSG("Looking for installation at `%1`").arg(::pretty_path(lb_dir_path)));
+			const QDir lb_dir(lb_dir_path);
 
-    const HashMap<QString, Emulator> emulators = EmulatorsXml(display_name(), lb_dir).find();
-    // NOTE: It's okay to not have any emulators
+			const std::vector<Platform> platforms = find_platforms(display_name(), lb_dir);
+			if (platforms.empty())
+			{
+				Log::warning(display_name(), LOGMSG("No platforms found"));
+				return *this;
+			}
 
-    const float progress_step = 1.f / platforms.size() / 2.f;
-    float progress = 0.f;
+			const QString steam_call = providers::find_steam_call();
 
-    const GamelistXml metahelper(display_name(), lb_dir);
-    const Assets assethelper(display_name(), lb_dir_path);
-    for (const Platform& platform : platforms) {
-        const std::vector<model::Game*> games = metahelper.find_games_for(platform, emulators, steam_call, sctx);
-        progress += progress_step;
-        emit progressChanged(progress);
+			const HashMap<QString, Emulator> emulators = EmulatorsXml(display_name(), lb_dir).find();
+			// NOTE: It's okay to not have any emulators
 
-        assethelper.find_assets_for(platform.name, games);
-        progress += progress_step;
-        emit progressChanged(progress);
-    }
+			const float progress_step = 1.f / platforms.size() / 2.f;
+			float progress = 0.f;
 
-    return *this;
-}
+			const GamelistXml metahelper(display_name(), lb_dir);
+			const Assets assethelper(display_name(), lb_dir_path);
+			for (const Platform &platform: platforms)
+			{
+				const std::vector<model::Game*> games = metahelper.find_games_for(platform, emulators, steam_call,
+				                                                                  sctx);
+				progress += progress_step;
+				emit progressChanged(progress);
 
-} // namespace launchbox
+				assethelper.find_assets_for(platform.name, games);
+				progress += progress_step;
+				emit progressChanged(progress);
+			}
+
+			return *this;
+		}
+
+	} // namespace launchbox
 } // namespace providers
