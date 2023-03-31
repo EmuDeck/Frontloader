@@ -18,7 +18,11 @@ rm "$file"
 mkdir -p ~/devkit-game
 cat << EOF > ~/devkit-game/devkit-steam
 #!/bin/bash
-~/Frontloader/frontloader
+if [ ! -f ~/Frontloader/frontloader ]; then
+  steam -steamdeck -steamos3 -steampal -gamepadui
+else
+  ~/Frontloader/frontloader
+fi
 EOF
 chmod +x ~/devkit-game/devkit-steam
 popd || exit
