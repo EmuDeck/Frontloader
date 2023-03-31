@@ -80,7 +80,7 @@ namespace model
 		void autobootCancelled();
 
 	private:
-		bool m_running;
+		bool m_running = false;
 		bool m_cancelled;
 		QString m_stage;
 		float m_progress;
