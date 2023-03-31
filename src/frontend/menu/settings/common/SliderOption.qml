@@ -24,6 +24,7 @@ FocusScope {
     property alias label: label.text
     property alias desc: description.text
     property alias value: slider.value
+    onValueChanged: valueText.text = value
 
     property int fontSize: vpx(22)
     property int horizontalPadding: vpx(30)
@@ -76,16 +77,33 @@ FocusScope {
         }
     }
 
-    SimpleSlider {
-        id: slider
-        pressed: parent.focus || mouseArea.containsMouse
+    Row {
+        id: sliderContainer
 
-        focus: true
         anchors.right: parent.right
         anchors.rightMargin: horizontalPadding
         anchors.verticalCenter: parent.verticalCenter
-        height: fontSize * 1.15
+        SimpleSlider {
+            id: slider
+
+            pressed: parent.focus || mouseArea.containsMouse
+            focus: true
+            height: fontSize * 1.15
+        }
+        Text {
+            id: valueText
+            text: value
+            color: "#c0c0c0"
+            font.pixelSize: fontSize
+            font.family: globalFonts.sans
+        }
+
+
+
     }
+
+
+
 
     MouseArea {
         id: mouseArea
