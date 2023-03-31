@@ -69,6 +69,10 @@ curl -OL "$download" 2>&1 | stdbuf -oL tr '\r' '\n' | sed -u 's/^ *\([0-9][0-9]*
 tar xf "$file"
 rm "$file"
 
+if [[ -f "${HOME}/Frontloader/frontloader" ]]; then
+  rm -rf "${HOME}/Frontloader/scripts"
+fi
+
 echo "80" ; echo "# Setting up devkit redirection" ;
 
 mkdir -p ~/devkit-game
